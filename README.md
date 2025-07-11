@@ -1,4 +1,5 @@
 # HTML
+
 - HyperText
   - Texto puros, livros, revistas, jornais
   - Links: acessar outros documentos
@@ -13,6 +14,7 @@
   - Sintaxe: maneira de escrever
 
 # HTTP
+
 - HyperText
 - Transfer
   - Transferencia
@@ -21,6 +23,7 @@
   - Conjunto de regras
 
 # URL
+
 - Uniform
   - Uniforme
 - Resource
@@ -29,6 +32,7 @@
   Encontrar um recurso (html, css, js, pdf, png, jpg, mp3, ...)
 
 # IP
+
 - Internet
   - Rede mundial de computadores
 - Protocol - Conjunto de regras
@@ -37,6 +41,7 @@
   123.32.1.23 (IP)
 
 # DNS
+
 - Domain
   - Dominios
 - Name
@@ -45,6 +50,7 @@
   - Servidor
 
 # CSS
+
 - Cascade
   - Cascata
   - Regras de escrita
@@ -61,3 +67,33 @@ A partir disso, o HTML e impactado visualmente.
 - Declaração
 - Seletor
 - Propriedade e valor
+
+# JS (JavaScript)
+
+- Linguagem de programação
+- Browsers
+- Input -> Process -> Output
+- Variaveis
+  - agrupamento e reuso de codigo
+  - Seguencia logica
+  - Saida de dados
+- Gemini (IA): esperar uma resposta
+- Mexer no navegador
+- Estrutura de dados
+- Estrutura de decisao (analise de cenarios)
+- Algoritimo: seguencia de passos logica, de maneira ordenada, a fim de chegar a alguma conclusao (Limitada)
+- Logica (Pensamento computacional)
+  - Abstração
+  - Decomposiçã
+  - Algoritimo
+  - Reconhecimento de padrão
+- Tipo de dados
+  - Number
+  - String (" ", ' ', ` `)
+  - Booleand: true of false
+
+# DOM
+
+- Documento
+- Object
+- Model
