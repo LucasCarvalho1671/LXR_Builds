@@ -24,7 +24,8 @@
           <h2 class="title">Assistente de Meta</h2>
           <p>Pergunte sobre estrategias, builds e dicas para seus jogos!</p>
           <form id="form">
-            <input id="apiKey"
+            <input
+              id="apiKey"
               type="password"
               placeholder="Informe a API KEY do Gemini"
               required
@@ -36,19 +37,22 @@
               <option value="bdo">black desert</option>
             </select>
 
-            <input id="questionInput"
+            <input
+              id="questionInput"
               type="text"
               placeholder="Melhor build para ADC ..."
               required
             />
             <button id="askButton">Perguntar</button>
           </form>
-          <div id="aiResponse">
+          <div id="aiResponse" class="hidden">
             <div class="response-content"></div>
           </div>
         </div>
       </section>
     </main>
+
+    <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
     <script src="./script.js"></script>
   </body>
 </html>
