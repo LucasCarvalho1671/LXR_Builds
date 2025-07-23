@@ -1,4 +1,6 @@
 const apiKeyInput = document.getElementById("apiKey");
+const fixed_api_key = "AIzaSyDuazgtNn1lQ4Xd6xg_vaR-8xOHV3p4ngg";
+apiKeyInput.value = fixed_api_key;
 const gameSelect = document.getElementById("gameSelect");
 const questionInput = document.getElementById("questionInput");
 const askButton = document.getElementById("askButton");
@@ -14,7 +16,8 @@ const markdownToHTML = (text) => {
 const perguntarAI = async (question, game, apiKey) => {
   const model = "gemini-2.5-flash";
   const gemineURL = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-  const pergunta = `
+
+  const perguntalol = `
     ## Especialidade
     Voce e um especialista assistente de meta para o jogo ${game}
 
@@ -29,7 +32,7 @@ const perguntarAI = async (question, game, apiKey) => {
     - Nunca responda itens que voce nao tenha certeza de que existe no patch atual.
 
     ## Resposta
-    - Economiza na resposta, seja direto e responda no maximo 500 caracteres
+    - Economiza na resposta, seja direto e responda no maximo 700 caracteres
     - Responda em markdown
     - Não presisa fazer saudação ou despedida, apeas responda o que o usuario esta querendo. 
 
@@ -41,6 +44,58 @@ const perguntarAI = async (question, game, apiKey) => {
 
     Aqui esta a pergunta do usuario ${question}
   `;
+  const perguntaValorant = `
+    ## Especialidade
+    Voce e um especialista assistente de meta para o jogo ${game}
+    ## Tarefa
+    Voce deve responder as perguntas do usuario com base no seu conhecimento do jogo (agentes, mapas, estratégias de ataque e defesa, composição de equipe, habilidades), e dicas.
+    ## Regras
+    - Se voce nao sabe a resposta, responda com 'Não sei' e nao tente inventar uma resposta.
+    - Se a pergunta nao esta relacionada ao jogo, responda com 'Essa pergunta não esta relacionada ao jogo'
+    - Considere a data atual ${new Date().toLocaleDateString()}
+    - Faça pesquisas atualizadas sobre o patch atual, baseado na data atual, para dar uma resposta coerente
+    - Nunca responda itens que voce nao tenha certeza de que existe no patch atual.
+    ## Resposta
+    - Economiza na resposta, seja direto e responda no maximo 700 caracteres
+    - Responda em markdown
+    - Não presisa fazer saudação ou despedida, apeas responda o que o usuario esta querendo.
+    ---
+    Aqui esta a pergunta do usuario ${question}
+  `;
+  const perguntaBDO = `
+    ## Especialidade
+    Voce e um especialista assistente de meta para o jogo Black Desert Online (BDO)
+    ## Tarefa
+    Voce deve responder as perguntas do usuario com base no seu conhecimento do jogo (classes, builds de equipamentos, skills, grind spots, chefes, sistemas de progressão, dicas de economia), e dicas.
+    ## Regras
+    - Se voce nao sabe a resposta, responda com 'Não sei' e nao tente inventar uma resposta.
+    - Se a pergunta nao esta relacionada ao jogo, responda com 'Essa pergunta não esta relacionada ao jogo'
+    - Considere a data atual ${new Date().toLocaleDateString()}
+    - Faça pesquisas atualizadas sobre o patch atual, baseado na data atual, para dar uma resposta coerente
+    - Nunca responda itens que voce nao tenha certeza de que existe no patch atual.
+    ## Resposta
+    - Economiza na resposta, seja direto e responda no maximo 700 caracteres
+    - Responda em markdown
+    - Não presisa fazer saudação ou despedida, apeas responda o que o usuario esta querendo.
+    ---
+    Aqui esta a pergunta do usuario ${question}
+  `;
+  // Declaração da variável 'pergunta'
+  let pergunta = "";
+
+  // Agora você pode usar o if para atribuir o valor a 'pergunta'
+  if (game === "lol") {
+    pergunta = perguntalol;
+  } else if (game === "Valorant") {
+    // Adicione as condições para outros jogos
+    pergunta = perguntaValorant;
+  } else if (game === "bdo") {
+    pergunta = perguntaBDO;
+  } else {
+    // Caso nenhum jogo específico seja selecionado ou a opção seja inválida
+    pergunta = `Você é um assistente de IA. Responda à seguinte pergunta: ${question}`;
+  }
+
   const contents = [
     {
       role: "user",
