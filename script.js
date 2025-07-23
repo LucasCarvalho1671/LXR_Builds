@@ -1,6 +1,6 @@
 const apiKeyInput = document.getElementById("apiKey");
-const fixed_api_key = "AIzaSyDuazgtNn1lQ4Xd6xg_vaR-8xOHV3p4ngg" ;
-  apiKeyInput.value = fixed_api_key;
+const fixed_api_key = "AIzaSyDuazgtNn1lQ4Xd6xg_vaR-8xOHV3p4ngg";
+apiKeyInput.value = fixed_api_key;
 const gameSelect = document.getElementById("gameSelect");
 const questionInput = document.getElementById("questionInput");
 const askButton = document.getElementById("askButton");
@@ -62,6 +62,29 @@ const perguntarAI = async (question, game, apiKey) => {
     ---
     Aqui esta a pergunta do usuario ${question}
   `;
+
+  const perguntatft = `
+    ## Especialidade
+    Voce e um especialista assistente de meta para o jogo ${game}
+
+    ## Tarefa
+    Voce deve responder as perguntas do usuario com base no seu conhecimento do jogo (composições, itens, campeões, sinergias, fases do jogo, dicas de economia e posicionamento), e dicas.
+
+    ## Regras
+    - Se voce nao sabe a resposta, responda com 'Não sei' e nao tente inventar uma resposta.
+    - Se a pergunta nao esta relacionada ao jogo, responda com 'Essa pergunta não esta relacionada ao jogo'
+    - Considere a data atual ${new Date().toLocaleDateString()}
+    - Faça pesquisas atualizadas sobre o patch atual, baseado na data atual, para dar uma resposta coerente
+    - Nunca responda itens que voce nao tenha certeza de que existe no patch atual.
+
+    ## Resposta
+    - Economiza na resposta, seja direto e responda no maximo 700 caracteres
+    - Responda em markdown
+    - Não presisa fazer saudação ou despedida, apeas responda o que o usuario esta querendo.
+    ---
+    Aqui esta a pergunta do usuario ${question}
+  `;
+
   const perguntaBDO = `
     ## Especialidade
     Voce e um especialista assistente de meta para o jogo Black Desert Online (BDO)
@@ -89,6 +112,8 @@ const perguntarAI = async (question, game, apiKey) => {
   } else if (game === "Valorant") {
     // Adicione as condições para outros jogos
     pergunta = perguntaValorant;
+  } else if (game === "tft") {
+    pergunta = perguntatft;
   } else if (game === "bdo") {
     pergunta = perguntaBDO;
   } else {
