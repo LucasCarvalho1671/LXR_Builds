@@ -1,132 +1,33 @@
-# HTML
+<h1 align="center"> LXR - Builds </h1>
 
-- HyperText
-  - Texto puros, livros, revistas, jornais
-  - Links: acessar outros documentos
-  - Imagens, videos, audios
-- Markup
-  - Marcação
-  - Tags: <a> Link </a>
-  - Atributos: <a href= "http://rockeatseat.com.br">
-  - Globais: id, class, ...
-- Language
-  - Linguagem
-  - Sintaxe: maneira de escrever
+<p align="center">
+  <a href="#-tecnologias">Tecnologias</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#-projeto">Projeto</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</p>
 
-# HTTP
+<br>
 
-- HyperText
-- Transfer
-  - Transferencia
-- Protocol
-  - Protocolo
-  - Conjunto de regras
-- Verbor HTTP (Methods): Get, Post, Patch/Put, Delete
-- Headers (Cabeçalhos): instruçãoes/informações extras para cada chamada
+<p align="center">
+  <img alt="projeto DevLinks" src="./assets/logo.png" width="100%">
+</p>
 
-# URL
+## 🚀 Tecnologias
 
-- Uniform
-  - Uniforme
-- Resource
-  - Recurso
-- Locator - Localizado
-  Encontrar um recurso (html, css, js, pdf, png, jpg, mp3, ...)
+Esse projeto foi desenvolvido com as seguintes tecnologias:
 
-# IP
+- HTML e CSS
+- JavaScript
+- Gemini AI
+- Git e Github
 
-- Internet
-  - Rede mundial de computadores
-- Protocol - Conjunto de regras
-  Endereço do computador
-  rocktseat.com.br (Dominio)
-  123.32.1.23 (IP)
 
-# DNS
+## 🎮 Projeto
 
-- Domain
-  - Dominios
-- Name
-  - Nome
-- Server
-  - Servidor
+LXR - Builds é a sua central estratégica com builds otimizadas, runas e informações detalhadas — tudo baseado no meta mais recente de cada patch.
 
-# CSS
+- [Acesse o projeto finalizado, online](https://lucascarvalho1671.github.io/Projeto_Lucas/)
 
-- Cascade
-  - Cascata
-  - Regras de escrita
-  - Hierarquia
-  - Especificidade
-- Style
-  - Estilo
-- Sheet
-  - Folha
 
-De um arquivo que tera na sua sintaxe, declarações, propriedades, e valores.
-A partir disso, o HTML e impactado visualmente.
 
-- Declaração
-- Seletor
-- Propriedade e valor
 
-# JS (JavaScript)
-
-- Linguagem de programação
-- Browsers
-- Input -> Process -> Output
-- Variaveis
-  - agrupamento e reuso de codigo
-  - Seguencia logica
-  - Saida de dados
-- Gemini (IA): esperar uma resposta
-- Mexer no navegador
-- Estrutura de dados
-- Estrutura de decisao (analise de cenarios)
-- Algoritimo: seguencia de passos logica, de maneira ordenada, a fim de chegar a alguma conclusao (Limitada)
-- Logica (Pensamento computacional)
-  - Abstração
-  - Decomposiçã
-  - Algoritimo
-  - Reconhecimento de padrão
-- Tipo de dados
-  - Number
-  - String (" ", ' ', ` `)
-  - Booleand: true of false
-
-# DOM
-
-- Documento
-- Object
-- Model
-
-# API
-
-- Application
-- Program
-- Interface
-- JSON: JavaScript Object Notation
-
-# CDN
-
-- Content
-- Delivery
-- Network
-
-# LLM
-
-- Large
-- Language
-- Model
-- Gemini, OpenAI,
-
-# Agentes AI
-
-- Tools (ferramentas): permitem uso de codigo, ou apps, ou qualquer informação extra
-- Melhor contexto
-
-# Engenharia de pronpt
-
-- One Shot: uma unica pergunta sem muito contexto
-- Few Shot: e apresentado exemplodo que se espera
-- Chain of Thougth: cadeia de pensamento para a AI responder gradativamente conforme a instrução.
+---
