@@ -1,6 +1,6 @@
 const apiKeyInput = document.getElementById("apiKey");
-const fixed_api_key = "AIzaSyDuazgtNn1lQ4Xd6xg_vaR-8xOHV3p4ngg";
-apiKeyInput.value = fixed_api_key;
+const fixed_api_key = "AIzaSyDuazgtNn1lQ4Xd6xg_vaR-8xOHV3p4ngg" ;
+  apiKeyInput.value = fixed_api_key;
 const gameSelect = document.getElementById("gameSelect");
 const questionInput = document.getElementById("questionInput");
 const askButton = document.getElementById("askButton");
