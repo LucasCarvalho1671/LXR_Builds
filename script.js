@@ -188,3 +188,16 @@ const enviarFormulario = async (event) => {
   }
 };
 form.addEventListener("submit", enviarFormulario);
+
+// Registro do Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js') // Caminho para o seu service worker
+      .then(registration => {
+        console.log('Service Worker registrado com sucesso:', registration.scope);
+      })
+      .catch(error => {
+        console.error('Falha ao registrar Service Worker:', error);
+      });
+  });
+}
