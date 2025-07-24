@@ -1,5 +1,6 @@
 const apiKeyInput = document.getElementById("apiKey");
 const fixed_api_key = "AIzaSyDuazgtNn1lQ4Xd6xg_vaR-8xOHV3p4ngg";
+apiKeyInput.disabled = true;
 apiKeyInput.value = fixed_api_key;
 apiKeyInput.readOnly = true;
 const gameSelect = document.getElementById("gameSelect");
