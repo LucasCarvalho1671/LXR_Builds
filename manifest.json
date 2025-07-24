@@ -23,5 +23,20 @@
       "type": "image/png",
       "purpose": "maskable"
     }
+  ],
+  "screenshots": [
+    {
+      "src": "./assets/screenshot-desktop.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Visão do aplicativo em desktop"
+    },
+    {
+      "src": "./assets/screenshot-mobile.png",
+      "sizes": "360x640",
+      "type": "image/png",
+      "label": "Visão do aplicativo em mobile"
+    }
   ]
 }
