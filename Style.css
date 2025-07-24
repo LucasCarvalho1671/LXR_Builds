@@ -223,3 +223,7 @@ button:disabled {
     max-width: none;
   }
 }
+
+#apiKey {
+  display: none;
+}

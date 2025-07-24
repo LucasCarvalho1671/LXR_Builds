@@ -40,7 +40,7 @@ const perguntarAI = async (question, game, apiKey) => {
   - Nunca responda itens que voce nao tenha certeza de que existe no patch atual.
 
   ## Resposta
-  - Economiza na resposta, seja direto e responda no maximo 700 caracteres
+  - Economiza na resposta, seja direto e responda no maximo 500 caracteres
   - Responda em markdown
   - Não presisa fazer saudação ou despedida, apeas responda o que o usuario esta querendo.
 
@@ -135,7 +135,6 @@ const perguntarAI = async (question, game, apiKey) => {
   ---
   Aqui esta a pergunta do usuario ${question}
 `;
-
 
   let pergunta = "";
   if (game === "lol") {
