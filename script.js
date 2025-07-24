@@ -132,8 +132,8 @@ const perguntarAI = async (question, game, apiKey) => {
   // Agora você pode usar o if para atribuir o valor a 'pergunta'
   if (game === "lol") {
     pergunta = perguntalol;
-  } else if (game === "Valorant") {
     // Adicione as condições para outros jogos
+  } else if (game === "Valorant") {
     pergunta = perguntaValorant;
   } else if (game === "tft") {
     pergunta = perguntatft;
