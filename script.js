@@ -1,5 +1,5 @@
 const apiKeyInput = document.getElementById("apiKey");
-const fixed_api_key = "AIzaSyAu0Ww9n8sV4WhcDZvxPK90gHnTLVzuptM"; // Sua API Key fixa aqui
+const fixed_api_key = "AIzaSyAu0Ww9n8sV4WhcDZvxPK90gHnTLVzuptM"; //Sua API Key fixa a
 apiKeyInput.value = fixed_api_key;
 apiKeyInput.readOnly = true; // Bloqueia o campo para edição, mas permite que o valor seja enviado
 
@@ -21,9 +21,13 @@ const markdownToHTML = (text) => {
 
 // **IMPORTANTE**: Todas as constantes de prompt (perguntalol, perguntaValorant, etc.)
 // devem ser declaradas ANTES da função 'perguntarAI' que as utiliza.
-const perguntalol = `
+const perguntarAI = async (question, game, apiKey) => {
+  const model = "gemini-2.5-flash";
+  const gemineURL = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+  const perguntalol = `
   ## Especialidade
-  Voce e um especialista assistente de meta para o jogo \${game}
+  Voce e um especialista assistente de meta para o jogo ${game}
 
   ## Tarefa
   Voce deve responder as perguntas do usuario com base no seu conhecimento do jogo, estrategias, build e dicas
@@ -31,7 +35,7 @@ const perguntalol = `
   ## Regras
   - Se voce nao sabe a resposta, responda com 'Não sei' e nao tente inventar uma resposta.
   - Se a pergunta nao esta relacionada ao jogo, responda com 'Essa pergunta não esta relacionada ao jogo'
-  - Considere a data atual \${new Date().toLocaleDateString()}
+  - Considere a data atual ${new Date().toLocaleDateString()}
   - Faça pesquisas atualizadas sobre o patch atual, baseado na data atual, para dar uma resposta coerente
   - Nunca responda itens que voce nao tenha certeza de que existe no patch atual.
 
@@ -46,17 +50,17 @@ const perguntalol = `
 
   ---
 
-  Aqui esta a pergunta do usuario \${question}
+  Aqui esta a pergunta do usuario ${question}
 `;
-const perguntaValorant = `
+  const perguntaValorant = `
   ## Especialidade
-  Voce e um especialista assistente de meta para o jogo \${game}
+  Voce e um especialista assistente de meta para o jogo ${game}
   ## Tarefa
   Voce deve responder as perguntas do usuario com base no seu conhecimento do jogo (agentes, mapas, estratégias de ataque e defesa, composição de equipe, habilidades), e dicas.
   ## Regras
   - Se voce nao sabe a resposta, responda com 'Não sei' e nao tente inventar uma resposta.
   - Se a pergunta nao esta relacionada ao jogo, responda com 'Essa pergunta não esta relacionada ao jogo'
-  - Considere a data atual \${new Date().toLocaleDateString()}
+  - Considere a data atual ${new Date().toLocaleDateString()}
   - Faça pesquisas atualizadas sobre o patch atual, baseado na data atual, para dar uma resposta coerente
   - Nunca responda itens que voce nao tenha certeza de que existe no patch atual.
   ## Resposta
@@ -64,12 +68,12 @@ const perguntaValorant = `
   - Responda em markdown
   - Não presisa fazer saudação ou despedida, apeas responda o que o usuario esta querendo.
   ---
-  Aqui esta a pergunta do usuario \${question}
+  Aqui esta a pergunta do usuario ${question}
 `;
 
-const perguntatft = `
+  const perguntatft = `
   ## Especialidade
-  Voce e um especialista assistente de meta para o jogo \${game}
+  Voce e um especialista assistente de meta para o jogo ${game}
 
   ## Tarefa
   Voce deve responder as perguntas do usuario com base no seu conhecimento do jogo (composições, itens, campeões, sinergias, fases do jogo, dicas de economia e posicionamento), e dicas.
@@ -77,7 +81,7 @@ const perguntatft = `
   ## Regras
   - Se voce nao sabe a resposta, responda com 'Não sei' e nao tente inventar uma resposta.
   - Se a pergunta nao esta relacionada ao jogo, responda com 'Essa pergunta não esta relacionada ao jogo'
-  - Considere a data atual \${new Date().toLocaleDateString()}
+  - Considere a data atual ${new Date().toLocaleDateString()}
   - Faça pesquisas atualizadas sobre o patch atual, baseado na data atual, para dar uma resposta coerente
   - Nunca responda itens que voce nao tenha certeza de que existe no patch atual.
 
@@ -86,18 +90,18 @@ const perguntatft = `
   - Responda em markdown
   - Não presisa fazer saudação ou despedida, apeas responda o que o usuario esta querendo.
   ---
-  Aqui esta a pergunta do usuario \${question}
+  Aqui esta a pergunta do usuario ${question}
 `;
 
-const perguntaBDO = `
+  const perguntaBDO = `
   ## Especialidade
-  Voce e um especialista assistente de meta para o jogo \${game}
+  Voce e um especialista assistente de meta para o jogo ${game}
   ## Tarefa
   Voce deve responder as perguntas do usuario com base no seu conhecimento do jogo (classes, builds de equipamentos, skills, grind spots, chefes, sistemas de progressão, dicas de economia), e dicas, levando em consideração as mecanicas e novidades da temporada no momento.
   ## Regras
   - Se voce nao sabe a resposta, responda com 'Não sei' e nao tente inventar uma resposta.
   - Se a pergunta nao esta relacionada ao jogo, responda com 'Essa pergunta não esta relacionada ao jogo'
-  - Considere a data atual \${new Date().toLocaleDateString()}
+  - Considere a data atual ${new Date().toLocaleDateString()}
   - Faça pesquisas atualizadas sobre o patch atual, baseado na data atual, para dar uma resposta coerente
   - Nunca responda itens que voce nao tenha certeza de que existe no patch atual.
   ## Resposta
@@ -105,11 +109,11 @@ const perguntaBDO = `
   - Responda em markdown
   - Não presisa fazer saudação ou despedida, apeas responda o que o usuario esta querendo.
   ---
-  Aqui esta a pergunta do usuario \${question}
+  Aqui esta a pergunta do usuario ${question}
 `;
-const perguntaDelta = `
+  const perguntaDelta = `
   ## Especialidade
-  Voce e um especialista assistente de meta para o jogo \${game}
+  Voce e um especialista assistente de meta para o jogo ${game}
 
   ## Tarefa
   - Voce deve responder as perguntas do usuario com base no seu conhecimento do jogo (armas, equipamentos, mapas, táticas de combate, modos de jogo, estratégias de infiltração e eliminação), e dicas.
@@ -119,7 +123,7 @@ const perguntaDelta = `
   ## Regras
   - Se voce nao sabe a resposta, responda com 'Não sei' e nao tente inventar uma resposta.
   - Se a pergunta nao esta relacionada ao jogo, responda com 'Essa pergunta não esta relacionada ao jogo'
-  - Considere a data atual \${new Date().toLocaleDateString()}
+  - Considere a data atual ${new Date().toLocaleDateString()}
   - Faça pesquisas atualizadas sobre o patch atual (se aplicável), baseado na data atual, para dar uma resposta coerente
   - Nunca responda itens que voce nao tenha certeza de que existe no patch atual.
 
@@ -129,12 +133,9 @@ const perguntaDelta = `
   - Responda em markdown
   - Não presisa fazer saudação ou despedida, apeas responda o que o usuario esta querendo.
   ---
-  Aqui esta a pergunta do usuario \${question}
+  Aqui esta a pergunta do usuario ${question}
 `;
 
-const perguntarAI = async (question, game, apiKey) => {
-  const model = "gemini-2.5-flash";
-  const gemineURL = `https://generativelanguage.googleapis.com/v1beta/models/\${model}:generateContent?key=\${apiKey}`;
 
   let pergunta = "";
   if (game === "lol") {
@@ -148,7 +149,7 @@ const perguntarAI = async (question, game, apiKey) => {
   } else if (game === "delta") {
     pergunta = perguntaDelta;
   } else {
-    pergunta = `Você é um assistente de IA. Responda à seguinte pergunta: \${question}`;
+    pergunta = `Você é um assistente de IA. Responda à seguinte pergunta: ${question}`;
   }
 
   const contents = [
