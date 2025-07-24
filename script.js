@@ -166,7 +166,7 @@ const perguntarAI = async (question, game, apiKey) => {
       google_search: {},
     },
   ];
-
+  // Chamada API
   const response = await fetch(gemineURL, {
     method: "POST",
     headers: {
@@ -179,17 +179,7 @@ const perguntarAI = async (question, game, apiKey) => {
   });
 
   const data = await response.json();
-  if (
-    data.candidates &&
-    data.candidates[0] &&
-    data.candidates[0].content &&
-    data.candidates[0].content.parts[0]
-  ) {
-    return data.candidates[0].content.parts[0].text;
-  } else {
-    console.error("Resposta inesperada da API Gemini:", data);
-    return "Não foi possível obter uma resposta da IA. Tente novamente.";
-  }
+  return data.candidates[0].content.parts[0].text;
 };
 
 // Lógica para seleção do jogo via clique nas capas
