@@ -32,14 +32,38 @@
               placeholder="Informe a API KEY do Gemini"
               required
             />
-            <select id="gameSelect">
-              <option value="">Selecione um jogo</option>
-              <option value="Valorant">Valorant</option>
-              <option value="lol">League of Legends</option>
-              <option value="tft">Teamfight Tactics</option>
-              <option value="bdo">Black Desert</option>
-              <option value="delta">Delta Force</option>
-            </select>
+            <div id="gameSelectionContainer" class="game-selection-container">
+              <div class="game-card" data-game-value="Valorant">
+                <img src="./assets/valorant_capa.jpg" alt="Capa Valorant" />
+                <span>Valorant</span>
+              </div>
+              <div class="game-card" data-game-value="lol">
+                <img src="./assets/lol_capa.jpg" alt="Capa League of Legends" />
+                <span>League of Legends</span>
+              </div>
+              <div class="game-card" data-game-value="bdo">
+                <img
+                  src="./assets/bdo_capa.jpg"
+                  alt="Capa Black Desert Online"
+                />
+                <span>Black Desert</span>
+              </div>
+              <div class="game-card" data-game-value="tft">
+                <img src="./assets/tft_capa.jpg" alt="Capa Teamfight Tactics" />
+                <span>Teamfight Tactics</span>
+              </div>
+              <div class="game-card" data-game-value="delta">
+                <img src="./assets/delta_capa.jpg" alt="Capa Delta Force" />
+                <span>Delta Force</span>
+              </div>
+            </div>
+
+            <input
+              type="hidden"
+              id="selectedGameHidden"
+              name="selectedGame"
+              required
+            />
 
             <input
               id="questionInput"

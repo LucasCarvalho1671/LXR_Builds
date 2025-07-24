@@ -156,3 +156,76 @@ button:disabled {
     opacity: 0.5;
   }
 }
+
+/* Estilos para o novo container de seleção de jogos */
+.game-selection-container {
+  display: flex;
+  flex-wrap: wrap; /* Permite que os cards quebrem para a próxima linha em telas menores */
+  gap: 1rem; /* Espaçamento entre os cards */
+  justify-content: center; /* Centraliza os cards */
+  margin-bottom: 1.25rem; /* Espaçamento abaixo do container */
+}
+
+.game-card {
+  background-color: #2a2634; /* Fundo similar ao de outras seções */
+  border: 2px solid transparent; /* Borda transparente inicial */
+  border-radius: 0.5rem;
+  overflow: hidden; /* Garante que a imagem não saia da borda arredondada */
+  cursor: pointer;
+  transition: all 0.3s ease; /* Transição suave para hover e seleção */
+  flex-basis: calc(
+    33.33% - 1rem
+  ); /* 3 colunas em tela grande, ajusta para gap */
+  max-width: 10rem; /* Limite de largura para cada card */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 0.5rem; /* Espaço para o texto do jogo */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave */
+}
+
+.game-card img {
+  width: 100%; /* Imagem preenche o card */
+  height: 8rem; /* Altura fixa para as imagens */
+  object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+  border-radius: 0.5rem 0.5rem 0 0; /* Borda arredondada só no topo da imagem */
+  display: block; /* Remove espaço extra abaixo da imagem */
+}
+
+.game-card span {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #a1a1aa; /* Cor do texto do jogo */
+  text-align: center;
+  white-space: nowrap; /* Evita quebra de linha no nome do jogo */
+  overflow: hidden; /* Esconde texto que excede a largura */
+  text-overflow: ellipsis; /* Adiciona reticências se o texto for muito longo */
+}
+
+.game-card:hover {
+  transform: translateY(-3px); /* Efeito de elevação ao passar o mouse */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Estilo para o card selecionado */
+.game-card.selected {
+  border-color: #43e7ad; /* Borda verde vibrante quando selecionado */
+  box-shadow: 0 0 0.5rem 0.2rem #43e7ad; /* Sombra mais forte para destaque */
+  transform: scale(1.02); /* Levemente maior */
+}
+
+/* Media Queries para responsividade */
+@media (max-width: 768px) {
+  .game-card {
+    flex-basis: calc(50% - 1rem); /* 2 colunas em telas médias */
+  }
+}
+
+@media (max-width: 480px) {
+  .game-card {
+    flex-basis: calc(100% - 1rem); /* 1 coluna em telas muito pequenas */
+    max-width: none; /* Remove limite de largura para preencher */
+  }
+}
+
+/* ... mantenha o restante do seu Style.css ... */
