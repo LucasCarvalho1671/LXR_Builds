@@ -1,6 +1,6 @@
 {
   "name": "Assistente de Meta",
-  "short_name": "LXR-Builds",
+  "short_name": "Meta AI",
   "description": "Seu assistente de meta para jogos com IA",
   "start_url": "./",
   "display": "standalone",

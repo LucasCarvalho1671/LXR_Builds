@@ -1,9 +1,9 @@
 const apiKeyInput = document.getElementById("apiKey");
 const fixed_api_key = "AIzaSyDuazgtNn1lQ4Xd6xg_vaR-8xOHV3p4ngg"; // Sua API Key fixa aqui
 apiKeyInput.value = fixed_api_key;
-apiKeyInput.readOnly = true; // Bloqueia o campo para edição
+apiKeyInput.readOnly = true; // Bloqueia o campo para edição, mas permite que o valor seja enviado
 
-// REMOVIDA: const gameSelect = document.getElementById("gameSelect");
+// REMOVIDA: const gameSelect = document.getElementById("gameSelect"); // Esta linha deve ser removida ou comentada
 
 const questionInput = document.getElementById("questionInput");
 const askButton = document.getElementById("askButton");
@@ -11,15 +11,16 @@ const aiResponse = document.getElementById("aiResponse");
 const form = document.getElementById("form");
 const gameSelectionContainer = document.getElementById(
   "gameSelectionContainer"
-); // NOVO: Referência ao container das capas
-const selectedGameHiddenInput = document.getElementById("selectedGameHidden"); // NOVO: Referência ao campo oculto
+); // Referência ao container das capas
+const selectedGameHiddenInput = document.getElementById("selectedGameHidden"); // Referência ao campo oculto
 
 const markdownToHTML = (text) => {
   const converter = new showdown.Converter();
   return converter.makeHtml(text);
 };
 
-// Seus prompts de jogo (AGORA DECLARADOS ANTES DE SEREM USADOS)
+// **IMPORTANTE**: Todas as constantes de prompt (perguntalol, perguntaValorant, etc.)
+// devem ser declaradas ANTES da função 'perguntarAI' que as utiliza.
 const perguntalol = `
   ## Especialidade
   Voce e um especialista assistente de meta para o jogo \${game}
@@ -166,7 +167,7 @@ const perguntarAI = async (question, game, apiKey) => {
       google_search: {},
     },
   ];
-  // Chamada API
+
   const response = await fetch(gemineURL, {
     method: "POST",
     headers: {
@@ -179,7 +180,19 @@ const perguntarAI = async (question, game, apiKey) => {
   });
 
   const data = await response.json();
-  return data.candidates[0].content.parts[0].text;
+  // Esta verificação é crucial para o TypeError
+  if (
+    data.candidates &&
+    data.candidates[0] &&
+    data.candidates[0].content &&
+    data.candidates[0].content.parts[0]
+  ) {
+    return data.candidates[0].content.parts[0].text;
+  } else {
+    console.error("Resposta inesperada da API Gemini:", data);
+    // Retorna uma mensagem de erro mais útil para o usuário
+    return "Não foi possível obter uma resposta da IA. Verifique sua API Key e se selecionou um jogo. Tente novamente.";
+  }
 };
 
 // Lógica para seleção do jogo via clique nas capas
@@ -208,11 +221,11 @@ const enviarFormulario = async (event) => {
   event.preventDefault();
   const apiKey = apiKeyInput.value;
   // AQUI: Pegue o jogo do input hidden, não mais do select
-  const game = selectedGameHiddenInput.value; // CORRIGIDO: Agora pega do input hidden
+  const game = selectedGameHiddenInput.value; // **CORRIGIDO AQUI**
   const question = questionInput.value;
 
   if (apiKey === "" || game === "" || question === "") {
-    // CORRIGIDO: Usando === e verificando 'game' do input hidden
+    // **CORRIGIDO AQUI**
     alert(
       "Atenção! Por favor, preencher todos os campos e selecionar um jogo!"
     );
@@ -229,7 +242,7 @@ const enviarFormulario = async (event) => {
       markdownToHTML(text);
     aiResponse.classList.remove("hidden");
   } catch (error) {
-    console.error("Erro: ", error); // Use console.error para erros
+    console.error("Erro: ", error); // **CORRIGIDO AQUI** para usar console.error
     aiResponse.querySelector(".response-content").innerHTML =
       "<p>Ocorreu um erro ao obter a resposta da IA. Verifique sua API Key ou tente novamente mais tarde.</p>";
     aiResponse.classList.remove("hidden");

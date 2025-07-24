@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
   <head>
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#9572fc" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,63 +10,59 @@
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LXR_Builds</title>
+    <title>Assistente de Meta</title>
     <link rel="stylesheet" href="./Style.css" />
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#9572fc">
   </head>
   <body>
     <header>
-      <img src="./assets/logo.png" alt="Logo" />
+      <img src="./assets/logo.png" alt="Logo Esports nlw" />
     </header>
 
     <main>
       <section>
         <div>
           <h2 class="title">Assistente de Meta</h2>
-          <p>Pergunte sobre estrategias, builds e dicas para seus jogos!</p>
+          <p>Pergunte sobre estratégias, builds e dicas para seus jogos!</p>
           <form id="form">
             <input
               id="apiKey"
               type="password"
               placeholder="Informe a API KEY do Gemini"
+              readonly
               required
             />
+
             <div id="gameSelectionContainer" class="game-selection-container">
               <div class="game-card" data-game-value="Valorant">
-                <img src="./assets/valorant_capa.jpg" alt="Capa Valorant" />
+                <img src="./assets/valorant_capa.jpg" alt="Capa Valorant">
                 <span>Valorant</span>
               </div>
               <div class="game-card" data-game-value="lol">
-                <img src="./assets/lol_capa.jpg" alt="Capa League of Legends" />
+                <img src="./assets/lol_capa.jpg" alt="Capa League of Legends">
                 <span>League of Legends</span>
               </div>
               <div class="game-card" data-game-value="bdo">
-                <img
-                  src="./assets/bdo_capa.jpg"
-                  alt="Capa Black Desert Online"
-                />
+                <img src="./assets/bdo_capa.jpg" alt="Capa Black Desert">
                 <span>Black Desert</span>
               </div>
               <div class="game-card" data-game-value="tft">
-                <img src="./assets/tft_capa.jpg" alt="Capa Teamfight Tactics" />
+                <img src="./assets/tft_capa.jpg" alt="Capa Teamfight Tactics">
                 <span>Teamfight Tactics</span>
               </div>
               <div class="game-card" data-game-value="delta">
-                <img src="./assets/delta_capa.jpg" alt="Capa Delta Force" />
+                <img src="./assets/delta_capa.jpg" alt="Capa Delta Force">
                 <span>Delta Force</span>
               </div>
             </div>
 
-            <input
-              type="hidden"
-              id="selectedGameHidden"
-              name="selectedGame"
-              required
-            />
+            <input type="hidden" id="selectedGameHidden" name="selectedGame" required>
 
             <input
               id="questionInput"
               type="text"
-              placeholder="Melhor build para ADC ..."
+              placeholder="Melhor build para ADC..."
               required
             />
             <button id="askButton">Perguntar</button>
