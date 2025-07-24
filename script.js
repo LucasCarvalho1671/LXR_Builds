@@ -1,5 +1,5 @@
 const apiKeyInput = document.getElementById("apiKey");
-const fixed_api_key = "AIzaSyDuazgtNn1lQ4Xd6xg_vaR-8xOHV3p4ngg"; // Sua API Key fixa aqui
+const fixed_api_key = "AIzaSyAu0Ww9n8sV4WhcDZvxPK90gHnTLVzuptM"; // Sua API Key fixa aqui
 apiKeyInput.value = fixed_api_key;
 apiKeyInput.readOnly = true; // Bloqueia o campo para edição, mas permite que o valor seja enviado
 
