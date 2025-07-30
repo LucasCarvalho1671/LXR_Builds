@@ -25,7 +25,7 @@ Esse projeto foi desenvolvido com as seguintes tecnologias:
 
 LXR - Builds é a sua central estratégica com builds otimizadas, runas e informações detalhadas — tudo baseado no meta mais recente de cada patch.
 
-- [Acesse o projeto finalizado, online](https://lucascarvalho1671.github.io/Projeto_Lucas/)
+- [Acesse o projeto finalizado, online](https://lxr-builds.onrender.com)
 
 
 
