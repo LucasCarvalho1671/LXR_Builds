@@ -1,22 +1,22 @@
-const CACHE_NAME = "assistente-meta-cache-v2.0"; // Mude a versão se alterar os arquivos
+const CACHE_NAME = "assistente-meta-cache-v2.1"; // Mude a versão se alterar os arquivos
 const urlsToCache = [
   "/",
   "/index.html",
   "/Style.css",
   "/script.js",
   "/manifest.json",
-  "/assets/bg.jpg",
-  "/assets/logo.png",
+  "/img/bg.jpg",
+  "/img/logo.png",
   // Ícones do manifest
-  "/assets/icon-192x192.png",
-  "/assets/icon-512x512.png",
-  "/assets/maskable_icon.png",
+  "/img/icon-192x192.png",
+  "/img/icon-512x512.png",
+  "/img/maskable_icon.png",
   // NOVAS CAPAS DE JOGOS
-  "/assets/valorant_capa.jpg",
-  "/assets/lol_capa.jpg",
-  "/assets/bdo_capa.jpg",
-  "/assets/tft_capa.jpg",
-  "/assets/delta_capa.jpg",
+  "/img/valorant_capa.jpg",
+  "/img/lol_capa.jpg",
+  "/img/bdo_capa.jpg",
+  "/img/tft_capa.jpg",
+  "/img/delta_capa.jpg",
   "https://unpkg.com/showdown/dist/showdown.min.js",
 ];
 
