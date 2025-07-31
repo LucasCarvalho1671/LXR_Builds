@@ -46,11 +46,13 @@ const clearForm = () => {
 const showMainFormArea = () => {
   document.body.classList.add("modal-open");
   mainFormArea.classList.remove("hidden");
+  blurBackgroundOverlay.classList.remove("hidden");
 };
 
 const hideMainFormArea = () => {
   document.body.classList.remove("modal-open");
   mainFormArea.classList.add("hidden");
+  blurBackgroundOverlay.classList.add("hidden");
 
   selectedGame = "";
   selectedGameHiddenInput.value = "";
@@ -318,3 +320,12 @@ if ("serviceWorker" in navigator) {
       });
   });
 }
+
+// NOVO: Event listener para a tecla 'Escape'
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+      if (!mainFormArea.classList.contains("hidden")) {
+          hideMainFormArea();
+      }
+  }
+});

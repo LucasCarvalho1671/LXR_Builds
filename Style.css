@@ -303,6 +303,8 @@ body.modal-open header {
   transform: translate(-50%, -50%);
   width: 90%;
   max-width: 36rem;
+  height: 95vh; /* Adicionado: Limita a altura do formulário a 95% da altura da tela */
+  overflow-y: auto; /* Adicionado: Habilita a rolagem vertical se o conteúdo for maior que a altura */
   background-color: #2a2634;
   border-radius: 0.625rem;
   padding: 2rem;
@@ -459,6 +461,12 @@ body.modal-open header {
     flex-basis: calc(50% - 1rem);
     max-width: 12rem;
   }
+}
+/* Adicionado: Para melhorar a visualização em telas pequenas */
+@media (max-width: 480px) {
+    .main-form-area {
+        padding: 1rem; /* Diminui o padding em telas muito pequenas */
+    }
 }
 
 @media (max-width: 480px) {
