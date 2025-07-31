@@ -204,7 +204,7 @@ button:disabled {
   }
 }
 
-/* NOVOS ESTILOS PARA SELEÇÃO DE JOGOS */
+/* ESTILOS PARA SELEÇÃO DE JOGOS */
 .game-selection-container {
   display: flex;
   flex-wrap: wrap;
@@ -264,7 +264,42 @@ button:disabled {
   color: white;
 }
 
-/* ESTILOS PARA O OVERLAY (main-form-area) */
+/* NOVO: Estilo para o overlay de blur que vai cobrir o fundo */
+.blur-background-overlay {
+  position: fixed; /* Fixa na tela */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparente preto para escurecer o fundo */
+  backdrop-filter: blur(5px); /* Efeito de blur */
+  z-index: 990; /* Um z-index alto o suficiente para cobrir o conteúdo principal, mas abaixo do modal */
+  opacity: 0; /* Começa invisível */
+  visibility: hidden; /* Começa oculto */
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.blur-background-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Removida a regra que embaçava o body, pois agora usamos blur-background-overlay
+body.modal-open > *:not(.main-form-area) {
+  filter: blur(5px);
+  transition: filter 0.3s ease-in-out;
+  pointer-events: none;
+}
+*/
+
+/* REMOVIDO: Regra antiga de overflow: hidden no body */
+/*
+body.modal-open {
+  overflow: hidden;
+}
+*/
+
+/* AJUSTADO: Estilos para o overlay (main-form-area) */
 .main-form-area {
   position: fixed; /* Fixa o elemento na tela */
   top: 50%; /* Centraliza verticalmente */
@@ -276,12 +311,12 @@ button:disabled {
   border-radius: 0.625rem;
   padding: 2rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); /* Sombra mais forte */
-  z-index: 1000; /* Garante que esteja acima de tudo */
+  z-index: 1000; /* Garante que esteja acima do blur-background-overlay (990) */
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  opacity: 0;
-  visibility: hidden;
+  opacity: 0; /* Começa invisível */
+  visibility: hidden; /* Começa oculto */
   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
@@ -333,17 +368,6 @@ button:disabled {
 
 .back-button:hover {
   color: white;
-}
-
-/* Estilo para o fundo embaçado */
-body.modal-open > *:not(.main-form-area) {
-  filter: blur(5px);
-  transition: filter 0.3s ease-in-out;
-  pointer-events: none; /* Impede cliques em elementos borrados */
-}
-
-body.modal-open {
-  overflow: hidden; /* Evita rolagem da página quando o modal está aberto */
 }
 
 /* MODAL PARA PERGUNTA DO INVOCADOR */

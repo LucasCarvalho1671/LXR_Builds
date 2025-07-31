@@ -1,7 +1,7 @@
 const questionInput = document.getElementById("questionInput");
 const askButton = document.getElementById("askButton");
 const aiResponse = document.getElementById("aiResponse");
-const aiForm = document.getElementById("aiForm"); // Referência ao formulário
+const aiForm = document.getElementById("aiForm");
 const gameSelectionContainer = document.getElementById("gameSelectionContainer");
 const selectedGameHiddenInput = document.getElementById("selectedGameHiddenInput");
 const mainFormArea = document.getElementById("mainFormArea");
@@ -17,6 +17,10 @@ const summonerTagInput = document.getElementById("summonerTagInput");
 const platformRegionSelect = document.getElementById("platformRegionSelect");
 const suggestedQuestionsContainer = document.getElementById("suggestedQuestionsContainer");
 const suggestedQuestionsList = document.getElementById("suggestedQuestionsList");
+
+// NOVA REFERÊNCIA PARA A DIV DE BLUR
+const blurBackgroundOverlay = document.getElementById("blurBackgroundOverlay");
+
 
 let selectedGame = "";
 let wantsSummonerInfo = false; // Estado para controlar se o usuário quer informar o invocador
@@ -43,19 +47,22 @@ const clearForm = () => {
 
 // --- Funções de Lógica Principal ---
 
-// Função para exibir o formulário principal como overlay
+// Função para exibir o formulário principal como overlay e ativar o blur do fundo
 const showMainFormArea = () => {
-  mainFormArea.classList.add("visible");
-  document.body.classList.add("modal-open"); // Aplica o blur no body
+  mainFormArea.classList.add("visible"); // Exibe o formulário de pergunta (modal)
+  blurBackgroundOverlay.classList.add("active"); // Ativa o overlay de blur
+  document.body.classList.add("modal-open"); // Mantém para controlar o `overflow: hidden` do body
 };
 
-// Função para esconder o formulário principal e retornar à seleção de jogo
+// Função para esconder o formulário principal e retornar à seleção de jogo, removendo o blur
 const hideMainFormArea = () => {
-  mainFormArea.classList.remove("visible");
-  document.body.classList.remove("modal-open"); // Remove o blur
+  mainFormArea.classList.remove("visible"); // Esconde o formulário de pergunta
+  blurBackgroundOverlay.classList.remove("active"); // Desativa o overlay de blur
+  document.body.classList.remove("modal-open"); // Remove o `overflow: hidden` do body
+
   selectedGame = "";
   selectedGameHiddenInput.value = "";
-  wantsSummonerInfo = false;
+  wantsSumonerInfo = false; // Resetar estado do invocador
   clearForm();
   // Remover a classe 'selected' de todos os cards
   document.querySelectorAll(".game-card").forEach(card => {
@@ -180,7 +187,7 @@ document.querySelectorAll(".game-card").forEach((card) => {
       <p>${card.querySelector('p').textContent}</p>
     `;
 
-    showMainFormArea();
+    showMainFormArea(); // Esta chamada agora ativará o blur no blurBackgroundOverlay
     clearForm(); // Limpa formulário ao selecionar novo jogo
 
     if (selectedGame === "lol") {
