@@ -18,6 +18,7 @@ body {
   align-items: center;
   justify-content: flex-start;
   transition: all 0.3s ease-in-out;
+  
 }
 
 body * {
@@ -276,9 +277,12 @@ button:disabled {
   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
-.blur-background-overlay.active {
-  opacity: 1;
-  visibility: visible;
+/* Estilo para embaçar o background (main e header) quando o modal estiver ativo */
+body.modal-open main,
+body.modal-open header {
+  filter: blur(5px) brightness(0.6);
+  pointer-events: none;
+  user-select: none;
 }
 
 /* AJUSTADO: Estilos para o overlay (main-form-area) */
@@ -306,7 +310,12 @@ button:disabled {
   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
-.main-form-area.visible {
+.main-form-area:not(.hidden) {
+  opacity: 1;
+  visibility: visible;
+}
+
+.blur-background-overlay:not(.hidden) {
   opacity: 1;
   visibility: visible;
 }
@@ -338,8 +347,8 @@ button:disabled {
 
 .back-button {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: 0.5rem; /* Ajustado para melhor posicionamento */
+  right: 0.5rem; /* Ajustado para melhor posicionamento */
   background: none;
   border: none;
   font-size: 1.5rem;
@@ -356,7 +365,7 @@ button:disabled {
 
 /* MODAL PARA PERGUNTA DO INVOCADOR */
 .modal {
-  position: absolute; /* Alterado para absolute para ser posicionado dentro do main-form-area */
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -471,11 +480,5 @@ button:disabled {
 
   .game-card p {
     font-size: 0.8rem;
-  }
-
-  .back-button {
-    font-size: 1.2rem;
-    top: 0.75rem;
-    right: 0.75rem;
   }
 }

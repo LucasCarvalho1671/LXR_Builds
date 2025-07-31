@@ -321,7 +321,6 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-// NOVO: Event listener para a tecla 'Escape'
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
       if (!mainFormArea.classList.contains("hidden")) {
