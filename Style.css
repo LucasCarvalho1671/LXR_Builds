@@ -311,16 +311,21 @@ body.modal-open header {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-  filter: none !important;
+  filter: none !important; 
   backdrop-filter: none !important;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .main-form-area.visible {
   opacity: 1;
   visibility: visible;
+}
+
+/* REGRAS PARA O ESTADO OCULTO */
+.main-form-area.hidden {
+  opacity: 0;
+  visibility: hidden;
+  /* display: none !important; pode ser usado para remover do fluxo do documento, mas vamos usar opacidade/visibilidade para a transição */
 }
 
 .selected-game-display {
