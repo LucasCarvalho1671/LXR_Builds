@@ -21,97 +21,114 @@
     <meta name="theme-color" content="#ffffff">
 </head>
 <body>
-    <div class="container">
-        <h1>Seu Assistente de IA para Jogos</h1>
-        
-        <div class="game-selection-container" id="gameSelectionContainer">
-            <h2>Selecione um Jogo:</h2>
-            <div class="game-cards">
-                <div class="game-card" data-game="lol">
-                    <img src="img/lol_capa.jpg" alt="League of Legends">
-                    <p>League of Legends</p>
-                </div>
-                <div class="game-card" data-game="valorant">
-                    <img src="img/valorant_capa.jpg" alt="Valorant"> <p>Valorant</p>
-                </div>
-                <div class="game-card" data-game="bdo">
-                    <img src="img/bdo_capa.jpg" alt="Black Desert Online">
-                    <p>Black Desert Online</p>
-                </div>
-                <div class="game-card" data-game="tft">
-                    <img src="img/tft_capa.jpg" alt="Teamfight Tactics">
-                    <p>Teamfight Tactics</p>
-                </div>
-                <div class="game-card" data-game="deltaforce">
-                    <img src="img/delta_capa.jpg" alt="Delta Force">
-                    <p>Delta Force</p>
-                </div>
-            </div>
-        </div>
+    <header>
+        <img src="./assets/logo.png" alt="Logo Esports nlw" />
+    </header>
 
-        <input type="hidden" id="selectedGameHiddenInput">
-
-        <div class="main-form-area hidden" id="mainFormArea">
-            <div class="selected-game-display" id="selectedGameDisplay">
-                </div>
-
-            <div class="modal hidden" id="summonerQuestionModal">
-                <div class="modal-content">
-                    <p>Deseja informar o nome do invocador para análise de desempenho em League of Legends?</p>
-                    <button id="btnYesSummoner">Sim</button>
-                    <button id="btnNoSummoner">Não</button>
-                </div>
-            </div>
-
-            <div class="lol-specific-fields hidden" id="lolSpecificFields">
-                <div class="input-group">
-                    <label for="summonerNameInput">Nome do Invocador (Riot ID):</label>
-                    <input type="text" id="summonerNameInput" placeholder="Ex: Killlon">
-                </div>
-                <div class="input-group">
-                    <label for="summonerTagInput">Tag (Riot ID):</label>
-                    <input type="text" id="summonerTagInput" placeholder="Ex: BR1">
-                </div>
-                <div class="input-group">
-                    <label for="platformRegionSelect">Região:</label>
-                    <select id="platformRegionSelect">
-                        <option value="">Selecione a Região</option>
-                        <option value="br1">Brasil (BR1)</option>
-                        <option value="na1">América do Norte (NA1)</option>
-                        <option value="euw1">Europa Ocidental (EUW1)</option>
-                        <option value="eun1">Europa Nórdica e Oriental (EUN1)</option>
-                        <option value="la1">América Latina Norte (LA1)</option>
-                        <option value="la2">América Latina Sul (LA2)</option>
-                        <option value="kr">Coreia (KR)</option>
-                        <option value="jp1">Japão (JP1)</option>
-                        <option value="oc1">Oceania (OC1)</option>
-                        </select>
-                </div>
-            </div>
-
-            <div class="suggested-questions-container hidden" id="suggestedQuestionsContainer">
-                <h3>Perguntas Sugeridas:</h3>
-                <div class="suggested-questions-list" id="suggestedQuestionsList">
-                    </div>
-            </div>
-
-            <form id="aiForm">
-                <div class="input-group">
-                    <label for="questionInput">Faça sua pergunta:</label>
-                    <textarea id="questionInput" rows="4" placeholder="Ex: Qual a melhor build para Kaisa ADC?"></textarea>
-                </div>
+    <main>
+        <section>
+            <div>
+                <h2 class="title">Assistente de Meta</h2>
+                <p>Pergunte sobre estratégias, builds e dicas para seus jogos!</p>
                 
-                <button type="submit" id="askButton">Perguntar</button>
-            </form>
-
-            <div class="ai-response hidden" id="aiResponse">
-                <h2>Resposta do Assistente:</h2>
-                <div class="response-content">
+                <div class="game-selection-container" id="gameSelectionContainer">
+                    <div class="game-cards">
+                        <div class="game-card" data-game="lol" data-image="img/lol_capa.jpg">
+                            <img src="img/lol_capa.jpg" alt="League of Legends">
+                            <p>League of Legends</p>
+                        </div>
+                        <div class="game-card" data-game="valorant" data-image="img/valorant_capa.jpg">
+                            <img src="img/valorant_capa.jpg" alt="Valorant">
+                            <p>Valorant</p>
+                        </div>
+                        <div class="game-card" data-game="bdo" data-image="img/bdo_capa.jpg">
+                            <img src="img/bdo_capa.jpg" alt="Black Desert Online">
+                            <p>Black Desert Online</p>
+                        </div>
+                        <div class="game-card" data-game="tft" data-image="img/tft_capa.jpg">
+                            <img src="img/tft_capa.jpg" alt="Teamfight Tactics">
+                            <p>Teamfight Tactics</p>
+                        </div>
+                        <div class="game-card" data-game="deltaforce" data-image="img/delta_capa.jpg">
+                            <img src="img/delta_capa.jpg" alt="Delta Force">
+                            <p>Delta Force</p>
+                        </div>
                     </div>
-            </div>
-        </div>
-    </div>
+                </div>
 
+                <input type="hidden" id="selectedGameHiddenInput">
+
+                <div class="main-form-area hidden" id="mainFormArea">
+                    <button class="back-button" id="backButton" aria-label="Voltar para seleção de jogo">&#x2190;</button>
+
+                    <div class="selected-game-display" id="selectedGameDisplay">
+                        </div>
+
+                    <div class="modal hidden" id="summonerQuestionModal">
+                        <div class="modal-content">
+                            <p>Deseja informar o nome do invocador para análise de desempenho em League of Legends?</p>
+                            <button id="btnYesSummoner">Sim</button>
+                            <button id="btnNoSummoner">Não</button>
+                        </div>
+                    </div>
+
+                    <div class="lol-specific-fields hidden" id="lolSpecificFields">
+                        <div class="input-group">
+                            <label for="summonerNameInput">Nome do Invocador (Riot ID):</label>
+                            <input type="text" id="summonerNameInput" placeholder="Ex: Killlon">
+                        </div>
+                        <div class="input-group">
+                            <label for="summonerTagInput">Tag (Riot ID):</label>
+                            <input type="text" id="summonerTagInput" placeholder="Ex: BR1">
+                        </div>
+                        <div class="input-group">
+                            <label for="platformRegionSelect">Região:</label>
+                            <select id="platformRegionSelect">
+                                <option value="">Selecione a Região</option>
+                                <option value="br1">Brasil (BR1)</option>
+                                <option value="na1">América do Norte (NA1)</option>
+                                <option value="euw1">Europa Ocidental (EUW1)</option>
+                                <option value="eun1">Europa Nórdica e Oriental (EUN1)</option>
+                                <option value="la1">América Latina Norte (LA1)</option>
+                                <option value="la2">América Latina Sul (LA2)</option>
+                                <option value="kr">Coreia (KR)</option>
+                                <option value="jp1">Japão (JP1)</option>
+                                <option value="oc1">Oceania (OC1)</option>
+                                <option value="ph2">Filipinas (PH2)</option>
+                                <option value="sg2">Singapura (SG2)</option>
+                                <option value="th2">Tailândia (TH2)</option>
+                                <option value="tw2">Taiwan (TW2)</option>
+                                <option value="vn2">Vietnã (VN2)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="suggested-questions-container hidden" id="suggestedQuestionsContainer">
+                        <h3>Perguntas Sugeridas:</h3>
+                        <div class="suggested-questions-list" id="suggestedQuestionsList">
+                            </div>
+                    </div>
+
+                    <form id="aiForm">
+                        <div class="input-group">
+                            <label for="questionInput">Faça sua pergunta:</label>
+                            <textarea id="questionInput" rows="4" placeholder="Ex: Qual a melhor build para Kaisa ADC?"></textarea>
+                        </div>
+                        
+                        <button type="submit" id="askButton">Perguntar</button>
+                    </form>
+
+                    <div class="ai-response hidden" id="aiResponse">
+                        <h2>Resposta do Assistente:</h2>
+                        <div class="response-content">
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
