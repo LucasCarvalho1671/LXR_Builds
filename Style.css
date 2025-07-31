@@ -5,7 +5,7 @@
 }
 
 body {
-  background-image: url("./assets/bg.jpg");
+  background-image: url("./img/bg.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
@@ -67,7 +67,10 @@ section > div {
   gap: 1.5rem;
 }
 
-h1, h2, h3, .title {
+h1,
+h2,
+h3,
+.title {
   color: white;
   text-align: center;
   font-weight: 900;
@@ -92,7 +95,10 @@ p {
   font-weight: bold;
 }
 
-input[type="text"], input[type="password"], textarea, select {
+input[type="text"],
+input[type="password"],
+textarea,
+select {
   width: 100%;
   padding: 0.75rem 1rem;
   border: none;
@@ -104,7 +110,10 @@ input[type="text"], input[type="password"], textarea, select {
   transition: border-color 0.2s;
 }
 
-input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
   border: 1px solid #43e7ad;
 }
 
@@ -279,13 +288,12 @@ button:disabled {
 }
 
 /* Estilo para embaçar o background (main e header) quando o modal estiver ativo */
-body.modal-open header,
-body.modal-open main {
+body.modal-open main,
+body.modal-open header {
   filter: blur(5px) brightness(0.6); /* Blur + escurecimento */
   pointer-events: none; /* Desativa cliques nos elementos do fundo */
   user-select: none; /* Desativa seleção de texto no fundo */
 }
-
 
 /* AJUSTADO: Estilos para o overlay (main-form-area) */
 .main-form-area {
@@ -306,6 +314,8 @@ body.modal-open main {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  filter: none !important;
+  backdrop-filter: none !important;
 }
 
 .main-form-area.visible {
