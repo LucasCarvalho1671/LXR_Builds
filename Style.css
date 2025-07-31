@@ -5,7 +5,7 @@
 }
 
 body {
-  background-image: url("./assets/bg.jpg");
+  background-image: url("./img/bg.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
@@ -61,7 +61,10 @@ section > div {
   gap: 1.5rem;
 }
 
-h1, h2, h3, .title {
+h1,
+h2,
+h3,
+.title {
   color: white;
   text-align: center;
   font-weight: 900;
@@ -86,7 +89,10 @@ p {
   font-weight: bold;
 }
 
-input[type="text"], input[type="password"], textarea, select {
+input[type="text"],
+input[type="password"],
+textarea,
+select {
   width: 100%;
   padding: 0.75rem 1rem;
   border: none;
@@ -98,7 +104,10 @@ input[type="text"], input[type="password"], textarea, select {
   transition: border-color 0.2s;
 }
 
-input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
   border: 1px solid #43e7ad;
 }
 
@@ -290,7 +299,7 @@ button:disabled {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  filter: none !important; 
+  filter: none !important;
   backdrop-filter: none !important;
   opacity: 0;
   visibility: hidden;
