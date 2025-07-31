@@ -5,22 +5,23 @@
 }
 
 body {
-  background-image: url("./img/bg.jpg");
+  background-image: url("./assets/bg.jpg");
   background-repeat: no-repeat;
-  background-size: cover; /* Ajustado para cobrir a tela */
-  background-position: center center; /* Centraliza a imagem */
-  background-attachment: fixed; /* Mantém a imagem fixa ao rolar */
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
   background-color: #121214;
   color: white;
-  min-height: 100vh; /* Garante que o body ocupe a altura total da viewport */
-  display: flex; /* Para centralizar o main */
+  min-height: 100vh;
+  display: flex;
   flex-direction: column;
-  align-items: center; /* Centraliza o main horizontalmente */
-  justify-content: flex-start; /* Alinha o main ao topo, mas permite centralização */
+  align-items: center;
+  justify-content: flex-start;
+  transition: all 0.3s ease-in-out;
 }
 
 body * {
-  font-family: "Inter", sans-serif; /* Fallback font */
+  font-family: "Inter", sans-serif;
   line-height: 160%;
 }
 
@@ -28,6 +29,8 @@ header {
   padding-top: 32px;
   text-align: center;
   width: 100%;
+  position: relative; /* Necessário para o z-index */
+  z-index: 2; /* Garante que o header esteja acima do blur */
 }
 
 header img {
@@ -37,9 +40,9 @@ header img {
 main {
   max-width: 36rem;
   width: 90%;
-  margin: 3rem auto; /* Ajuste para espaçamento */
-  position: relative; /* Para o main-form-area se sobrepor corretamente */
-  z-index: 1; /* Garante que o conteúdo do main esteja acima do blur (se aplicado diretamente ao body) */
+  margin: 3rem auto;
+  position: relative;
+  z-index: 2; /* Garante que o main esteja acima do blur */
 }
 
 section {
@@ -51,23 +54,20 @@ section {
   );
   border-radius: 0.625rem;
   padding-top: 4px;
-  position: relative; /* Para permitir z-index */
-  z-index: 2; /* Garante que o section esteja acima do blur */
+  position: relative;
+  z-index: 2;
 }
 
 section > div {
   padding: 2rem;
-  background-color: #2a2634; /* Cor de fundo original da seção */
+  background-color: #2a2634;
   border-radius: 0.625rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-h1,
-h2,
-h3,
-.title {
+h1, h2, h3, .title {
   color: white;
   text-align: center;
   font-weight: 900;
@@ -92,38 +92,32 @@ p {
   font-weight: bold;
 }
 
-input[type="text"],
-input[type="password"],
-textarea,
-select {
+input[type="text"], input[type="password"], textarea, select {
   width: 100%;
   padding: 0.75rem 1rem;
   border: none;
   border-radius: 0.5rem;
-  background-color: #1f1d24; /* Cor de fundo dos inputs */
+  background-color: #1f1d24;
   color: white;
   font-size: 1rem;
   outline: none;
   transition: border-color 0.2s;
 }
 
-input[type="text"]:focus,
-input[type="password"]:focus,
-textarea:focus,
-select:focus {
-  border: 1px solid #43e7ad; /* Cor de foco */
+input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
+  border: 1px solid #43e7ad;
 }
 
 textarea {
-  resize: vertical; /* Permite redimensionamento vertical */
+  resize: vertical;
   min-height: 5rem;
 }
 
 button {
   width: 100%;
   padding: 0.75rem 1rem;
-  background-color: #43e7ad; /* Cor do botão */
-  color: #121214; /* Cor do texto do botão */
+  background-color: #43e7ad;
+  color: #121214;
   border: none;
   border-radius: 0.5rem;
   font-size: 1rem;
@@ -133,7 +127,7 @@ button {
 }
 
 button:hover:not(:disabled) {
-  background-color: #35c48b; /* Cor do botão ao passar o mouse */
+  background-color: #35c48b;
 }
 
 button:disabled {
@@ -218,7 +212,7 @@ button:disabled {
   flex-wrap: wrap;
   gap: 1rem;
   justify-content: center;
-  width: 100%; /* Garante que os cards ocupem a largura disponível */
+  width: 100%;
 }
 
 .game-card {
@@ -228,9 +222,9 @@ button:disabled {
   overflow: hidden;
   cursor: pointer;
   transition: all 0.3s ease;
-  flex-basis: calc(33.33% - 1rem); /* 3 cards por linha em telas maiores */
-  max-width: 10rem; /* Largura máxima para manter o layout */
-  min-width: 8rem; /* Largura mínima para evitar que fiquem muito pequenos */
+  flex-basis: calc(33.33% - 1rem);
+  max-width: 10rem;
+  min-width: 8rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -241,20 +235,20 @@ button:disabled {
 .game-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-  border-color: #9572fc; /* Cor de borda ao passar o mouse */
+  border-color: #9572fc;
 }
 
 .game-card.selected {
-  border-color: #43e7ad; /* Cor de borda quando selecionado */
+  border-color: #43e7ad;
   box-shadow: 0 0 15px rgba(67, 231, 173, 0.6);
   transform: scale(1.02);
 }
 
 .game-card img {
   width: 100%;
-  height: 8rem; /* Altura fixa para as imagens */
-  object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
-  border-radius: 0.5rem 0.5rem 0 0; /* Borda superior arredondada */
+  height: 8rem;
+  object-fit: cover;
+  border-radius: 0.5rem 0.5rem 0 0;
 }
 
 .game-card p {
@@ -266,16 +260,16 @@ button:disabled {
 
 /* NOVO: Estilo para o overlay de blur que vai cobrir o fundo */
 .blur-background-overlay {
-  position: fixed; /* Fixa na tela */
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparente preto para escurecer o fundo */
-  backdrop-filter: blur(5px); /* Efeito de blur */
-  z-index: 990; /* Um z-index alto o suficiente para cobrir o conteúdo principal, mas abaixo do modal */
-  opacity: 0; /* Começa invisível */
-  visibility: hidden; /* Começa oculto */
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  z-index: 990;
+  opacity: 0;
+  visibility: hidden;
   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
@@ -284,42 +278,34 @@ button:disabled {
   visibility: visible;
 }
 
-/* Removida a regra que embaçava o body, pois agora usamos blur-background-overlay
-body.modal-open > *:not(.main-form-area) {
-  filter: blur(5px);
-  transition: filter 0.3s ease-in-out;
-  pointer-events: none;
+/* Estilo para embaçar o background (main e header) quando o modal estiver ativo */
+body.modal-open header,
+body.modal-open main {
+  filter: blur(5px) brightness(0.6); /* Blur + escurecimento */
+  pointer-events: none; /* Desativa cliques nos elementos do fundo */
+  user-select: none; /* Desativa seleção de texto no fundo */
 }
-*/
 
-/* REMOVIDO: Regra antiga de overflow: hidden no body */
-/*
-body.modal-open {
-  overflow: hidden;
-}
-*/
 
 /* AJUSTADO: Estilos para o overlay (main-form-area) */
 .main-form-area {
-  position: fixed; /* Fixa o elemento na tela */
-  top: 50%; /* Centraliza verticalmente */
-  left: 50%; /* Centraliza horizontalmente */
-  transform: translate(-50%, -50%); /* Ajusta para centralização exata */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 90%;
   max-width: 36rem;
-  background-color: #2a2634; /* Fundo do modal */
+  background-color: #2a2634;
   border-radius: 0.625rem;
   padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); /* Sombra mais forte */
-  z-index: 1000; /* Garante que esteja acima do blur-background-overlay (990) */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  opacity: 0; /* Começa invisível */
-  visibility: hidden; /* Começa oculto */
+  opacity: 0;
+  visibility: hidden;
   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-  filter: none !important;
-  backdrop-filter: none !important;
 }
 
 .main-form-area.visible {
@@ -327,7 +313,6 @@ body.modal-open {
   visibility: visible;
 }
 
-/* Estilo para a imagem e nome do jogo selecionado dentro do overlay */
 .selected-game-display {
   display: flex;
   align-items: center;
@@ -348,12 +333,11 @@ body.modal-open {
 .selected-game-display p {
   font-size: 1.1rem;
   font-weight: bold;
-  color: #43e7ad; /* Cor para o nome do jogo selecionado */
+  color: #43e7ad;
   text-align: left;
   margin: 0;
 }
 
-/* Estilo para o botão de voltar */
 .back-button {
   position: absolute;
   top: 1rem;
@@ -365,7 +349,7 @@ body.modal-open {
   cursor: pointer;
   padding: 0.5rem;
   transition: color 0.2s;
-  width: auto; /* Sobrescreve o width: 100% de button */
+  width: auto;
 }
 
 .back-button:hover {
@@ -382,7 +366,7 @@ body.modal-open {
   border-radius: 0.625rem;
   padding: 2rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  z-index: 1001; /* Acima do main-form-area */
+  z-index: 1001;
   width: 90%;
   max-width: 25rem;
   display: flex;
@@ -457,7 +441,7 @@ body.modal-open {
 /* RESPONSIVIDADE */
 @media (max-width: 768px) {
   .game-card {
-    flex-basis: calc(50% - 1rem); /* 2 cards por linha em telas menores */
+    flex-basis: calc(50% - 1rem);
     max-width: 12rem;
   }
 }

@@ -18,19 +18,17 @@ const platformRegionSelect = document.getElementById("platformRegionSelect");
 const suggestedQuestionsContainer = document.getElementById("suggestedQuestionsContainer");
 const suggestedQuestionsList = document.getElementById("suggestedQuestionsList");
 
-// NOVA REFERÊNCIA PARA A DIV DE BLUR
 const blurBackgroundOverlay = document.getElementById("blurBackgroundOverlay");
 
 
 let selectedGame = "";
-let wantsSummonerInfo = false; // Estado para controlar se o usuário quer informar o invocador
+let wantsSummonerInfo = false;
 
 const markdownToHTML = (text) => {
   const converter = new showdown.Converter();
   return converter.makeHtml(text);
 };
 
-// --- Funções Auxiliares para Manipulação de Elementos ---
 const showElement = (element) => element.classList.remove("hidden");
 const hideElement = (element) => element.classList.add("hidden");
 
@@ -42,29 +40,22 @@ const clearForm = () => {
   hideElement(aiResponse);
   hideElement(lolSpecificFields);
   hideElement(suggestedQuestionsContainer);
-  suggestedQuestionsList.innerHTML = ""; // Limpa sugestões
+  suggestedQuestionsList.innerHTML = "";
 };
 
-// --- Funções de Lógica Principal ---
-
-// Função para exibir o formulário principal como overlay e ativar o blur do fundo
 const showMainFormArea = () => {
-  mainFormArea.classList.add("visible"); // Exibe o formulário de pergunta (modal)
-  blurBackgroundOverlay.classList.add("active"); // Ativa o overlay de blur
-  document.body.classList.add("modal-open"); // Mantém para controlar o `overflow: hidden` do body
+  document.body.classList.add("modal-open");
+  mainFormArea.classList.remove("hidden");
 };
 
-// Função para esconder o formulário principal e retornar à seleção de jogo, removendo o blur
 const hideMainFormArea = () => {
-  mainFormArea.classList.remove("visible"); // Esconde o formulário de pergunta
-  blurBackgroundOverlay.classList.remove("active"); // Desativa o overlay de blur
-  document.body.classList.remove("modal-open"); // Remove o `overflow: hidden` do body
+  document.body.classList.remove("modal-open");
+  mainFormArea.classList.add("hidden");
 
   selectedGame = "";
   selectedGameHiddenInput.value = "";
-  wantsSumonerInfo = false; // Resetar estado do invocador
+  wantsSummonerInfo = false;
   clearForm();
-  // Remover a classe 'selected' de todos os cards
   document.querySelectorAll(".game-card").forEach(card => {
     card.classList.remove("selected");
   });
@@ -161,103 +152,92 @@ const updateSuggestedQuestions = () => {
         button.textContent = q;
         button.addEventListener("click", () => {
             questionInput.value = q;
-            aiForm.dispatchEvent(new Event('submit')); // Dispara o envio do formulário
+            aiForm.dispatchEvent(new Event('submit'));
         });
         suggestedQuestionsList.appendChild(button);
     });
     showElement(suggestedQuestionsContainer);
 };
 
-// --- Event Listeners ---
-
-// Lógica de seleção de jogo
 document.querySelectorAll(".game-card").forEach((card) => {
   card.addEventListener("click", () => {
-    // Remove a classe 'selected' de todos os cards
     document.querySelectorAll(".game-card").forEach(c => c.classList.remove("selected"));
-    // Adiciona a classe 'selected' ao card clicado
     card.classList.add("selected");
 
     selectedGame = card.dataset.game;
     selectedGameHiddenInput.value = selectedGame;
     
-    // Atualiza o display do jogo selecionado no formulário principal
     selectedGameDisplay.innerHTML = `
       <img src="${card.dataset.image}" alt="${card.querySelector('p').textContent}">
       <p>${card.querySelector('p').textContent}</p>
     `;
 
-    showMainFormArea(); // Esta chamada agora ativará o blur no blurBackgroundOverlay
-    clearForm(); // Limpa formulário ao selecionar novo jogo
+    showMainFormArea();
+    clearForm();
 
     if (selectedGame === "lol") {
       showElement(summonerQuestionModal);
-      hideElement(lolSpecificFields); // Esconde campos LoL até o usuário decidir
-      hideElement(suggestedQuestionsContainer); // Esconde sugestões até o usuário decidir
-      hideElement(aiForm); // Esconde o formulário principal até o usuário decidir
+      hideElement(lolSpecificFields);
+      hideElement(suggestedQuestionsContainer);
+      hideElement(aiForm);
     } else {
       hideElement(summonerQuestionModal);
       hideElement(lolSpecificFields);
       showElement(aiForm);
-      wantsSummonerInfo = false; // Garante que o estado seja falso para outros jogos
-      updateSuggestedQuestions(); // Mostra sugestões para outros jogos
+      wantsSummonerInfo = false;
+      updateSuggestedQuestions();
     }
   });
 });
 
-// Lógica do botão Voltar
 backButton.addEventListener("click", hideMainFormArea);
 
-// Lógica do Modal de Pergunta do Invocador
 btnYesSummoner.addEventListener("click", () => {
   wantsSummonerInfo = true;
   hideElement(summonerQuestionModal);
   showElement(lolSpecificFields);
-  showElement(aiForm); // Mostra o formulário principal
-  updateSuggestedQuestions(); // Atualiza sugestões para LoL com invocador
+  showElement(aiForm);
+  updateSuggestedQuestions();
 });
 
 btnNoSummoner.addEventListener("click", () => {
   wantsSummonerInfo = false;
   hideElement(summonerQuestionModal);
-  hideElement(lolSpecificFields); // Garante que os campos de invocador estejam ocultos
-  summonerNameInput.value = ""; // Limpa os campos se ele não quiser informar
+  hideElement(lolSpecificFields);
+  summonerNameInput.value = "";
   summonerTagInput.value = "";
   platformRegionSelect.value = "";
-  showElement(aiForm); // Mostra o formulário principal
-  updateSuggestedQuestions(); // Atualiza sugestões para LoL sem invocador
+  showElement(aiForm);
+  updateSuggestedQuestions();
 });
 
-// Vincular Tag à Região (para LoL)
+const regionMap = {
+  "BR1": "br1",
+  "NA1": "na1",
+  "EUW1": "euw1",
+  "EUN1": "eun1",
+  "LA1": "la1",
+  "LA2": "la2",
+  "KR": "kr",
+  "JP1": "jp1",
+  "OC1": "oc1",
+  "PH2": "ph2",
+  "SG2": "sg2",
+  "TH2": "th2",
+  "TW2": "tw2",
+  "VN2": "vn2"
+};
+
 summonerTagInput.addEventListener('input', () => {
     const tag = summonerTagInput.value.toUpperCase();
-    const regionMap = {
-        "BR1": "br1",
-        "NA1": "na1",
-        "EUW1": "euw1",
-        "EUN1": "eun1",
-        "LA1": "la1",
-        "LA2": "la2",
-        "KR": "kr",
-        "JP1": "jp1",
-        "OC1": "oc1",
-        "PH2": "ph2",
-        "SG2": "sg2",
-        "TH2": "th2",
-        "TW2": "tw2",
-        "VN2": "vn2"
-    };
-
     if (regionMap[tag]) {
         platformRegionSelect.value = regionMap[tag];
     } else {
-        // Opcional: Se a tag não for reconhecida, você pode limpar a seleção de região
-        // platformRegionSelect.value = "";
+        platformRegionSelect.value = "";
     }
 });
 
 
-// Envio do formulário principal para o backend
 aiForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -272,14 +252,13 @@ aiForm.addEventListener("submit", async (event) => {
   askButton.textContent = "Perguntando...";
   askButton.classList.add("loading");
 
-  hideElement(aiResponse); // Esconde a resposta anterior
+  hideElement(aiResponse);
   
   const requestBody = {
     game: selectedGame,
     question: question,
   };
 
-  // Adiciona dados do invocador SOMENTE se LoL e 'Sim' foi selecionado
   if (selectedGame === "lol" && wantsSummonerInfo) {
     const summonerName = summonerNameInput.value.trim();
     const summonerTag = summonerTagInput.value.trim();
@@ -327,11 +306,10 @@ aiForm.addEventListener("submit", async (event) => {
   }
 });
 
-// Registro do Service Worker (para PWA)
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("/sw.js") // Caminho para o seu service worker
+      .register("/sw.js")
       .then((registration) => {
         console.log("Service Worker registrado com sucesso:", registration);
       })
