@@ -5,7 +5,7 @@
 }
 
 body {
-  background-image: url("./img/bg.jpg");
+  background-image: url("./img/bg.png");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
@@ -29,6 +29,8 @@ header {
   padding-top: 32px;
   text-align: center;
   width: 100%;
+  transition: filter 0.3s ease-in-out, pointer-events 0.3s ease-in-out,
+    user-select 0.3s ease-in-out;
 }
 
 header img {
@@ -39,6 +41,8 @@ main {
   max-width: 36rem;
   width: 90%;
   margin: 3rem auto;
+  transition: filter 0.3s ease-in-out, pointer-events 0.3s ease-in-out,
+    user-select 0.3s ease-in-out;
 }
 
 section {
@@ -272,16 +276,13 @@ button:disabled {
   backdrop-filter: blur(5px);
   z-index: 990;
   opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
 }
 
-/* Estilo para embaçar o background (main e header) quando o modal estiver ativo */
-body.modal-open main,
-body.modal-open header {
-  filter: blur(5px) brightness(0.6);
-  pointer-events: none;
-  user-select: none;
+.blur-background-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* AJUSTADO: Estilos para o overlay (main-form-area) */
@@ -302,21 +303,14 @@ body.modal-open header {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  filter: none !important;
-  backdrop-filter: none !important;
   opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
 }
 
-.main-form-area:not(.hidden) {
+.main-form-area.active {
   opacity: 1;
-  visibility: visible;
-}
-
-.blur-background-overlay:not(.hidden) {
-  opacity: 1;
-  visibility: visible;
+  pointer-events: auto;
 }
 
 .selected-game-display {
@@ -356,7 +350,7 @@ body.modal-open header {
   padding: 0.5rem;
   transition: color 0.2s;
   width: auto;
-  z-index: 1002; /* Garante que o botão fique acima do modal */
+  z-index: 1002;
 }
 
 .back-button:hover {
