@@ -31,6 +31,8 @@ const markdownToHTML = (text) => {
 
 const showElement = (element) => element.classList.remove("hidden");
 const hideElement = (element) => element.classList.add("hidden");
+const showActive = (element) => element.classList.add("active");
+const hideActive = (element) => element.classList.remove("active");
 
 const clearForm = () => {
   questionInput.value = "";
@@ -44,13 +46,13 @@ const clearForm = () => {
 };
 
 const showMainFormArea = () => {
-  mainFormArea.classList.remove("hidden");
-  blurBackgroundOverlay.classList.remove("hidden");
+  showActive(mainFormArea);
+  showActive(blurBackgroundOverlay);
 };
 
 const hideMainFormArea = () => {
-  mainFormArea.classList.add("hidden");
-  blurBackgroundOverlay.classList.add("hidden");
+  hideActive(mainFormArea);
+  hideActive(blurBackgroundOverlay);
 
   selectedGame = "";
   selectedGameHiddenInput.value = "";
@@ -179,7 +181,7 @@ document.querySelectorAll(".game-card").forEach((card) => {
       showElement(summonerQuestionModal);
       hideElement(lolSpecificFields);
       hideElement(suggestedQuestionsContainer);
-      hideElement(aiForm);
+      showElement(aiForm); // Mostra o formulário para ter o overlay
     } else {
       hideElement(summonerQuestionModal);
       hideElement(lolSpecificFields);
@@ -196,7 +198,6 @@ btnYesSummoner.addEventListener("click", () => {
   wantsSummonerInfo = true;
   hideElement(summonerQuestionModal);
   showElement(lolSpecificFields);
-  showElement(aiForm);
   updateSuggestedQuestions();
 });
 
@@ -207,7 +208,6 @@ btnNoSummoner.addEventListener("click", () => {
   summonerNameInput.value = "";
   summonerTagInput.value = "";
   platformRegionSelect.value = "";
-  showElement(aiForm);
   updateSuggestedQuestions();
 });
 
