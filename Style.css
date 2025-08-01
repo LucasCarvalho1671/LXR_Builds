@@ -5,7 +5,7 @@
 }
 
 body {
-  background-image: url("./img/bg.jpg");
+  background-image: url("./img/bg.png");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
@@ -29,8 +29,7 @@ header {
   padding-top: 32px;
   text-align: center;
   width: 100%;
-  transition: filter 0.3s ease-in-out, pointer-events 0.3s ease-in-out,
-    user-select 0.3s ease-in-out;
+  transition: filter 0.3s ease-in-out, pointer-events 0.3s ease-in-out, user-select 0.3s ease-in-out;
 }
 
 header img {
@@ -41,8 +40,7 @@ main {
   max-width: 36rem;
   width: 90%;
   margin: 3rem auto;
-  transition: filter 0.3s ease-in-out, pointer-events 0.3s ease-in-out,
-    user-select 0.3s ease-in-out;
+  transition: filter 0.3s ease-in-out, pointer-events 0.3s ease-in-out, user-select 0.3s ease-in-out;
 }
 
 section {

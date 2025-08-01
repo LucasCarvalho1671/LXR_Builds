@@ -1,159 +1,123 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Game Helper</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./Style.css" />
     <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
-  </head>
-  <body>
+</head>
+<body>
     <header>
-      <img src="./img/logo.png" alt="logo AI Game Helper" />
+        <img src="./img/logo.png" alt="logo AI Game Helper" />
     </header>
 
     <main id="mainContent">
-      <section>
-        <div>
-          <h1 class="title">Escolha seu Jogo</h1>
-          <p>Selecione um jogo para que o assistente de IA possa te ajudar!</p>
+        <section>
+            <div>
+                <h1 class="title">Escolha seu Jogo</h1>
+                <p>
+                    Selecione um jogo para que o assistente de IA possa te ajudar!
+                </p>
 
-          <div class="game-cards">
-            <div
-              class="game-card"
-              data-game="lol"
-              data-image="./img/lol_capa.jpg"
-            >
-              <img src="./img/lol_capa.jpg" alt="League of Legends" />
-              <p>League of Legends</p>
-            </div>
+                <div class="game-cards">
+                    <div class="game-card" data-game="lol" data-image="./img/lol_capa.jpg">
+                        <img src="./img/lol_capa.jpg" alt="League of Legends" />
+                        <p>League of Legends</p>
+                    </div>
 
-            <div
-              class="game-card"
-              data-game="valorant"
-              data-image="./img/valorant_capa.jpg"
-            >
-              <img src="./img/valorant_capa.jpg" alt="Valorant" />
-              <p>Valorant</p>
-            </div>
+                    <div class="game-card" data-game="valorant" data-image="./img/valorant_capa.jpg">
+                        <img src="./img/valorant_capa.jpg" alt="Valorant" />
+                        <p>Valorant</p>
+                    </div>
 
-            <div
-              class="game-card"
-              data-game="bdo"
-              data-image="./img/bdo_capa.jpg"
-            >
-              <img src="./img/bdo_capa.jpg" alt="Black Desert Online" />
-              <p>Black Desert Online</p>
-            </div>
+                    <div class="game-card" data-game="bdo" data-image="./img/bdo_capa.jpg">
+                        <img src="./img/bdo_capa.jpg" alt="Black Desert Online" />
+                        <p>Black Desert Online</p>
+                    </div>
 
-            <div
-              class="game-card"
-              data-game="tft"
-              data-image="./img/tft_capa.jpg"
-            >
-              <img src="./img/tft_capa.jpg" alt="Teamfight Tactics" />
-              <p>Teamfight Tactics</p>
-            </div>
+                    <div class="game-card" data-game="tft" data-image="./img/tft_capa.jpg">
+                        <img src="./img/tft_capa.jpg" alt="Teamfight Tactics" />
+                        <p>Teamfight Tactics</p>
+                    </div>
 
-            <div
-              class="game-card"
-              data-game="deltaforce"
-              data-image="./img/delta_capa.jpg"
-            >
-              <img src="./img/delta_capa.jpg" alt="Delta Force" />
-              <p>Delta Force</p>
+                    <div class="game-card" data-game="deltaforce" data-image="./img/delta_capa.jpg">
+                        <img src="./img/delta_capa.jpg" alt="Delta Force" />
+                        <p>Delta Force</p>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </section>
+        </section>
     </main>
 
-    <div
-      class="blur-background-overlay hidden"
-      id="blurBackgroundOverlay"
-    ></div>
-
+    <div class="blur-background-overlay hidden" id="blurBackgroundOverlay"></div>
+    
     <div class="main-form-area hidden" id="mainFormArea">
-      <button id="backButton" class="back-button">✖</button>
-      <div id="selectedGameDisplay" class="selected-game-display"></div>
+        <button id="backButton" class="back-button">✖</button>
+        <div id="selectedGameDisplay" class="selected-game-display"></div>
 
-      <div id="summonerQuestionModal" class="modal hidden">
-        <div class="modal-content">
-          <h3>
-            Deseja informar seu nome de invocador para uma resposta mais
-            personalizada?
-          </h3>
-          <button id="btnYesSummoner">Sim</button>
-          <button id="btnNoSummoner">Não</button>
-        </div>
-      </div>
-
-      <form id="aiForm" class="hidden">
-        <div id="lolSpecificFields" class="input-group hidden">
-          <label for="summonerNameInput">Nome de Invocador</label>
-          <input type="text" id="summonerNameInput" placeholder="Ex: Faker" />
-
-          <label for="summonerTagInput">Tag de Invocador</label>
-          <input
-            type="text"
-            id="summonerTagInput"
-            placeholder="Ex: BR1, KR, EUW"
-          />
-
-          <label for="platformRegionSelect">Região</label>
-          <select id="platformRegionSelect">
-            <option value="">Selecione sua Região</option>
-            <option value="br1">BR1</option>
-            <option value="na1">NA1</option>
-            <option value="euw1">EUW1</option>
-            <option value="eun1">EUN1</option>
-            <option value="la1">LA1</option>
-            <option value="la2">LA2</option>
-            <option value="kr">KR</option>
-            <option value="jp1">JP1</option>
-            <option value="oc1">OC1</option>
-            <option value="ph2">PH2</option>
-            <option value="sg2">SG2</option>
-            <option value="th2">TH2</option>
-            <option value="tw2">TW2</option>
-            <option value="vn2">VN2</option>
-          </select>
+        <div id="summonerQuestionModal" class="modal hidden">
+            <div class="modal-content">
+                <h3>Deseja informar seu nome de invocador para uma resposta mais personalizada?</h3>
+                <button id="btnYesSummoner">Sim</button>
+                <button id="btnNoSummoner">Não</button>
+            </div>
         </div>
 
-        <div class="input-group">
-          <label for="questionInput">Faça sua Pergunta</label>
-          <textarea
-            id="questionInput"
-            placeholder="Ex: Qual a melhor build para o campeão X?"
-          ></textarea>
+        <form id="aiForm" class="hidden">
+            <input type="hidden" id="selectedGameHiddenInput">
+            <div id="lolSpecificFields" class="input-group hidden">
+                <label for="summonerNameInput">Nome de Invocador</label>
+                <input type="text" id="summonerNameInput" placeholder="Ex: Faker" />
+
+                <label for="summonerTagInput">Tag de Invocador</label>
+                <input type="text" id="summonerTagInput" placeholder="Ex: BR1, KR, EUW" />
+
+                <label for="platformRegionSelect">Região</label>
+                <select id="platformRegionSelect">
+                    <option value="">Selecione sua Região</option>
+                    <option value="br1">BR1</option>
+                    <option value="na1">NA1</option>
+                    <option value="euw1">EUW1</option>
+                    <option value="eun1">EUN1</option>
+                    <option value="la1">LA1</option>
+                    <option value="la2">LA2</option>
+                    <option value="kr">KR</option>
+                    <option value="jp1">JP1</option>
+                    <option value="oc1">OC1</option>
+                    <option value="ph2">PH2</option>
+                    <option value="sg2">SG2</option>
+                    <option value="th2">TH2</option>
+                    <option value="tw2">TW2</option>
+                    <option value="vn2">VN2</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="questionInput">Faça sua Pergunta</label>
+                <textarea
+                    id="questionInput"
+                    placeholder="Ex: Qual a melhor build para o campeão X?"
+                ></textarea>
+            </div>
+            
+            <div id="suggestedQuestionsContainer" class="suggested-questions-container hidden">
+                <h3>Perguntas sugeridas</h3>
+                <div id="suggestedQuestionsList" class="suggested-questions-list"></div>
+            </div>
+
+            <button type="submit" id="askButton">Perguntar</button>
+        </form>
+
+        <div id="aiResponse" class="hidden">
+            <h2>Resposta do Assistente</h2>
+            <div class="response-content"></div>
         </div>
-
-        <div
-          id="suggestedQuestionsContainer"
-          class="suggested-questions-container hidden"
-        >
-          <h3>Perguntas sugeridas</h3>
-          <div
-            id="suggestedQuestionsList"
-            class="suggested-questions-list"
-          ></div>
-        </div>
-
-        <button type="submit" id="askButton">Perguntar</button>
-      </form>
-
-      <div id="aiResponse" class="hidden">
-        <h2>Resposta do Assistente</h2>
-        <div class="response-content"></div>
-      </div>
     </div>
-
+    
     <script src="./script.js"></script>
-  </body>
+</body>
 </html>
