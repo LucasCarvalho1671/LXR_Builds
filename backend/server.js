@@ -40,7 +40,11 @@ const getPromptForGame = (game, question, summonerInfo) => {
   // Objeto para mapear games e seus prompts
   const prompts = {
     lol: `Você é um assistente de IA especialista em League of Legends.
-${summonerInfo ? `O usuário está fornecendo o nome de invocador: ${summonerInfo.summonerName}, tag: ${summonerInfo.summonerTag}, e região: ${summonerInfo.platformRegion}. ` : ''}
+${
+  summonerInfo
+    ? `O usuário está fornecendo o nome de invocador: ${summonerInfo.summonerName}, tag: ${summonerInfo.summonerTag}, e região: ${summonerInfo.platformRegion}. `
+    : ""
+}
 Sua tarefa é responder à pergunta do usuário: "${question}".
 Considere as informações fornecidas, as mecânicas do jogo, builds, estratégias e o meta atual.
 Formate sua resposta usando Markdown para facilitar a leitura.`,
@@ -59,29 +63,40 @@ Formate sua resposta usando Markdown.`,
 Sua tarefa é responder à pergunta do usuário: "${question}".
 Considere as sinergias, itens, posicionamento, composições e o meta do jogo.
 Formate sua resposta usando Markdown.`,
-    
+
     deltaforce: `Você é um assistente de IA especialista em Delta Force.
 Sua tarefa é responder à pergunta do usuário: "${question}".
 Considere as armas, táticas de combate, mapas, e estratégias multiplayer.
 Formate sua resposta usando Markdown.`,
   };
 
-  return prompts[game] || "Desculpe, não consegui encontrar um prompt para este jogo.";
+  return (
+    prompts[game] ||
+    "Desculpe, não consegui encontrar um prompt para este jogo."
+  );
 };
 
 // 8. Rota para a requisição da IA (Gemini)
 app.post("/api/gemini-ask", async (req, res) => {
   if (!GEMINI_API_KEY) {
-    return res.status(500).json({ error: "API Key do Gemini não está configurada." });
+    return res
+      .status(500)
+      .json({ error: "API Key do Gemini não está configurada." });
   }
 
-  const { game, question, summonerName, summonerTag, platformRegion } = req.body;
+  const { game, question, summonerName, summonerTag, platformRegion } =
+    req.body;
 
   if (!game || !question) {
-    return res.status(400).json({ error: "Parâmetros 'game' e 'question' são obrigatórios." });
+    return res
+      .status(400)
+      .json({ error: "Parâmetros 'game' e 'question' são obrigatórios." });
   }
 
-  const summonerInfo = summonerName && summonerTag && platformRegion ? { summonerName, summonerTag, platformRegion } : null;
+  const summonerInfo =
+    summonerName && summonerTag && platformRegion
+      ? { summonerName, summonerTag, platformRegion }
+      : null;
   const prompt = getPromptForGame(game, question, summonerInfo);
 
   if (prompt.includes("não consegui")) {
@@ -90,22 +105,35 @@ app.post("/api/gemini-ask", async (req, res) => {
 
   try {
     const geminiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-    const response = await axios.post(geminiURL, {
-      contents: [{
-        parts: [{ text: prompt }]
-      }]
-    }, {
-      headers: {
-        "Content-Type": "application/json"
+    const response = await axios.post(
+      geminiURL,
+      {
+        contents: [
+          {
+            parts: [{ text: prompt }],
+          },
+        ],
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    });
+    );
 
     const geminiResponse = response.data.candidates[0].content.parts[0].text;
     res.json({ response: geminiResponse });
-
   } catch (error) {
-    console.error("Erro na requisição para a API do Gemini:", error.response?.data || error.message);
-    res.status(500).json({ error: "Erro ao se comunicar com a API do Gemini. Verifique a chave e o formato da requisição." });
+    console.error(
+      "Erro na requisição para a API do Gemini:",
+      error.response?.data || error.message
+    );
+    res
+      .status(500)
+      .json({
+        error:
+          "Erro ao se comunicar com a API do Gemini. Verifique a chave e o formato da requisição.",
+      });
   }
 });
 
