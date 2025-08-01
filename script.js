@@ -34,7 +34,7 @@ const hideElement = (element) => element.classList.add("hidden");
 const showActive = (element) => element.classList.add("active");
 const hideActive = (element) => element.classList.remove("active");
 
-// **CORREÇÃO ANTERIOR**: A função clearForm está no escopo global.
+// A função `clearForm` está no escopo global
 const clearForm = () => {
   questionInput.value = "";
   summonerNameInput.value = "";
@@ -177,7 +177,7 @@ document.querySelectorAll(".game-card").forEach((card) => {
   });
 });
 
-// **CORREÇÃO ATUAL**: A função `hideMainFormArea` foi movida para o escopo global.
+// A função `hideMainFormArea` foi movida para o escopo global.
 // Isso garante que ela seja acessível para o backButton e outras partes do script.
 function hideMainFormArea() {
   hideActive(mainFormArea);
@@ -192,7 +192,7 @@ function hideMainFormArea() {
     document.querySelectorAll(".game-card").forEach(card => {
       card.classList.remove("selected");
     });
-  }, 300); // 0.3s da transição CSS
+  }, 300);
 }
 
 backButton.addEventListener("click", hideMainFormArea);
