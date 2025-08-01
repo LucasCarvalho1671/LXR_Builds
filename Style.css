@@ -18,7 +18,6 @@ body {
   align-items: center;
   justify-content: flex-start;
   transition: all 0.3s ease-in-out;
-  
 }
 
 body * {
@@ -347,8 +346,8 @@ body.modal-open header {
 
 .back-button {
   position: absolute;
-  top: 0.5rem; /* Ajustado para melhor posicionamento */
-  right: 0.5rem; /* Ajustado para melhor posicionamento */
+  top: 0.5rem;
+  right: 0.5rem;
   background: none;
   border: none;
   font-size: 1.5rem;
@@ -357,6 +356,7 @@ body.modal-open header {
   padding: 0.5rem;
   transition: color 0.2s;
   width: auto;
+  z-index: 1002; /* Garante que o botão fique acima do modal */
 }
 
 .back-button:hover {

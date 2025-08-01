@@ -89,7 +89,7 @@ app.post("/api/gemini-ask", async (req, res) => {
   }
 
   try {
-    const geminiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    const geminiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
     const response = await axios.post(geminiURL, {
       contents: [{
         parts: [{ text: prompt }]

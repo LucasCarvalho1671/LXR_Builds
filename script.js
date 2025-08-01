@@ -3,7 +3,7 @@ const askButton = document.getElementById("askButton");
 const aiResponse = document.getElementById("aiResponse");
 const aiForm = document.getElementById("aiForm");
 const gameSelectionContainer = document.getElementById("gameSelectionContainer");
-const selectedGameHiddenInput = document.getElementById("selectedGameHiddenInput");
+const selectedGameHiddenInput = document.getElementById("selectedGameHidden");
 const mainFormArea = document.getElementById("mainFormArea");
 const selectedGameDisplay = document.getElementById("selectedGameDisplay");
 const backButton = document.getElementById("backButton");
@@ -19,7 +19,6 @@ const suggestedQuestionsContainer = document.getElementById("suggestedQuestionsC
 const suggestedQuestionsList = document.getElementById("suggestedQuestionsList");
 
 const blurBackgroundOverlay = document.getElementById("blurBackgroundOverlay");
-
 
 let selectedGame = "";
 let wantsSummonerInfo = false;
