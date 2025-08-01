@@ -39,6 +39,8 @@ const hideElement = (element) => element.classList.add("hidden");
 const showActive = (element) => element.classList.add("active");
 const hideActive = (element) => element.classList.remove("active");
 
+// **CORREÇÃO**: A função clearForm foi movida para o escopo global.
+// Isso garante que ela seja acessível de qualquer lugar no script, incluindo o backButton.
 const clearForm = () => {
   questionInput.value = "";
   summonerNameInput.value = "";
@@ -185,7 +187,9 @@ document.querySelectorAll(".game-card").forEach((card) => {
   });
 });
 
-backButton.addEventListener("click", () => {
+// A função `hideMainFormArea` foi extraída para o escopo global.
+// Isso garante que `backButton.addEventListener` e o `keydown` possam chamá-la.
+function hideMainFormArea() {
   hideActive(mainFormArea);
   hideActive(blurBackgroundOverlay);
   setTimeout(() => {
@@ -194,12 +198,14 @@ backButton.addEventListener("click", () => {
     selectedGame = "";
     selectedGameHiddenInput.value = "";
     wantsSummonerInfo = false;
-    clearForm();
+    clearForm(); // A função `clearForm` é chamada aqui e está acessível.
     document.querySelectorAll(".game-card").forEach((card) => {
       card.classList.remove("selected");
     });
   }, 300); // 0.3s da transição CSS
-});
+}
+
+backButton.addEventListener("click", hideMainFormArea);
 
 btnYesSummoner.addEventListener("click", () => {
   wantsSummonerInfo = true;
@@ -339,19 +345,3 @@ document.addEventListener("keydown", (event) => {
     }
   }
 });
-
-function hideMainFormArea() {
-  hideActive(mainFormArea);
-  hideActive(blurBackgroundOverlay);
-  setTimeout(() => {
-    hideElement(mainFormArea);
-    hideElement(blurBackgroundOverlay);
-    selectedGame = "";
-    selectedGameHiddenInput.value = "";
-    wantsSummonerInfo = false;
-    clearForm();
-    document.querySelectorAll(".game-card").forEach((card) => {
-      card.classList.remove("selected");
-    });
-  }, 300); // 0.3s da transição CSS
-}
