@@ -34,26 +34,22 @@ const hideElement = (element) => element.classList.add("hidden");
 const showActive = (element) => element.classList.add("active");
 const hideActive = (element) => element.classList.remove("active");
 
-const clearForm = () => {
-  questionInput.value = "";
-  summonerNameInput.value = "";
-  summonerTagInput.value = "";
-  platformRegionSelect.value = "";
-  hideElement(aiResponse);
-  hideElement(lolSpecificFields);
-  hideElement(suggestedQuestionsContainer);
-  suggestedQuestionsList.innerHTML = "";
-};
-
 const showMainFormArea = () => {
-  showActive(mainFormArea);
-  showActive(blurBackgroundOverlay);
+  hideElement(mainFormArea);
+  hideElement(blurBackgroundOverlay);
+  setTimeout(() => {
+    showActive(mainFormArea);
+    showActive(blurBackgroundOverlay);
+  }, 10);
 };
 
 const hideMainFormArea = () => {
   hideActive(mainFormArea);
   hideActive(blurBackgroundOverlay);
-
+  setTimeout(() => {
+    showElement(mainFormArea);
+    showElement(blurBackgroundOverlay);
+  }, 300); // tempo para transição de 0.3s no css
   selectedGame = "";
   selectedGameHiddenInput.value = "";
   wantsSummonerInfo = false;
@@ -174,14 +170,16 @@ document.querySelectorAll(".game-card").forEach((card) => {
       <p>${card.querySelector('p').textContent}</p>
     `;
 
-    showMainFormArea();
+    showElement(mainFormArea);
+    showActive(mainFormArea);
+    showActive(blurBackgroundOverlay);
     clearForm();
 
     if (selectedGame === "lol") {
       showElement(summonerQuestionModal);
       hideElement(lolSpecificFields);
       hideElement(suggestedQuestionsContainer);
-      showElement(aiForm); // Mostra o formulário para ter o overlay
+      hideElement(aiForm);
     } else {
       hideElement(summonerQuestionModal);
       hideElement(lolSpecificFields);
@@ -192,12 +190,27 @@ document.querySelectorAll(".game-card").forEach((card) => {
   });
 });
 
-backButton.addEventListener("click", hideMainFormArea);
+backButton.addEventListener("click", () => {
+  hideActive(mainFormArea);
+  hideActive(blurBackgroundOverlay);
+  setTimeout(() => {
+    hideElement(mainFormArea);
+    hideElement(blurBackgroundOverlay);
+    selectedGame = "";
+    selectedGameHiddenInput.value = "";
+    wantsSummonerInfo = false;
+    clearForm();
+    document.querySelectorAll(".game-card").forEach(card => {
+      card.classList.remove("selected");
+    });
+  }, 300); // 0.3s da transição CSS
+});
 
 btnYesSummoner.addEventListener("click", () => {
   wantsSummonerInfo = true;
   hideElement(summonerQuestionModal);
   showElement(lolSpecificFields);
+  showElement(aiForm);
   updateSuggestedQuestions();
 });
 
@@ -208,6 +221,7 @@ btnNoSummoner.addEventListener("click", () => {
   summonerNameInput.value = "";
   summonerTagInput.value = "";
   platformRegionSelect.value = "";
+  showElement(aiForm);
   updateSuggestedQuestions();
 });
 
