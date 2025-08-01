@@ -2,7 +2,7 @@ const questionInput = document.getElementById("questionInput");
 const askButton = document.getElementById("askButton");
 const aiResponse = document.getElementById("aiResponse");
 const aiForm = document.getElementById("aiForm");
-const mainContent = document.getElementById("mainContent"); // Elemento principal
+const mainContent = document.getElementById("mainContent");
 const selectedGameHiddenInput = document.getElementById("selectedGameHiddenInput");
 const mainFormArea = document.getElementById("mainFormArea");
 const selectedGameDisplay = document.getElementById("selectedGameDisplay");
@@ -34,29 +34,15 @@ const hideElement = (element) => element.classList.add("hidden");
 const showActive = (element) => element.classList.add("active");
 const hideActive = (element) => element.classList.remove("active");
 
-const showMainFormArea = () => {
-  hideElement(mainFormArea);
-  hideElement(blurBackgroundOverlay);
-  setTimeout(() => {
-    showActive(mainFormArea);
-    showActive(blurBackgroundOverlay);
-  }, 10);
-};
-
-const hideMainFormArea = () => {
-  hideActive(mainFormArea);
-  hideActive(blurBackgroundOverlay);
-  setTimeout(() => {
-    showElement(mainFormArea);
-    showElement(blurBackgroundOverlay);
-  }, 300); // tempo para transição de 0.3s no css
-  selectedGame = "";
-  selectedGameHiddenInput.value = "";
-  wantsSummonerInfo = false;
-  clearForm();
-  document.querySelectorAll(".game-card").forEach(card => {
-    card.classList.remove("selected");
-  });
+const clearForm = () => {
+  questionInput.value = "";
+  summonerNameInput.value = "";
+  summonerTagInput.value = "";
+  platformRegionSelect.value = "";
+  hideElement(aiResponse);
+  hideElement(lolSpecificFields);
+  hideElement(suggestedQuestionsContainer);
+  suggestedQuestionsList.innerHTML = "";
 };
 
 const updateSuggestedQuestions = () => {
@@ -340,3 +326,19 @@ document.addEventListener('keydown', (event) => {
       }
   }
 });
+
+function hideMainFormArea() {
+  hideActive(mainFormArea);
+  hideActive(blurBackgroundOverlay);
+  setTimeout(() => {
+    hideElement(mainFormArea);
+    hideElement(blurBackgroundOverlay);
+    selectedGame = "";
+    selectedGameHiddenInput.value = "";
+    wantsSummonerInfo = false;
+    clearForm();
+    document.querySelectorAll(".game-card").forEach(card => {
+      card.classList.remove("selected");
+    });
+  }, 300); // 0.3s da transição CSS
+}
