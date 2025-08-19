@@ -35,7 +35,6 @@ header {
   width: 100%;
   transition: filter 0.3s ease-in-out, pointer-events 0.3s ease-in-out,
     user-select 0.3s ease-in-out;
-  /* NOVO: Centraliza o conteúdo (a imagem) usando Flexbox */
   display: flex;
   justify-content: center;
 }
@@ -47,7 +46,8 @@ header img {
 main {
   max-width: 36rem;
   width: 90%;
-  margin: 3rem auto;
+  /* REMOVIDO: A centralização será feita pelo "align-items" do body */
+  margin-top: 3rem;
   transition: filter 0.3s ease-in-out, pointer-events 0.3s ease-in-out;
 }
 
