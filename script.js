@@ -29,6 +29,40 @@ const blurBackgroundOverlay = document.getElementById("blurBackgroundOverlay");
 let selectedGame = "";
 let wantsSummonerInfo = false;
 
+// Objeto com as perguntas sugeridas para cada jogo
+const gameSuggestions = {
+  lol: [
+    "Melhor build para Ahri mid?",
+    "Como jogar de caçador no LoL?",
+    "Melhores itens para o campeão X?",
+    "Análise o meta atual!",
+  ],
+  valorant: [
+    "Melhores agentes para iniciantes no Valorant.",
+    "Dicas para melhorar a mira no Valorant.",
+    "Como subir de elo no Valorant?",
+    "Qual o melhor mapa para a Viper?",
+  ],
+  bdo: [
+    "Melhores classes para iniciantes no BDO.",
+    "Como ganhar prata rapidamente no BDO?",
+    "Melhor rotação para a classe X?",
+    "Dicas de pesca no BDO.",
+  ],
+  tft: [
+    "Melhores composições atuais no TFT.",
+    "Dicas para fazer ouro rapidamente no TFT.",
+    "Como se posicionar no TFT?",
+    "Qual a melhor lenda para o patch atual?",
+  ],
+  delta: [
+    "Melhores armas no Delta Force.",
+    "Dicas para jogar Delta Force multiplayer.",
+    "Onde encontro as melhores comunidades de Delta Force?",
+    "Quais as melhores estratégias para o mapa X?",
+  ],
+};
+
 const markdownToHTML = (text) => {
   const converter = new showdown.Converter();
   return converter.makeHtml(text);
@@ -50,24 +84,28 @@ const setBackgroundImage = (imageUrl) => {
   document.body.style.backgroundImage = `url('${imageUrl}')`;
 };
 
-const showMainForm = (game, image, suggestions = []) => {
+// Nova função para exibir a área de formulário e perguntas sugeridas
+const showMainForm = (game, image) => {
   selectedGame = game;
   selectedGameDisplay.textContent = game.toUpperCase();
   selectedGameDisplay.style.backgroundImage = `url(${image})`;
-  showElement(mainFormArea);
   hideElement(mainContent);
+  showElement(mainFormArea);
   showElement(backButton);
   setBackgroundImage(image);
 
+  // Lógica para carregar e exibir as perguntas sugeridas
+  const suggestions = gameSuggestions[game] || [];
+  suggestedQuestionsList.innerHTML = "";
   if (suggestions.length > 0) {
-    suggestedQuestionsList.innerHTML = "";
     suggestions.forEach((suggestion) => {
       const button = document.createElement("button");
       button.textContent = suggestion;
       button.classList.add("suggested-question-button");
       button.addEventListener("click", () => {
         questionInput.value = suggestion;
-        aiForm.dispatchEvent(new Event("submit"));
+        // Opcional: enviar o formulário automaticamente ao clicar na sugestão
+        // aiForm.dispatchEvent(new Event("submit"));
       });
       suggestedQuestionsList.appendChild(button);
     });
@@ -89,23 +127,20 @@ const resetToGameSelection = () => {
   hideElement(lolSpecificFields);
 };
 
-const handleGameCardClick = (game, image) => {
-  if (game === "lol") {
-    showElement(summonerQuestionModal);
-    showElement(blurBackgroundOverlay);
-    document.body.classList.add("blurred");
-  } else {
-    hideElement(lolSpecificFields);
-    showMainForm(game, image);
-  }
-};
-
-// Event Listeners
+// Event listener para as capas de jogo
 document.querySelectorAll(".game-card").forEach((card) => {
   card.addEventListener("click", () => {
     const game = card.dataset.game;
     const image = card.dataset.image;
-    handleGameCardClick(game, image);
+    // Lógica para jogos específicos (como o LoL que tem um modal)
+    if (game === "lol") {
+      showElement(summonerQuestionModal);
+      showElement(blurBackgroundOverlay);
+      document.body.classList.add("blurred");
+    } else {
+      hideElement(lolSpecificFields);
+      showMainForm(game, image);
+    }
   });
 });
 
@@ -117,11 +152,7 @@ btnYesSummoner.addEventListener("click", () => {
   hideElement(blurBackgroundOverlay);
   document.body.classList.remove("blurred");
   showElement(lolSpecificFields);
-  showMainForm("lol", "./img/lol_capa.jpg", [
-    "Qual a melhor rota para o campeão X?",
-    "Quais os melhores itens para o campeão Y?",
-    "Análise meu perfil de invocador!",
-  ]);
+  showMainForm("lol", "./img/lol_capa.jpg");
 });
 
 btnNoSummoner.addEventListener("click", () => {
@@ -130,11 +161,7 @@ btnNoSummoner.addEventListener("click", () => {
   hideElement(blurBackgroundOverlay);
   document.body.classList.remove("blurred");
   hideElement(lolSpecificFields);
-  showMainForm("lol", "./img/lol_capa.jpg", [
-    "Qual a melhor rota para o campeão X?",
-    "Quais os melhores itens para o campeão Y?",
-    "Análise o meta atual!",
-  ]);
+  showMainForm("lol", "./img/lol_capa.jpg");
 });
 
 // Envia o formulário
@@ -143,7 +170,6 @@ aiForm.addEventListener("submit", async (e) => {
 
   const question = questionInput.value.trim();
 
-  // Validação
   if (question === "") {
     alert("Por favor, digite sua pergunta.");
     return;
