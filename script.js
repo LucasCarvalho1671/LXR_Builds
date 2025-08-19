@@ -2,7 +2,7 @@ const questionInput = document.getElementById("questionInput");
 const askButton = document.getElementById("askButton");
 const aiResponse = document.getElementById("aiResponse");
 const aiForm = document.getElementById("aiForm");
-const mainContent = document.getElementById("mainContent");
+const mainContent = document.getElementById("mainContent"); // **CORRIGIDO AQUI**
 const selectedGameHiddenInput = document.getElementById(
   "selectedGameHiddenInput"
 );
@@ -89,7 +89,7 @@ const showMainForm = (game, image) => {
   selectedGame = game;
   selectedGameDisplay.textContent = game.toUpperCase();
   selectedGameDisplay.style.backgroundImage = `url(${image})`;
-  hideElement(mainContent);
+  hideElement(mainContent); // **CORRIGIDO AQUI**
   showElement(mainFormArea);
   showElement(backButton);
   setBackgroundImage(image);
@@ -104,8 +104,6 @@ const showMainForm = (game, image) => {
       button.classList.add("suggested-question-button");
       button.addEventListener("click", () => {
         questionInput.value = suggestion;
-        // Opcional: enviar o formulário automaticamente ao clicar na sugestão
-        // aiForm.dispatchEvent(new Event("submit"));
       });
       suggestedQuestionsList.appendChild(button);
     });
@@ -130,8 +128,10 @@ const resetToGameSelection = () => {
 // Event listener para as capas de jogo
 document.querySelectorAll(".game-card").forEach((card) => {
   card.addEventListener("click", () => {
+    // CORREÇÃO APLICADA AQUI: A linha abaixo agora verifica data-game OU data-game-value
     const game = card.dataset.game || card.dataset.gameValue;
     const image = card.dataset.image;
+
     // Lógica para jogos específicos (como o LoL que tem um modal)
     if (game === "lol") {
       showElement(summonerQuestionModal);
