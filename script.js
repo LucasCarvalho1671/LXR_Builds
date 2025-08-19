@@ -130,7 +130,7 @@ const resetToGameSelection = () => {
 // Event listener para as capas de jogo
 document.querySelectorAll(".game-card").forEach((card) => {
   card.addEventListener("click", () => {
-    const game = card.dataset.game;
+    const game = card.dataset.game || card.dataset.gameValue;
     const image = card.dataset.image;
     // Lógica para jogos específicos (como o LoL que tem um modal)
     if (game === "lol") {
