@@ -32,90 +32,74 @@
       sizes="16x16"
       href="/icons/favicon-16x16.png"
     />
-
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13k+L5bW4p+7p7Xg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   </head>
   <body>
     <header>
       <img src="./img/logo.png" alt="logo AI Game Helper" />
     </header>
 
-    <main>
+    <main id="mainContent">
       <section>
-        <div class="main-content" id="mainContent">
+        <div class="main-content">
           <h1 class="title">Escolha seu Jogo</h1>
           <p>Selecione um jogo para que o assistente de IA possa te ajudar!</p>
+
           <div class="game-cards-container" id="gameSelectionContainer">
-            <div
-              class="game-card"
-              data-game="lol"
-              data-image="./img/lol_capa.jpg"
-            >
+            <div class="game-card" data-game="lol" data-image="./img/lol_capa.jpg">
               <div class="game-card-image-container">
                 <img src="./img/lol_capa.jpg" alt="League of Legends" />
               </div>
               <span>League of Legends</span>
             </div>
-            <div
-              class="game-card"
-              data-game="valorant"
-              data-image="./img/valorant_capa.jpg"
-            >
+
+            <div class="game-card" data-game="valorant" data-image="./img/valorant_capa.jpg">
               <div class="game-card-image-container">
                 <img src="./img/valorant_capa.jpg" alt="Valorant" />
               </div>
               <span>Valorant</span>
             </div>
-            <div
-              class="game-card"
-              data-game="bdo"
-              data-image="./img/bdo_capa.jpg"
-            >
-              <div class="game-card-image-container">
-                <img src="./img/bdo_capa.jpg" alt="Black Desert Online" />
-              </div>
-              <span>Black Desert</span>
-            </div>
-            <div
-              class="game-card"
-              data-game="tft"
-              data-image="./img/tft_capa.jpg"
-            >
+
+            <div class="game-card" data-game="tft" data-image="./img/tft_capa.jpg">
               <div class="game-card-image-container">
                 <img src="./img/tft_capa.jpg" alt="Teamfight Tactics" />
               </div>
               <span>Teamfight Tactics</span>
             </div>
-            <div
-              class="game-card"
-              data-game="delta"
-              data-image="./img/delta_capa.jpg"
-            >
+
+            <div class="game-card" data-game="bdo" data-image="./img/bdo_capa.jpg">
               <div class="game-card-image-container">
-                <img src="./img/delta_capa.jpg" alt="Delta Force" />
+                <img src="./img/bdo_capa.jpg" alt="Black Desert Online" />
+              </div>
+              <span>Black Desert Online</span>
+            </div>
+
+            <div class="game-card" data-game="delta" data-image="./img/delta_capa.jpg">
+              <div class="game-card-image-container">
+                <img src="./img/delta_capa.jpg" alt="Delta Force Hawk Ops" />
               </div>
               <span>Delta Force</span>
             </div>
           </div>
         </div>
+      </section>
 
-        <div class="main-form-area hidden" id="mainFormArea">
-          <button id="backButton" class="back-button">Voltar</button>
-          <div class="selected-game-display" id="selectedGameDisplay"></div>
+      <section class="main-form-area hidden" id="mainFormArea">
+        <div class="main-content">
+          <button class="back-button" id="backButton">← Voltar</button>
 
-          <div id="lolSpecificFields" class="lol-fields hidden">
+          <div
+            class="selected-game-display"
+            id="selectedGameDisplay"
+          ></div>
+
+          <div class="lol-fields hidden" id="lolSpecificFields">
             <div class="input-group">
               <label for="summonerNameInput">Nome de Invocador:</label>
               <input
                 type="text"
                 id="summonerNameInput"
-                placeholder="Digite o nome de invocador"
+                placeholder="Nome do Invocador"
               />
             </div>
             <div class="input-group">
@@ -123,28 +107,23 @@
               <input
                 type="text"
                 id="summonerTagInput"
-                placeholder="Ex: BR1, #BR1"
+                placeholder="#BR1"
               />
             </div>
             <div class="input-group">
-              <label for="platformRegionSelect">Plataforma/Região:</label>
+              <label for="platformRegionSelect">Região:</label>
               <select id="platformRegionSelect">
                 <option value="br1">Brasil (BR1)</option>
-                <option value="eun1">Europa Nórdica e Leste (EUN1)</option>
+                <option value="eun1">Europa Nórdica e Oriental (EUN1)</option>
                 <option value="euw1">Europa Ocidental (EUW1)</option>
+                <option value="jp1">Japão (JP1)</option>
+                <option value="kr">Coreia (KR)</option>
                 <option value="la1">América Latina Norte (LA1)</option>
                 <option value="la2">América Latina Sul (LA2)</option>
                 <option value="na1">América do Norte (NA1)</option>
                 <option value="oc1">Oceania (OC1)</option>
-                <option value="ru">Rússia (RU)</option>
                 <option value="tr1">Turquia (TR1)</option>
-                <option value="jp1">Japão (JP1)</option>
-                <option value="kr">Coreia (KR)</option>
-                <option value="ph2">Filipinas (PH2)</option>
-                <option value="sg2">Singapura (SG2)</option>
-                <option value="th2">Tailândia (TH2)</option>
-                <option value="tw2">Taiwan (TW2)</option>
-                <option value="vn2">Vietnã (VN2)</option>
+                <option value="ru">Rússia (RU)</option>
               </select>
             </div>
           </div>
@@ -154,10 +133,7 @@
             id="suggestedQuestionsContainer"
           >
             <h3>Perguntas Sugeridas:</h3>
-            <div
-              class="suggested-questions-list"
-              id="suggestedQuestionsList"
-            ></div>
+            <div class="suggested-questions-list" id="suggestedQuestionsList"></div>
           </div>
 
           <form id="aiForm">
@@ -180,6 +156,7 @@
         </div>
       </section>
     </main>
+    
     <div class="modal hidden" id="summonerQuestionModal">
       <div class="modal-content">
         <h3>Você gostaria de adicionar informações de invocador?</h3>
@@ -188,13 +165,10 @@
         <button id="btnNoSummoner">Não</button>
       </div>
     </div>
-    <div
-      class="blur-background-overlay hidden"
-      id="blurBackgroundOverlay"
-    ></div>
+    
+    <div class="blur-background-overlay hidden" id="blurBackgroundOverlay"></div>
 
     <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
     <script src="./script.js"></script>
-    <script src="./sw.js"></script>
   </body>
 </html>

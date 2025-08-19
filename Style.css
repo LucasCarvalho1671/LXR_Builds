@@ -21,7 +21,9 @@ body {
 }
 
 body.modal-open {
-  overflow: hidden;
+  filter: blur(5px);
+  pointer-events: none;
+  user-select: none;
 }
 
 body.modal-open header,
@@ -31,8 +33,7 @@ body.modal-open main {
   user-select: none;
 }
 
-body *,
-:root {
+body * {
   font-family: "Inter", sans-serif;
   line-height: 160%;
 }
@@ -204,10 +205,6 @@ section {
   font-size: 1rem;
 }
 
-.input-group textarea {
-  resize: vertical;
-}
-
 .input-group input:focus,
 .input-group textarea:focus,
 .input-group select:focus {
@@ -275,7 +272,7 @@ section {
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-  z-index: 1001; /* Z-index mais alto que o overlay */
+  z-index: 1001;
   animation: slideIn 0.5s ease-out forwards;
 }
 

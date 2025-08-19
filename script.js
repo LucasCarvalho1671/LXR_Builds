@@ -2,16 +2,11 @@ const questionInput = document.getElementById("questionInput");
 const askButton = document.getElementById("askButton");
 const aiResponse = document.getElementById("aiResponse");
 const aiForm = document.getElementById("aiForm");
-const mainContent = document.getElementById("mainContent"); // Elemento principal
-const selectedGameHiddenInput = document.getElementById(
-  "selectedGameHiddenInput"
-);
+const mainContent = document.getElementById("mainContent");
 const mainFormArea = document.getElementById("mainFormArea");
 const selectedGameDisplay = document.getElementById("selectedGameDisplay");
 const backButton = document.getElementById("backButton");
-const gameSelectionContainer = document.getElementById(
-  "gameSelectionContainer"
-);
+const gameSelectionContainer = document.getElementById("gameSelectionContainer");
 
 const summonerQuestionModal = document.getElementById("summonerQuestionModal");
 const btnYesSummoner = document.getElementById("btnYesSummoner");
@@ -20,51 +15,175 @@ const lolSpecificFields = document.getElementById("lolSpecificFields");
 const summonerNameInput = document.getElementById("summonerNameInput");
 const summonerTagInput = document.getElementById("summonerTagInput");
 const platformRegionSelect = document.getElementById("platformRegionSelect");
-const suggestedQuestionsContainer = document.getElementById(
-  "suggestedQuestionsContainer"
-);
-const suggestedQuestionsList = document.getElementById(
-  "suggestedQuestionsList"
-);
+const suggestedQuestionsContainer = document.getElementById("suggestedQuestionsContainer");
+const suggestedQuestionsList = document.getElementById("suggestedQuestionsList");
 
 const blurBackgroundOverlay = document.getElementById("blurBackgroundOverlay");
 
 let selectedGame = "";
 let wantsSummonerInfo = false;
 
+// Objeto com as perguntas sugeridas para cada jogo
+const gameSuggestions = {
+  lol: [
+    "Melhor build para Ahri mid?",
+    "Como jogar de caçador no LoL?",
+    "Melhores itens para o campeão X?",
+    "Análise o meta atual!",
+  ],
+  valorant: [
+    "Melhores agentes para iniciantes no Valorant.",
+    "Dicas para melhorar a mira no Valorant.",
+    "Como subir de elo no Valorant?",
+    "Qual o melhor mapa para a Viper?",
+  ],
+  bdo: [
+    "Melhores classes para iniciantes no BDO.",
+    "Como ganhar prata rapidamente no BDO?",
+    "Melhor rotação para a classe X?",
+    "Dicas de pesca no BDO.",
+  ],
+  tft: [
+    "Melhores composições atuais no TFT.",
+    "Dicas para fazer ouro rapidamente no TFT.",
+    "Como se posicionar no TFT?",
+    "Qual a melhor lenda para o patch atual?",
+  ],
+  delta: [
+    "Melhores armas no Delta Force.",
+    "Dicas para jogar Delta Force multiplayer.",
+    "Onde encontro as melhores comunidades de Delta Force?",
+    "Quais as melhores estratégias para o mapa X?",
+  ],
+};
+
 const markdownToHTML = (text) => {
   const converter = new showdown.Converter();
   return converter.makeHtml(text);
 };
 
-// Obter as credenciais da API da Riot Games do backend
-const getRiotCredentials = async () => {
-  try {
-    const response = await fetch("/api/riot-credentials");
-    if (!response.ok) {
-      throw new Error("Falha ao obter as credenciais da Riot.");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Erro ao obter credenciais da Riot:", error);
-    return null;
+const showElement = (element) => {
+  if (element) {
+    element.classList.remove("hidden");
   }
 };
 
-const perguntarAI = async (
-  question,
-  game,
-  summonerName = null,
-  summonerTag = null,
-  platformRegion = null
-) => {
+const hideElement = (element) => {
+  if (element) {
+    element.classList.add("hidden");
+  }
+};
+
+const setBackgroundImage = (imageUrl) => {
+  document.body.style.backgroundImage = `url('${imageUrl}')`;
+};
+
+const showMainFormArea = (game, image) => {
+  selectedGame = game;
+  selectedGameDisplay.textContent = game.toUpperCase();
+  selectedGameDisplay.style.backgroundImage = `url(${image})`;
+  hideElement(gameSelectionContainer);
+  showElement(mainFormArea);
+  setBackgroundImage(image);
+
+  const suggestions = gameSuggestions[game] || [];
+  suggestedQuestionsList.innerHTML = "";
+  if (suggestions.length > 0) {
+    suggestions.forEach((suggestion) => {
+      const button = document.createElement("button");
+      button.textContent = suggestion;
+      button.classList.add("suggested-question-button");
+      button.addEventListener("click", () => {
+        questionInput.value = suggestion;
+      });
+      suggestedQuestionsList.appendChild(button);
+    });
+    showElement(suggestedQuestionsContainer);
+  } else {
+    hideElement(suggestedQuestionsContainer);
+  }
+};
+
+const resetToGameSelection = () => {
+  selectedGame = "";
+  wantsSummonerInfo = false;
+  hideElement(mainFormArea);
+  hideElement(aiResponse);
+  showElement(gameSelectionContainer);
+  setBackgroundImage("./img/bg.jpg");
+  document.body.classList.remove("modal-open");
+  hideElement(lolSpecificFields);
+};
+
+// Event listener para as capas de jogo
+document.querySelectorAll(".game-card").forEach((card) => {
+  card.addEventListener("click", () => {
+    const game = card.dataset.game;
+    const image = card.dataset.image;
+
+    if (game === "lol") {
+      showElement(summonerQuestionModal);
+      showElement(blurBackgroundOverlay);
+      document.body.classList.add("modal-open");
+    } else {
+      hideElement(lolSpecificFields);
+      showMainFormArea(game, image);
+    }
+  });
+});
+
+backButton.addEventListener("click", resetToGameSelection);
+
+btnYesSummoner.addEventListener("click", () => {
+  wantsSummonerInfo = true;
+  hideElement(summonerQuestionModal);
+  hideElement(blurBackgroundOverlay);
+  document.body.classList.remove("modal-open");
+  showElement(lolSpecificFields);
+  showMainFormArea("lol", "./img/lol_capa.jpg");
+});
+
+btnNoSummoner.addEventListener("click", () => {
+  wantsSummonerInfo = false;
+  hideElement(summonerQuestionModal);
+  hideElement(blurBackgroundOverlay);
+  document.body.classList.remove("modal-open");
+  hideElement(lolSpecificFields);
+  showMainFormArea("lol", "./img/lol_capa.jpg");
+});
+
+
+aiForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const question = questionInput.value.trim();
+  const summonerName = wantsSummonerInfo ? summonerNameInput.value.trim() : null;
+  const summonerTag = wantsSummonerInfo ? summonerTagInput.value.trim() : null;
+  const platformRegion = wantsSummonerInfo ? platformRegionSelect.value : null;
+
+  if (question === "") {
+    alert("Por favor, digite sua pergunta.");
+    return;
+  }
+
+  askButton.disabled = true;
+  askButton.textContent = "Perguntando...";
+  askButton.classList.add("loading");
+
   const requestBody = {
-    game,
-    question,
+    game: selectedGame,
+    question: question,
   };
 
-  if (summonerName && summonerTag && platformRegion) {
+  if (selectedGame === "lol" && wantsSummonerInfo) {
+    if (summonerName === "" || summonerTag === "") {
+      alert("Por favor, preencha o nome e a tag do invocador.");
+      askButton.disabled = false;
+      askButton.textContent = "Perguntar";
+      askButton.classList.remove("loading");
+      return;
+    }
+
     requestBody.summonerName = summonerName;
     requestBody.summonerTag = summonerTag;
     requestBody.platformRegion = platformRegion;
@@ -100,100 +219,6 @@ const perguntarAI = async (
     askButton.textContent = "Perguntar";
     askButton.classList.remove("loading");
   }
-};
-
-const showElement = (element) => {
-  element.classList.remove("hidden");
-};
-
-const hideElement = (element) => {
-  element.classList.add("hidden");
-};
-
-const showMainFormArea = (game) => {
-  selectedGame = game;
-  hideElement(gameSelectionContainer);
-  showElement(mainFormArea);
-  selectedGameDisplay.textContent = `Você escolheu: ${game.toUpperCase()}`;
-};
-
-// Event listener para as capas dos jogos
-document.querySelectorAll(".game-card").forEach((card) => {
-  card.addEventListener("click", () => {
-    selectedGame = card.dataset.game;
-    const gameName = card.dataset.game;
-
-    if (gameName === "lol") {
-      // Abre o modal para perguntar sobre informações de invocador
-      showElement(summonerQuestionModal);
-      showElement(blurBackgroundOverlay);
-      document.body.classList.add("modal-open");
-    } else {
-      showMainFormArea(gameName);
-    }
-  });
-});
-
-// Event listeners para o modal de League of Legends
-btnYesSummoner.addEventListener("click", () => {
-  wantsSummonerInfo = true;
-  showElement(lolSpecificFields);
-  hideElement(summonerQuestionModal);
-  hideElement(blurBackgroundOverlay);
-  document.body.classList.remove("modal-open");
-  showMainFormArea("lol");
-});
-
-btnNoSummoner.addEventListener("click", () => {
-  wantsSummonerInfo = false;
-  hideElement(lolSpecificFields);
-  hideElement(summonerQuestionModal);
-  hideElement(blurBackgroundOverlay);
-  document.body.classList.remove("modal-open");
-  showMainFormArea("lol");
-});
-
-// Event listener para o botão de voltar
-backButton.addEventListener("click", () => {
-  selectedGame = "";
-  hideElement(mainFormArea);
-  hideElement(aiResponse);
-  showElement(gameSelectionContainer);
-  hideElement(summonerQuestionModal);
-  hideElement(lolSpecificFields);
-});
-
-// Event listener para o formulário
-aiForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const question = questionInput.value.trim();
-  const summonerName = wantsSummonerInfo
-    ? summonerNameInput.value.trim()
-    : null;
-  const summonerTag = wantsSummonerInfo ? summonerTagInput.value.trim() : null;
-  const platformRegion = wantsSummonerInfo ? platformRegionSelect.value : null;
-
-  if (question === "") {
-    alert("Por favor, digite sua pergunta.");
-    return;
-  }
-
-  askButton.disabled = true;
-  askButton.textContent = "Perguntando...";
-  askButton.classList.add("loading");
-
-  await perguntarAI(
-    question,
-    selectedGame,
-    summonerName,
-    summonerTag,
-    platformRegion
-  );
-
-  askButton.disabled = false;
-  askButton.textContent = "Perguntar";
-  askButton.classList.remove("loading");
 });
 
 // Registro do Service Worker (para PWA)
