@@ -24,7 +24,8 @@ body.blurred {
   filter: blur(5px);
 }
 
-body * {
+body *,
+:root {
   font-family: "Inter", sans-serif;
   line-height: 160%;
 }
@@ -78,7 +79,7 @@ section {
   margin-bottom: 0.5rem;
 }
 
-/* **NOVO** Estilos para a grade das capas */
+/* Corrigido: Estilos para a grade das capas (do `Style.css` corrigido) */
 .game-cards-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -92,7 +93,6 @@ section {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  /* Garante que o card seja um flexbox para alinhar imagem e texto */
   display: flex;
   flex-direction: column;
 }
@@ -104,20 +104,19 @@ section {
 
 .game-card img {
   width: 100%;
-  height: auto; /* Mantém a proporção da imagem */
+  height: auto;
   display: block;
 }
 
-/* Estilo para o nome do jogo */
 .game-card span {
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
   text-align: center;
   padding: 0.5rem;
   font-size: 0.9rem;
-  white-space: nowrap; /* Evita que o texto quebre */
+  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; /* Adiciona "..." se o texto for muito longo */
+  text-overflow: ellipsis;
 }
 
 .main-form-area {
@@ -164,7 +163,6 @@ section {
   gap: 1rem;
 }
 
-/* Formulário */
 .input-group {
   display: flex;
   flex-direction: column;
@@ -250,7 +248,6 @@ section {
   margin-bottom: 0.5rem;
 }
 
-/* Estilos para o modal */
 .modal {
   position: fixed;
   top: 50%;
@@ -305,7 +302,6 @@ section {
   background-color: #cbbd4b;
 }
 
-/* Sugestões de Perguntas */
 .suggested-questions-container {
   background-color: #1f1d24;
   border-radius: 0.5rem;
