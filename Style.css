@@ -79,12 +79,13 @@ section {
   margin-bottom: 0.5rem;
 }
 
-/* Corrigido: Estilos para a grade das capas (do `Style.css` corrigido) */
+/* Estilos para a grade das capas */
 .game-cards-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 1rem;
   margin-top: 1.5rem;
+  justify-items: center; /* Centraliza os itens horizontalmente dentro de cada célula da grade */
 }
 
 .game-card {
@@ -95,6 +96,8 @@ section {
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   display: flex;
   flex-direction: column;
+  width: 100%; /* Garante que cada item ocupe a largura da sua célula na grade */
+  max-width: 150px; /* Define uma largura máxima para as capas */
 }
 
 .game-card:hover {
@@ -102,9 +105,16 @@ section {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
 }
 
+.game-card-image-container {
+  width: 100%;
+  height: 90px; /* Defina uma altura fixa para o container da imagem */
+  overflow: hidden;
+}
+
 .game-card img {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover; /* Preenche o container mantendo a proporção */
   display: block;
 }
 
