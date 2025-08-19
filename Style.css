@@ -32,10 +32,12 @@ body *,
 
 header {
   padding-top: 32px;
-  text-align: center;
   width: 100%;
   transition: filter 0.3s ease-in-out, pointer-events 0.3s ease-in-out,
     user-select 0.3s ease-in-out;
+  /* NOVO: Centraliza o conteúdo (a imagem) usando Flexbox */
+  display: flex;
+  justify-content: center;
 }
 
 header img {
@@ -79,13 +81,12 @@ section {
   margin-bottom: 0.5rem;
 }
 
-/* Estilos para a grade das capas */
 .game-cards-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 1rem;
   margin-top: 1.5rem;
-  justify-items: center; /* Centraliza os itens horizontalmente dentro de cada célula da grade */
+  justify-items: center;
 }
 
 .game-card {
@@ -96,8 +97,8 @@ section {
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   display: flex;
   flex-direction: column;
-  width: 100%; /* Garante que cada item ocupe a largura da sua célula na grade */
-  max-width: 150px; /* Define uma largura máxima para as capas */
+  width: 100%;
+  max-width: 150px;
 }
 
 .game-card:hover {
@@ -107,14 +108,14 @@ section {
 
 .game-card-image-container {
   width: 100%;
-  height: 90px; /* Defina uma altura fixa para o container da imagem */
+  height: 90px;
   overflow: hidden;
 }
 
 .game-card img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Preenche o container mantendo a proporção */
+  object-fit: cover;
   display: block;
 }
 
