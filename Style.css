@@ -20,8 +20,15 @@ body {
   transition: all 0.3s ease-in-out;
 }
 
-body.blurred {
+body.modal-open {
+  overflow: hidden;
+}
+
+body.modal-open header,
+body.modal-open main {
   filter: blur(5px);
+  pointer-events: none;
+  user-select: none;
 }
 
 body *,
@@ -46,7 +53,7 @@ header img {
 main {
   max-width: 36rem;
   width: 90%;
-  margin-top: 3rem;
+  margin: 3rem auto;
   transition: filter 0.3s ease-in-out, pointer-events 0.3s ease-in-out;
 }
 
@@ -268,7 +275,7 @@ section {
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+  z-index: 1001; /* Z-index mais alto que o overlay */
   animation: slideIn 0.5s ease-out forwards;
 }
 
@@ -359,7 +366,7 @@ section {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 999;
+  z-index: 1000;
 }
 
 @keyframes fadeIn {
