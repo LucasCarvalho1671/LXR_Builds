@@ -89,6 +89,53 @@ section h2 {
   display: none;
 }
 
+/* --- ESTILOS PARA A SELEÇÃO DE JOGOS (CORRIGIDOS) --- */
+#gameSelectionSection > div > div {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(100px, 1fr)
+  ); /* Grid responsivo */
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.game-card {
+  background-color: #1f1d24;
+  border: 2px solid transparent;
+  border-radius: 0.5rem;
+  padding-bottom: 120%; /* Proporção 1:1.2 */
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  display: flex;
+  align-items: flex-end; /* Alinha o texto na parte inferior */
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  user-select: none;
+  background-size: cover; /* Garante que a imagem cubra o card */
+  background-position: center; /* Centraliza a imagem */
+}
+
+.game-card:hover {
+  transform: scale(1.05);
+  border-color: #e2d45c;
+}
+
+.game-card span {
+  position: absolute;
+  bottom: 0.5rem;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+}
+/* --- FIM DA SEÇÃO DE CORREÇÕES --- */
+
 /* Componentes do formulário */
 .main-form-area {
   margin-top: 1rem;
