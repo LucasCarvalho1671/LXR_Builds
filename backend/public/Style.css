@@ -20,13 +20,6 @@ body {
   transition: all 0.3s ease-in-out;
 }
 
-header.blur-content,
-main.blur-content {
-  filter: blur(5px);
-  pointer-events: none;
-  user-select: none;
-}
-
 body * {
   font-family: "Inter", sans-serif;
   line-height: 160%;
@@ -34,11 +27,10 @@ body * {
 
 header {
   padding-top: 32px;
+  text-align: center;
   width: 100%;
   transition: filter 0.3s ease-in-out, pointer-events 0.3s ease-in-out,
     user-select 0.3s ease-in-out;
-  display: flex;
-  justify-content: center;
 }
 
 header img {
@@ -52,6 +44,23 @@ main {
   transition: filter 0.3s ease-in-out, pointer-events 0.3s ease-in-out;
 }
 
+/* Efeito de blur para quando o modal está ativo */
+.blur-content {
+  filter: blur(5px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.blur-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99;
+}
+
 section {
   background-image: linear-gradient(
     90deg,
@@ -59,198 +68,118 @@ section {
     #43e7ad 50%,
     #e2d45c 100%
   );
-  padding: 0.25rem;
-  border-radius: 8px;
-  max-width: 36rem;
+  border-radius: 0.625rem;
+  padding-top: 4px;
 }
 
-.main-content {
+section > div {
+  padding: 2rem;
   background-color: #2a2634;
-  padding: 1.5rem;
-  border-radius: 8px;
-  margin: 0 auto;
+  border-radius: 0.5rem;
 }
 
-.title {
-  font-size: 1.25rem;
-  font-weight: 900;
-  margin-bottom: 0.5rem;
-}
-
-.game-cards-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 1rem;
-  margin-top: 1.5rem;
-  justify-items: center;
-}
-
-.game-card {
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 150px;
-}
-
-.game-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
-}
-
-.game-card-image-container {
-  width: 100%;
-  height: 90px;
-  overflow: hidden;
-}
-
-.game-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.game-card span {
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
+section h2 {
+  font-size: 1.625rem;
+  font-weight: 700;
   text-align: center;
-  padding: 0.5rem;
-  font-size: 0.9rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin-bottom: 2rem;
 }
 
+.hidden {
+  display: none;
+}
+
+/* Componentes do formulário */
 .main-form-area {
-  background-color: #2a2634;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  animation: fadeIn 0.5s ease-in-out;
-  margin: 0 auto;
+  margin-top: 1rem;
 }
 
-.selected-game-display {
-  display: block;
-  font-weight: bold;
-  font-size: 1.5rem;
-  color: #e2d45c;
-  text-align: center;
-  text-transform: uppercase;
+#selectedGameDisplay {
   background-size: cover;
   background-position: center;
   padding: 1rem;
-  border-radius: 8px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-}
-
-.back-button {
-  background: none;
-  border: none;
-  color: #a1a1aa;
-  cursor: pointer;
-  font-size: 1rem;
-  align-self: flex-start;
-  transition: color 0.2s;
-}
-
-.back-button:hover {
-  color: #e1e1e6;
-}
-
-.lol-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
 }
 
 .input-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .input-group label {
-  color: #e1e1e6;
-  font-weight: bold;
+  font-size: 0.875rem;
+  color: #a1a1a1;
 }
 
-.input-group input,
 .input-group textarea,
+.input-group input,
 .input-group select {
   width: 100%;
-  background-color: #1f1d24;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
   border: 1px solid #4a4552;
-  border-radius: 0.25rem;
-  padding: 0.5rem;
-  color: #e1e1e6;
+  background-color: #3a3642;
+  color: white;
   font-size: 1rem;
+  outline: none;
 }
 
-.input-group input:focus,
 .input-group textarea:focus,
+.input-group input:focus,
 .input-group select:focus {
-  outline: none;
   border-color: #e2d45c;
-  box-shadow: 0 0 0 2px rgba(226, 212, 92, 0.5);
 }
 
 #askButton {
   width: 100%;
-  padding: 0.75rem;
+  padding: 1rem;
   background-color: #e2d45c;
   color: #121214;
   border: none;
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.3s ease;
 }
 
-#askButton.loading {
+#askButton:hover {
   background-color: #cbbd4b;
+}
+
+#askButton:disabled {
+  background-color: #a1a1a1;
   cursor: not-allowed;
-}
-
-#askButton:hover:not(.loading) {
-  background-color: #cbbd4b;
+  animation: none;
 }
 
 .ai-response {
-  margin-top: 1.5rem;
-  background-color: #1f1d24;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  animation: fadeIn 0.5s ease-in-out;
+  margin-top: 2rem;
 }
 
 .ai-response h2 {
-  color: #e2d45c;
+  color: #43e7ad;
   text-align: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
-.response-content p,
-.response-content ul,
-.response-content li {
+.ai-response .response-content {
+  background-color: #1f1d24;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
   color: #e1e1e6;
-  line-height: 1.6;
+  font-size: 0.9375rem;
 }
 
-.response-content ul {
-  padding-left: 1.5rem;
-}
-
-.response-content li {
-  margin-bottom: 0.5rem;
-}
-
+/* Estilos para o modal de pergunta sobre invocador */
 .modal {
   position: fixed;
   top: 50%;
@@ -258,38 +187,36 @@ section {
   transform: translate(-50%, -50%);
   background-color: #2a2634;
   padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-  z-index: 1001;
-  animation: slideIn 0.5s ease-out forwards;
-}
-
-.modal-content {
+  border-radius: 0.5rem;
+  z-index: 100;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
   text-align: center;
 }
 
 .modal-content h3 {
   color: #e2d45c;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .modal-content p {
+  color: #a1a1a1;
   margin-bottom: 1.5rem;
 }
 
 .modal-content button {
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s;
+  margin: 0 0.5rem;
+  transition: background-color 0.3s ease;
 }
 
 .modal-content button:first-of-type {
   background-color: #9572fc;
   color: white;
-  margin-right: 1rem;
 }
 
 .modal-content button:first-of-type:hover {
@@ -305,6 +232,7 @@ section {
   background-color: #cbbd4b;
 }
 
+/* Sugestões de Perguntas */
 .suggested-questions-container {
   background-color: #1f1d24;
   border-radius: 0.5rem;
@@ -332,53 +260,35 @@ section {
   border-radius: 20px;
   cursor: pointer;
   font-size: 0.875rem;
-  transition: background-color 0.2s, border-color 0.2s;
+  transition: background-color 0.2s ease;
 }
 
 .suggested-question-button:hover {
   background-color: #4a4552;
-  border-color: #e2d45c;
 }
 
-.hidden {
-  display: none;
+/* Feedback visual durante o carregamento */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  font-style: italic;
+  color: #a1a1a1;
 }
 
-.blur-background-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #e2d45c;
+  animation: spin 1s ease-in-out infinite;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
+@keyframes spin {
   to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    top: 60%;
-    opacity: 0;
-  }
-  to {
-    top: 50%;
-    opacity: 1;
-  }
-}
-
-@media (max-width: 600px) {
-  .game-cards-container {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  }
-  .game-card span {
-    font-size: 0.8rem;
+    transform: rotate(360deg);
   }
 }
