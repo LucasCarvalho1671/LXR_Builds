@@ -12,7 +12,7 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="./Style.css" />
+    <link rel="stylesheet" href="Style.css" />
     <link rel="manifest" href="/manifest.json" />
 
     <link
@@ -46,35 +46,55 @@
           <p>Selecione um jogo para que o assistente de IA possa te ajudar!</p>
 
           <div class="game-cards-container" id="gameSelectionContainer">
-            <div class="game-card" data-game="lol" data-image="./img/lol_capa.jpg">
+            <div
+              class="game-card"
+              data-game="lol"
+              data-image="./img/lol_capa.jpg"
+            >
               <div class="game-card-image-container">
                 <img src="./img/lol_capa.jpg" alt="League of Legends" />
               </div>
               <span>League of Legends</span>
             </div>
 
-            <div class="game-card" data-game="valorant" data-image="./img/valorant_capa.jpg">
+            <div
+              class="game-card"
+              data-game="valorant"
+              data-image="./img/valorant_capa.jpg"
+            >
               <div class="game-card-image-container">
                 <img src="./img/valorant_capa.jpg" alt="Valorant" />
               </div>
               <span>Valorant</span>
             </div>
 
-            <div class="game-card" data-game="tft" data-image="./img/tft_capa.jpg">
+            <div
+              class="game-card"
+              data-game="tft"
+              data-image="./img/tft_capa.jpg"
+            >
               <div class="game-card-image-container">
                 <img src="./img/tft_capa.jpg" alt="Teamfight Tactics" />
               </div>
               <span>Teamfight Tactics</span>
             </div>
 
-            <div class="game-card" data-game="bdo" data-image="./img/bdo_capa.jpg">
+            <div
+              class="game-card"
+              data-game="bdo"
+              data-image="./img/bdo_capa.jpg"
+            >
               <div class="game-card-image-container">
                 <img src="./img/bdo_capa.jpg" alt="Black Desert Online" />
               </div>
               <span>Black Desert Online</span>
             </div>
 
-            <div class="game-card" data-game="delta" data-image="./img/delta_capa.jpg">
+            <div
+              class="game-card"
+              data-game="delta"
+              data-image="./img/delta_capa.jpg"
+            >
               <div class="game-card-image-container">
                 <img src="./img/delta_capa.jpg" alt="Delta Force Hawk Ops" />
               </div>
@@ -88,10 +108,7 @@
         <div class="main-content">
           <button class="back-button" id="backButton">← Voltar</button>
 
-          <div
-            class="selected-game-display"
-            id="selectedGameDisplay"
-          ></div>
+          <div class="selected-game-display" id="selectedGameDisplay"></div>
 
           <div class="lol-fields hidden" id="lolSpecificFields">
             <div class="input-group">
@@ -104,11 +121,7 @@
             </div>
             <div class="input-group">
               <label for="summonerTagInput">Tag de Invocador:</label>
-              <input
-                type="text"
-                id="summonerTagInput"
-                placeholder="#BR1"
-              />
+              <input type="text" id="summonerTagInput" placeholder="#BR1" />
             </div>
             <div class="input-group">
               <label for="platformRegionSelect">Região:</label>
@@ -133,7 +146,10 @@
             id="suggestedQuestionsContainer"
           >
             <h3>Perguntas Sugeridas:</h3>
-            <div class="suggested-questions-list" id="suggestedQuestionsList"></div>
+            <div
+              class="suggested-questions-list"
+              id="suggestedQuestionsList"
+            ></div>
           </div>
 
           <form id="aiForm">
@@ -156,7 +172,7 @@
         </div>
       </section>
     </main>
-    
+
     <div class="modal hidden" id="summonerQuestionModal">
       <div class="modal-content">
         <h3>Você gostaria de adicionar informações de invocador?</h3>
@@ -165,8 +181,11 @@
         <button id="btnNoSummoner">Não</button>
       </div>
     </div>
-    
-    <div class="blur-background-overlay hidden" id="blurBackgroundOverlay"></div>
+
+    <div
+      class="blur-background-overlay hidden"
+      id="blurBackgroundOverlay"
+    ></div>
 
     <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
     <script src="./script.js"></script>
