@@ -6,6 +6,7 @@ const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
 const path = require("path");
+const { getPromptForGame } = require("./prompts.js"); // Importa a lógica dos prompts
 
 // 3. Inicializa o aplicativo Express
 const app = express();
@@ -15,7 +16,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Adicione esta linha para servir arquivos estáticos da pasta 'public'
+// Adiciona esta linha para servir arquivos estáticos da pasta 'public'
 app.use(express.static(path.join(__dirname, "public")));
 
 // 5. Acessa as chaves de API das variáveis de ambiente
@@ -38,55 +39,7 @@ if (!GEMINI_API_KEY) {
   console.log("Variável GEMINI_API_KEY carregada com sucesso.");
 }
 
-// 6. Define a lógica para criar os prompts da IA
-const getPromptForGame = (game, question, summonerInfo) => {
-  let promptText = "";
-
-  const basePrompt = `
-    ## Especialidade
-    Você é um assistente especializado em meta e estratégias para o jogo ${game}.
-
-    ## Tarefa
-    Você deve responder as perguntas do usuário com base no seu conhecimento do jogo, estratégias, builds, composições e dicas. Use suas ferramentas para obter informações atualizadas, se necessário.
-
-    ## Regras
-    - Se você não sabe a resposta, responda com 'Não sei' e não tente inventar uma resposta.
-    - Se a pergunta não está relacionada ao jogo, responda com 'Essa pergunta não está relacionada ao jogo'.
-    - Considere a data atual ${new Date().toLocaleDateString()}.
-    - Faça pesquisas atualizadas sobre o patch atual, baseado na data atual, para dar uma resposta coerente.
-    - Nunca responda itens que você não tenha certeza de que existe no patch atual.
-    - Seja direto e objetivo.
-    - Não precisa fazer saudação ou despedida.
-    - A resposta deve ser formatada em Markdown.
-  `;
-
-  if (game === "lol") {
-    let summonerSection = "";
-    if (summonerInfo && summonerInfo.summonerName && summonerInfo.summonerTag) {
-      summonerSection = `
-        ## Informações de Invocador
-        - Nome: ${summonerInfo.summonerName}
-        - Tag: ${summonerInfo.summonerTag}
-        - Região: ${summonerInfo.platformRegion}
-      `;
-    }
-
-    promptText = `${basePrompt}
-      ${summonerSection}
-      ---
-      Pergunta do usuário: ${question}
-    `;
-  } else {
-    promptText = `${basePrompt}
-      ---
-      Pergunta do usuário: ${question}
-    `;
-  }
-
-  return promptText;
-};
-
-// 7. Define a rota para a comunicação com a API do Gemini
+// 6. Define a rota para a comunicação com a API do Gemini
 app.post("/api/gemini-ask", async (req, res) => {
   const { game, question, summonerName, summonerTag, platformRegion } =
     req.body;
@@ -101,7 +54,7 @@ app.post("/api/gemini-ask", async (req, res) => {
   }
 
   try {
-    const geminiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    const geminiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
     const tools = [
       {
@@ -150,7 +103,7 @@ app.post("/api/gemini-ask", async (req, res) => {
   }
 });
 
-// 8. Rotas para a API da Riot Games
+// 7. Rotas para a API da Riot Games
 app.get(
   "/api/lol/puuid/:gameName/:tagLine/:platformRegion",
   async (req, res) => {
@@ -200,7 +153,7 @@ app.get("/api/lol/match-history/:puuid/:platformRegion", async (req, res) => {
   }
 });
 
-// 9. Inicia o servidor e o faz escutar na porta definida
+// 8. Inicia o servidor e o faz escutar na porta definida
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
