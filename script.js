@@ -2,11 +2,10 @@ const questionInput = document.getElementById("questionInput");
 const askButton = document.getElementById("askButton");
 const aiResponse = document.getElementById("aiResponse");
 const aiForm = document.getElementById("aiForm");
-const mainContent = document.getElementById("mainContent");
+const gameSelectionSection = document.getElementById("gameSelectionSection"); // Nova referência
 const mainFormArea = document.getElementById("mainFormArea");
 const selectedGameDisplay = document.getElementById("selectedGameDisplay");
 const backButton = document.getElementById("backButton");
-const gameSelectionContainer = document.getElementById("gameSelectionContainer");
 
 const summonerQuestionModal = document.getElementById("summonerQuestionModal");
 const btnYesSummoner = document.getElementById("btnYesSummoner");
@@ -15,8 +14,12 @@ const lolSpecificFields = document.getElementById("lolSpecificFields");
 const summonerNameInput = document.getElementById("summonerNameInput");
 const summonerTagInput = document.getElementById("summonerTagInput");
 const platformRegionSelect = document.getElementById("platformRegionSelect");
-const suggestedQuestionsContainer = document.getElementById("suggestedQuestionsContainer");
-const suggestedQuestionsList = document.getElementById("suggestedQuestionsList");
+const suggestedQuestionsContainer = document.getElementById(
+  "suggestedQuestionsContainer"
+);
+const suggestedQuestionsList = document.getElementById(
+  "suggestedQuestionsList"
+);
 
 const blurBackgroundOverlay = document.getElementById("blurBackgroundOverlay");
 
@@ -82,8 +85,8 @@ const showMainFormArea = (game, image) => {
   selectedGame = game;
   selectedGameDisplay.textContent = game.toUpperCase();
   selectedGameDisplay.style.backgroundImage = `url(${image})`;
-  hideElement(gameSelectionContainer);
-  showElement(mainFormArea);
+  hideElement(gameSelectionSection); // CORRIGIDO: Oculta a seção de seleção
+  showElement(mainFormArea); // Mostra a seção do formulário
   setBackgroundImage(image);
 
   const suggestions = gameSuggestions[game] || [];
@@ -107,9 +110,9 @@ const showMainFormArea = (game, image) => {
 const resetToGameSelection = () => {
   selectedGame = "";
   wantsSummonerInfo = false;
-  hideElement(mainFormArea);
+  hideElement(mainFormArea); // Oculta a seção do formulário
   hideElement(aiResponse);
-  showElement(gameSelectionContainer);
+  showElement(gameSelectionSection); // CORRIGIDO: Mostra a seção de seleção
   setBackgroundImage("./img/bg.jpg");
   document.body.classList.remove("modal-open");
   hideElement(lolSpecificFields);
@@ -152,12 +155,13 @@ btnNoSummoner.addEventListener("click", () => {
   showMainFormArea("lol", "./img/lol_capa.jpg");
 });
 
-
 aiForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const question = questionInput.value.trim();
-  const summonerName = wantsSummonerInfo ? summonerNameInput.value.trim() : null;
+  const summonerName = wantsSummonerInfo
+    ? summonerNameInput.value.trim()
+    : null;
   const summonerTag = wantsSummonerInfo ? summonerTagInput.value.trim() : null;
   const platformRegion = wantsSummonerInfo ? platformRegionSelect.value : null;
 
