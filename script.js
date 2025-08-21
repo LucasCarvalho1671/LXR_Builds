@@ -23,9 +23,9 @@ const suggestedQuestionsList = document.getElementById(
 
 const blurBackgroundOverlay = document.getElementById("blurBackgroundOverlay");
 
-// Adicionando referências aos elementos principais
-const mainContent = document.querySelector('main');
-const headerContent = document.querySelector('header');
+// Adicionando referências aos elementos principais para o efeito de blur
+const mainContent = document.querySelector("main");
+const headerContent = document.querySelector("header");
 
 let selectedGame = "";
 let wantsSummonerInfo = false;
@@ -119,10 +119,10 @@ const resetToGameSelection = () => {
   showElement(gameSelectionSection);
   setBackgroundImage("./img/bg.jpg");
   hideElement(lolSpecificFields);
-  
+
   // CORREÇÃO: Remove a classe de blur
-  mainContent.classList.remove('blur-content');
-  headerContent.classList.remove('blur-content');
+  mainContent.classList.remove("blur-content");
+  headerContent.classList.remove("blur-content");
 };
 
 // Event listener para as capas de jogo
@@ -134,10 +134,10 @@ document.querySelectorAll(".game-card").forEach((card) => {
     if (game === "lol") {
       showElement(summonerQuestionModal);
       showElement(blurBackgroundOverlay);
-      
+
       // CORREÇÃO: Adiciona a classe de blur aos elementos corretos
-      mainContent.classList.add('blur-content');
-      headerContent.classList.add('blur-content');
+      mainContent.classList.add("blur-content");
+      headerContent.classList.add("blur-content");
     } else {
       hideElement(lolSpecificFields);
       showMainFormArea(game, image);
@@ -151,10 +151,10 @@ btnYesSummoner.addEventListener("click", () => {
   wantsSummonerInfo = true;
   hideElement(summonerQuestionModal);
   hideElement(blurBackgroundOverlay);
-  
+
   // CORREÇÃO: Remove a classe de blur
-  mainContent.classList.remove('blur-content');
-  headerContent.classList.remove('blur-content');
+  mainContent.classList.remove("blur-content");
+  headerContent.classList.remove("blur-content");
 
   showElement(lolSpecificFields);
   showMainFormArea("lol", "./img/lol_capa.jpg");
@@ -164,10 +164,10 @@ btnNoSummoner.addEventListener("click", () => {
   wantsSummonerInfo = false;
   hideElement(summonerQuestionModal);
   hideElement(blurBackgroundOverlay);
-  
+
   // CORREÇÃO: Remove a classe de blur
-  mainContent.classList.remove('blur-content');
-  headerContent.classList.remove('blur-content');
+  mainContent.classList.remove("blur-content");
+  headerContent.classList.remove("blur-content");
 
   hideElement(lolSpecificFields);
   showMainFormArea("lol", "./img/lol_capa.jpg");
@@ -177,7 +177,9 @@ aiForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const question = questionInput.value.trim();
-  const summonerName = wantsSummonerInfo ? summonerNameInput.value.trim() : null;
+  const summonerName = wantsSummonerInfo
+    ? summonerNameInput.value.trim()
+    : null;
   const summonerTag = wantsSummonerInfo ? summonerTagInput.value.trim() : null;
   const platformRegion = wantsSummonerInfo ? platformRegionSelect.value : null;
 
