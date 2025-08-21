@@ -89,40 +89,41 @@ section h2 {
   display: none;
 }
 
-/* --- ESTILOS PARA A SELEÇÃO DE JOGOS (CORRIGIDOS) --- */
+/* --- CORREÇÃO DO LAYOUT DA SELEÇÃO DE JOGOS --- */
 #gameSelectionSection > div > div {
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(100px, 1fr)
-  ); /* Grid responsivo */
+  display: flex; /* Usamos flexbox para mais controle */
+  flex-wrap: wrap;
   gap: 1rem;
+  justify-content: center;
   margin-top: 1rem;
 }
 
 .game-card {
+  width: 150px; /* Largura fixa para cada card */
+  height: 180px; /* Altura fixa */
   background-color: #1f1d24;
   border: 2px solid transparent;
   border-radius: 0.5rem;
-  padding-bottom: 120%; /* Proporção 1:1.2 */
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s ease-in-out;
+  transition: transform 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   display: flex;
-  align-items: flex-end; /* Alinha o texto na parte inferior */
+  align-items: flex-end;
   justify-content: center;
   color: white;
   font-weight: bold;
   text-align: center;
   user-select: none;
-  background-size: cover; /* Garante que a imagem cubra o card */
-  background-position: center; /* Centraliza a imagem */
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adiciona uma sombra para destacar */
 }
 
 .game-card:hover {
   transform: scale(1.05);
   border-color: #e2d45c;
+  box-shadow: 0 0 15px rgba(226, 212, 92, 0.7); /* Sombra amarela no hover */
 }
 
 .game-card span {
