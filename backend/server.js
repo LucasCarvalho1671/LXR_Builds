@@ -30,117 +30,59 @@ if (!GEMINI_API_KEY) {
     "Erro: A variável de ambiente GEMINI_API_KEY não está definida no arquivo .env"
   );
   process.exit(1);
+} else {
+  console.log("Variável GEMINI_API_KEY carregada com sucesso.");
 }
 
-// 6. Define os prompts para cada jogo
-const prompts = {
-  lol: {
-    base: `
-    Você é um assistente especializado em League of Legends. Seu objetivo é ajudar o usuário com base em sua pergunta e, se disponível, nas informações de invocador fornecidas. Aja como um analista de meta, respondendo de forma técnica e detalhada.
-    
-    Instruções:
-    - Se a pergunta for sobre um campeão, build, rota ou estratégia geral, responda com uma análise detalhada do meta atual.
-    - Se o usuário fornecer dados de invocador (nome, tag e região), você deve buscar informações de partidas recentes na API da Riot Games para analisar o desempenho do jogador.
-    - Se a API for consultada, inclua a análise dos dados no início da sua resposta. Use estatísticas como KDA, ouro por minuto, controle de visão, participação em abates e builds de itens das últimas 10 partidas.
-    - Baseie-se nas informações de jogo, builds, itens e estratégias do meta atual do patch 14.12.
-    - A resposta deve ser em Markdown, formatando o texto para facilitar a leitura com títulos, listas e negrito.
-    - Limite sua resposta a um máximo de 2000 caracteres, sendo objetivo.
-    
-    Exemplo de análise de invocador:
-    "Análise do Invocador:
-    - KDA médio: 5.2/3.1/8.9
-    - Farm (CS/min): 6.5
-    - Visão (pontuação): 1.5 por minuto. Sugestão: comprar Sentinela de Controle.
-    - Destaques: Vitórias recentes com Vayne e Lucian.
-    - Pontos a melhorar: Baixa participação em abates (45%). Tente seguir as lutas de equipe."
-    
-    Se não for fornecido dados de invocador, ignore essa parte e vá direto para a pergunta.
-    
-    Perguntas do Usuário:
-    Jogo: League of Legends
-    Pergunta: {{question}}
-    `,
-  },
-  valorant: {
-    base: `
-    Você é um assistente especializado em Valorant. Seu objetivo é ajudar o usuário com base em sua pergunta.
-    
-    Instruções:
-    - Responda a pergunta com base no meta atual do jogo (agentes, armas, estratégias, etc.).
-    - A resposta deve ser em Markdown, formatando o texto para facilitar a leitura com títulos, listas e negrito.
-    - Seja objetivo e direto, sem enrolação.
-    
-    Perguntas do Usuário:
-    Jogo: Valorant
-    Pergunta: {{question}}
-    `,
-  },
-  bdo: {
-    base: `
-    Você é um assistente especializado em Black Desert Online. Seu objetivo é ajudar o usuário com base em sua pergunta.
-    
-    Instruções:
-    - Responda a pergunta com base no meta e nas mecânicas atuais do jogo.
-    - A resposta deve ser em Markdown, formatando o texto para facilitar a leitura com títulos, listas e negrito.
-    - Seja objetivo e direto, sem enrolação.
-    
-    Perguntas do Usuário:
-    Jogo: Black Desert Online
-    Pergunta: {{question}}
-    `,
-  },
-  tft: {
-    base: `
-    Você é um assistente especializado em Teamfight Tactics. Seu objetivo é ajudar o usuário com base em sua pergunta.
-    
-    Instruções:
-    - Responda a pergunta com base no meta atual do jogo (composições, itens, lendas, etc.).
-    - A resposta deve ser em Markdown, formatando o texto para facilitar a leitura com títulos, listas e negrito.
-    - Seja objetivo e direto, sem enrolação.
-    
-    Perguntas do Usuário:
-    Jogo: Teamfight Tactics
-    Pergunta: {{question}}
-    `,
-  },
-  deltaforce: {
-    base: `
-    Você é um assistente especializado no jogo Delta Force. Seu objetivo é ajudar o usuário com base em sua pergunta.
-    
-    Instruções:
-    - Responda a pergunta com base nas mecânicas e estratégias do jogo.
-    - A resposta deve ser em Markdown, formatando o texto para facilitar a leitura com títulos, listas e negrito.
-    - Seja objetivo e direto, sem enrolação.
-    
-    Perguntas do Usuário:
-    Jogo: Delta Force
-    Pergunta: {{question}}
-    `,
-  },
-};
+// 6. Define a lógica para criar os prompts da IA
+const getPromptForGame = (game, question, summonerInfo) => {
+  let promptText = "";
 
-// 7. Função para obter o prompt correto
-function getPromptForGame(game, question, summonerInfo = null) {
-  const gameKey = game;
-  const gamePrompts = prompts[gameKey];
+  const basePrompt = `
+    ## Especialidade
+    Você é um assistente especializado em meta e estratégias para o jogo ${game}.
 
-  if (!gamePrompts) {
-    return "Não consegui encontrar prompts para este jogo.";
-  }
+    ## Tarefa
+    Você deve responder as perguntas do usuário com base no seu conhecimento do jogo, estratégias, builds, composições e dicas. Use suas ferramentas para obter informações atualizadas, se necessário.
 
-  let promptText = gamePrompts.base.replace("{{question}}", question);
+    ## Regras
+    - Se você não sabe a resposta, responda com 'Não sei' e não tente inventar uma resposta.
+    - Se a pergunta não está relacionada ao jogo, responda com 'Essa pergunta não está relacionada ao jogo'.
+    - Considere a data atual ${new Date().toLocaleDateString()}.
+    - Faça pesquisas atualizadas sobre o patch atual, baseado na data atual, para dar uma resposta coerente.
+    - Nunca responda itens que você não tenha certeza de que existe no patch atual.
+    - Seja direto e objetivo.
+    - Não precisa fazer saudação ou despedida.
+    - A resposta deve ser formatada em Markdown.
+  `;
 
-  if (game === "lol" && summonerInfo) {
-    promptText = promptText.replace(
-      "Se o usuário fornecer dados de invocador",
-      "O usuário forneceu dados de invocador"
-    );
+  if (game === "lol") {
+    let summonerSection = "";
+    if (summonerInfo && summonerInfo.summonerName && summonerInfo.summonerTag) {
+      summonerSection = `
+        ## Informações de Invocador
+        - Nome: ${summonerInfo.summonerName}
+        - Tag: ${summonerInfo.summonerTag}
+        - Região: ${summonerInfo.platformRegion}
+      `;
+    }
+
+    promptText = `${basePrompt}
+      ${summonerSection}
+      ---
+      Pergunta do usuário: ${question}
+    `;
+  } else {
+    promptText = `${basePrompt}
+      ---
+      Pergunta do usuário: ${question}
+    `;
   }
 
   return promptText;
-}
+};
 
-// 8. Rota para o assistente de IA
+// 7. Define a rota para a comunicação com a API do Gemini
 app.post("/api/gemini-ask", async (req, res) => {
   const { game, question, summonerName, summonerTag, platformRegion } =
     req.body;
@@ -156,6 +98,14 @@ app.post("/api/gemini-ask", async (req, res) => {
 
   try {
     const geminiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+    // Ferramenta Google Search para a IA buscar informações
+    const tools = [
+      {
+        google_search: {},
+      },
+    ];
+
     const response = await axios.post(
       geminiURL,
       {
@@ -164,6 +114,7 @@ app.post("/api/gemini-ask", async (req, res) => {
             parts: [{ text: prompt }],
           },
         ],
+        tools,
       },
       {
         headers: {
@@ -178,7 +129,6 @@ app.post("/api/gemini-ask", async (req, res) => {
     let errorMessage = "Erro desconhecido ao se comunicar com a API do Gemini.";
 
     if (error.response) {
-      // O servidor Gemini respondeu com um status de erro (ex: 400, 500)
       console.error("Erro de resposta da API do Gemini:", error.response.data);
       if (error.response.data.error && error.response.data.error.message) {
         errorMessage = `Erro da API: ${error.response.data.error.message}`;
@@ -186,11 +136,9 @@ app.post("/api/gemini-ask", async (req, res) => {
         errorMessage = `Erro do servidor: ${error.response.status} - ${error.response.statusText}`;
       }
     } else if (error.request) {
-      // A requisição foi feita, mas não houve resposta
       console.error("Erro de requisição para a API do Gemini:", error.request);
       errorMessage = "A requisição para a API do Gemini não obteve resposta.";
     } else {
-      // Algum outro erro aconteceu
       console.error("Erro geral:", error.message);
       errorMessage = `Erro interno: ${error.message}`;
     }
@@ -199,25 +147,59 @@ app.post("/api/gemini-ask", async (req, res) => {
   }
 });
 
-// 9. Rotas para a API da Riot Games (se existirem)
+// 8. Rotas para a API da Riot Games (exemplo, se você precisar)
 // Rota para buscar o puuid de um jogador
 app.get(
   "/api/lol/puuid/:gameName/:tagLine/:platformRegion",
   async (req, res) => {
-    // ... (código existente, se houver)
+    const { gameName, tagLine, platformRegion } = req.params;
+    const url = `https://${platformRegion}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${gameName}/${tagLine}`;
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          "X-Riot-Token": RIOT_API_KEY,
+        },
+      });
+      res.json(response.data);
+    } catch (error) {
+      console.error(
+        "Erro na busca do PUUID:",
+        error.response?.data || error.message
+      );
+      res.status(error.response?.status || 500).json({
+        error:
+          "Erro ao buscar informações do invocador. Verifique o nome/tag e a chave da API da Riot.",
+      });
+    }
   }
 );
 
-// Rota para buscar o histórico de partidas
+// Rota para buscar o histórico de partidas (exemplo)
 app.get("/api/lol/match-history/:puuid/:platformRegion", async (req, res) => {
-  // ... (código existente, se houver)
+  const { puuid, platformRegion } = req.params;
+  const url = `https://${platformRegion}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids`;
+
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        "X-Riot-Token": RIOT_API_KEY,
+      },
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error(
+      "Erro na busca do histórico de partidas:",
+      error.response?.data || error.message
+    );
+    res.status(error.response?.status || 500).json({
+      error:
+        "Erro ao buscar histórico de partidas. Verifique o PUUID e a região.",
+    });
+  }
 });
 
-// 10. Inicia o servidor
+// 9. Inicia o servidor e o faz escutar na porta definida
 app.listen(PORT, () => {
-  console.log(`Servidor backend rodando em http://localhost:${PORT}`);
-  console.log(`API Key Riot: ${RIOT_API_KEY ? "Carregada" : "NÃO CARREGADA!"}`);
-  console.log(
-    `API Key Gemini: ${GEMINI_API_KEY ? "Carregada" : "NÃO CARREGADA!"}`
-  );
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
