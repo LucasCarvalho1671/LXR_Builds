@@ -144,12 +144,10 @@ function getPromptForGame(game, question, summonerInfo = null) {
 app.post("/api/gemini-ask", async (req, res) => {
   const { game, question, summonerName, summonerTag, platformRegion } =
     req.body;
-
   const summonerInfo =
     summonerName && summonerTag && platformRegion
       ? { summonerName, summonerTag, platformRegion }
       : null;
-
   const prompt = getPromptForGame(game, question, summonerInfo);
 
   if (prompt.includes("não consegui")) {
@@ -157,7 +155,7 @@ app.post("/api/gemini-ask", async (req, res) => {
   }
 
   try {
-    const geminiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    const geminiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
     const response = await axios.post(
       geminiURL,
       {
@@ -181,10 +179,12 @@ app.post("/api/gemini-ask", async (req, res) => {
       "Erro na requisição para a API do Gemini:",
       error.response?.data || error.message
     );
-    res.status(500).json({
-      error:
-        "Erro ao se comunicar com a API do Gemini. Verifique a chave e o formato da requisição.",
-    });
+    res
+      .status(500)
+      .json({
+        error:
+          "Erro ao se comunicar com a API do Gemini. Verifique a chave e o formato da requisição.",
+      });
   }
 });
 
