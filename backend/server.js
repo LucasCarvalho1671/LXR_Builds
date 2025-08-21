@@ -175,16 +175,27 @@ app.post("/api/gemini-ask", async (req, res) => {
     const geminiResponse = response.data.candidates[0].content.parts[0].text;
     res.json({ response: geminiResponse });
   } catch (error) {
-    console.error(
-      "Erro na requisição para a API do Gemini:",
-      error.response?.data || error.message
-    );
-    res
-      .status(500)
-      .json({
-        error:
-          "Erro ao se comunicar com a API do Gemini. Verifique a chave e o formato da requisição.",
-      });
+    let errorMessage = "Erro desconhecido ao se comunicar com a API do Gemini.";
+
+    if (error.response) {
+      // O servidor Gemini respondeu com um status de erro (ex: 400, 500)
+      console.error("Erro de resposta da API do Gemini:", error.response.data);
+      if (error.response.data.error && error.response.data.error.message) {
+        errorMessage = `Erro da API: ${error.response.data.error.message}`;
+      } else {
+        errorMessage = `Erro do servidor: ${error.response.status} - ${error.response.statusText}`;
+      }
+    } else if (error.request) {
+      // A requisição foi feita, mas não houve resposta
+      console.error("Erro de requisição para a API do Gemini:", error.request);
+      errorMessage = "A requisição para a API do Gemini não obteve resposta.";
+    } else {
+      // Algum outro erro aconteceu
+      console.error("Erro geral:", error.message);
+      errorMessage = `Erro interno: ${error.message}`;
+    }
+
+    res.status(500).json({ error: errorMessage });
   }
 });
 
