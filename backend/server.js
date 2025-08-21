@@ -6,7 +6,7 @@ const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
 const path = require("path");
-const { getPromptForGame } = require("prompts.js"); // Importa a lógica dos prompts
+const { getPromptForGame } = require("./prompts.js"); // Importa a lógica dos prompts
 
 // 3. Inicializa o aplicativo Express
 const app = express();
