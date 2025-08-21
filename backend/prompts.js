@@ -17,12 +17,13 @@ const getPromptForGame = (game, question, summonerInfo) => {
     - Considere a data atual ${date}.
     - Faça pesquisas atualizadas sobre o patch atual, baseado na data atual, para dar uma resposta coerente.
     - Nunca responda itens que você não tenha certeza de que existe no patch atual.
-    - verificar se o jogo tem mecanicas de temporada, se caso tiver, levar em consideração o a temporada atual. 
     - Seja direto e objetivo.
     - Não precisa fazer saudação ou despedida.
     - A resposta deve ser formatada em Markdown.
+    - Verificar se o jogo tem mecanicas de temporada, se caso tiver, levar em consideração o a temporada atual.
   `;
 
+  // Padronize os nomes dos jogos para minúsculas
   if (game === "lol") {
     let summonerSection = "";
     if (summonerInfo && summonerInfo.summonerName && summonerInfo.summonerTag) {
@@ -43,7 +44,7 @@ const getPromptForGame = (game, question, summonerInfo) => {
   }
 
   // Lógica para os outros jogos
-  if (game === "Valorant") {
+  if (game === "valorant") {
     return `${basePrompt}
       ---
       Pergunta do usuário: ${question}
@@ -63,7 +64,7 @@ const getPromptForGame = (game, question, summonerInfo) => {
       Pergunta do usuário: ${question}
     `;
   }
-  
+
   if (game === "delta") {
     return `${basePrompt}
       ---
