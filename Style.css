@@ -20,14 +20,8 @@ body {
   transition: all 0.3s ease-in-out;
 }
 
-body.modal-open {
-  filter: blur(5px);
-  pointer-events: none;
-  user-select: none;
-}
-
-body.modal-open header,
-body.modal-open main {
+header.blur-content,
+main.blur-content {
   filter: blur(5px);
   pointer-events: none;
   user-select: none;

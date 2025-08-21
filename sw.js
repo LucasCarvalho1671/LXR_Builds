@@ -1,4 +1,4 @@
-const CACHE_NAME = "assistente-meta-cache-v2.19"; // Mude a versão se alterar os arquivos
+const CACHE_NAME = "assistente-meta-cache-v2.20"; // Mude a versão se alterar os arquivos
 const urlsToCache = [
   "/",
   "/index.html",

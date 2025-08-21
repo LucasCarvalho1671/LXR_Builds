@@ -2,7 +2,7 @@ const questionInput = document.getElementById("questionInput");
 const askButton = document.getElementById("askButton");
 const aiResponse = document.getElementById("aiResponse");
 const aiForm = document.getElementById("aiForm");
-const gameSelectionSection = document.getElementById("gameSelectionSection"); // Nova referência
+const gameSelectionSection = document.getElementById("gameSelectionSection");
 const mainFormArea = document.getElementById("mainFormArea");
 const selectedGameDisplay = document.getElementById("selectedGameDisplay");
 const backButton = document.getElementById("backButton");
@@ -22,6 +22,10 @@ const suggestedQuestionsList = document.getElementById(
 );
 
 const blurBackgroundOverlay = document.getElementById("blurBackgroundOverlay");
+
+// Adicionando referências aos elementos principais
+const mainContent = document.querySelector('main');
+const headerContent = document.querySelector('header');
 
 let selectedGame = "";
 let wantsSummonerInfo = false;
@@ -85,8 +89,8 @@ const showMainFormArea = (game, image) => {
   selectedGame = game;
   selectedGameDisplay.textContent = game.toUpperCase();
   selectedGameDisplay.style.backgroundImage = `url(${image})`;
-  hideElement(gameSelectionSection); // CORRIGIDO: Oculta a seção de seleção
-  showElement(mainFormArea); // Mostra a seção do formulário
+  hideElement(gameSelectionSection);
+  showElement(mainFormArea);
   setBackgroundImage(image);
 
   const suggestions = gameSuggestions[game] || [];
@@ -110,12 +114,15 @@ const showMainFormArea = (game, image) => {
 const resetToGameSelection = () => {
   selectedGame = "";
   wantsSummonerInfo = false;
-  hideElement(mainFormArea); // Oculta a seção do formulário
+  hideElement(mainFormArea);
   hideElement(aiResponse);
-  showElement(gameSelectionSection); // CORRIGIDO: Mostra a seção de seleção
+  showElement(gameSelectionSection);
   setBackgroundImage("./img/bg.jpg");
-  document.body.classList.remove("modal-open");
   hideElement(lolSpecificFields);
+  
+  // CORREÇÃO: Remove a classe de blur
+  mainContent.classList.remove('blur-content');
+  headerContent.classList.remove('blur-content');
 };
 
 // Event listener para as capas de jogo
@@ -127,7 +134,10 @@ document.querySelectorAll(".game-card").forEach((card) => {
     if (game === "lol") {
       showElement(summonerQuestionModal);
       showElement(blurBackgroundOverlay);
-      document.body.classList.add("modal-open");
+      
+      // CORREÇÃO: Adiciona a classe de blur aos elementos corretos
+      mainContent.classList.add('blur-content');
+      headerContent.classList.add('blur-content');
     } else {
       hideElement(lolSpecificFields);
       showMainFormArea(game, image);
@@ -141,7 +151,11 @@ btnYesSummoner.addEventListener("click", () => {
   wantsSummonerInfo = true;
   hideElement(summonerQuestionModal);
   hideElement(blurBackgroundOverlay);
-  document.body.classList.remove("modal-open");
+  
+  // CORREÇÃO: Remove a classe de blur
+  mainContent.classList.remove('blur-content');
+  headerContent.classList.remove('blur-content');
+
   showElement(lolSpecificFields);
   showMainFormArea("lol", "./img/lol_capa.jpg");
 });
@@ -150,7 +164,11 @@ btnNoSummoner.addEventListener("click", () => {
   wantsSummonerInfo = false;
   hideElement(summonerQuestionModal);
   hideElement(blurBackgroundOverlay);
-  document.body.classList.remove("modal-open");
+  
+  // CORREÇÃO: Remove a classe de blur
+  mainContent.classList.remove('blur-content');
+  headerContent.classList.remove('blur-content');
+
   hideElement(lolSpecificFields);
   showMainFormArea("lol", "./img/lol_capa.jpg");
 });
@@ -159,9 +177,7 @@ aiForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const question = questionInput.value.trim();
-  const summonerName = wantsSummonerInfo
-    ? summonerNameInput.value.trim()
-    : null;
+  const summonerName = wantsSummonerInfo ? summonerNameInput.value.trim() : null;
   const summonerTag = wantsSummonerInfo ? summonerTagInput.value.trim() : null;
   const platformRegion = wantsSummonerInfo ? platformRegionSelect.value : null;
 
