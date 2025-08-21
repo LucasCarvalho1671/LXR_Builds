@@ -5,6 +5,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
+const path = require("path");
 
 // 3. Inicializa o aplicativo Express
 const app = express();
@@ -13,7 +14,9 @@ const PORT = process.env.PORT || 3000;
 // 4. Configura middlewares
 app.use(cors());
 app.use(express.json());
-app.use(express.static("public"));
+
+// Adicione esta linha para servir arquivos estáticos da pasta 'public'
+app.use(express.static(path.join(__dirname, "public")));
 
 // 5. Acessa as chaves de API das variáveis de ambiente
 const RIOT_API_KEY = process.env.RIOT_API_KEY;
@@ -100,7 +103,6 @@ app.post("/api/gemini-ask", async (req, res) => {
   try {
     const geminiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
-    // Ferramenta Google Search para a IA buscar informações
     const tools = [
       {
         google_search: {},
@@ -148,8 +150,7 @@ app.post("/api/gemini-ask", async (req, res) => {
   }
 });
 
-// 8. Rotas para a API da Riot Games (exemplo, se você precisar)
-// Rota para buscar o puuid de um jogador
+// 8. Rotas para a API da Riot Games
 app.get(
   "/api/lol/puuid/:gameName/:tagLine/:platformRegion",
   async (req, res) => {
@@ -176,7 +177,6 @@ app.get(
   }
 );
 
-// Rota para buscar o histórico de partidas (exemplo)
 app.get("/api/lol/match-history/:puuid/:platformRegion", async (req, res) => {
   const { puuid, platformRegion } = req.params;
   const url = `https://${platformRegion}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids`;
