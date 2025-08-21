@@ -13,6 +13,7 @@ const PORT = process.env.PORT || 3000;
 // 4. Configura middlewares
 app.use(cors());
 app.use(express.json());
+app.use(express.static("public"));
 
 // 5. Acessa as chaves de API das variáveis de ambiente
 const RIOT_API_KEY = process.env.RIOT_API_KEY;
