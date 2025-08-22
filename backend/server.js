@@ -40,107 +40,107 @@ const regionMapping = {
   jp1: "asia",
   oc1: "sea",
   ru: "europe",
-  tr1: "turkey",
+  tr1: "europe",
 };
 
 app.post("/api/gemini-ask", async (req, res) => {
-  const { game, question, summonerName, summonerTag, platformRegion, forceRefresh, matchCount = 5 } = req.body;
+  const {
+    game,
+    question,
+    forceRefresh,
+    summonerName,
+    summonerTag,
+    platformRegion,
+    matchCount,
+  } = req.body;
 
-  if (game === "lol" && summonerName && summonerTag && platformRegion) {
-    const cacheKey = `${summonerName.toLowerCase()}${summonerTag.toLowerCase()}-${matchCount}`;
+  if (game === "lol" && summonerName && summonerTag) {
+    const cacheKey = `${summonerName}-${summonerTag}-${platformRegion}`;
     const cachedData = summonerCache[cacheKey];
+    const now = Date.now();
 
-    const isInitialFetch = !question;
-    
-    if (cachedData && Date.now() - cachedData.timestamp < CACHE_LIFETIME && !forceRefresh) {
-      console.log("Usando dados do cache para o invocador:", cacheKey);
-      const summonerInfo = cachedData.data;
-
-      if (isInitialFetch) {
-        return res.json(summonerInfo);
-      } else {
-        const prompt = getPromptForGame(game, question, summonerInfo);
+    if (
+      cachedData &&
+      !forceRefresh &&
+      now - cachedData.timestamp < CACHE_LIFETIME
+    ) {
+      console.log(
+        `[LOG] Dados do invocador ${summonerName} carregados do cache.`
+      );
+      const prompt = getPromptForGame(game, question, cachedData.data);
+      try {
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const text = response.text();
         return res.json({ response: text });
+      } catch (error) {
+        console.error("[ERRO] Erro ao gerar conteúdo da IA:", error);
+        return res
+          .status(500)
+          .json({ error: "Ocorreu um erro ao gerar a resposta da IA." });
       }
     }
 
     try {
-      const routingRegion = regionMapping[platformRegion.toLowerCase()];
-      if (!routingRegion) {
-        return res.status(400).json({
-          error: "Região do invocador inválida. Por favor, verifique a tag.",
-        });
-      }
+      console.log(
+        `[LOG] Buscando dados do invocador ${summonerName} na Riot API...`
+      );
+      const summonerUrl = `https://${platformRegion}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${summonerName}/${summonerTag}?api_key=${RIOT_API_KEY}`;
+      const summonerResponse = await axios.get(summonerUrl);
+      const puuid = summonerResponse.data.puuid;
+      console.log(`[LOG] PUUID do invocador ${summonerName}: ${puuid}`);
 
-      const riotApiUrlAccount = `https://${routingRegion}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${summonerName}/${summonerTag.replace("#", "")}`;
-      const riotResponseAccount = await axios.get(riotApiUrlAccount, {
-        headers: {
-          "X-Riot-Token": RIOT_API_KEY,
-        },
-      });
+      const lolRegion = regionMapping[platformRegion];
+      const summonerIdUrl = `https://${platformRegion}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}?api_key=${RIOT_API_KEY}`;
+      const summonerIdResponse = await axios.get(summonerIdUrl);
+      const summonerId = summonerIdResponse.data.id;
+      const summonerLevel = summonerIdResponse.data.summonerLevel;
 
-      const puuid = riotResponseAccount.data.puuid;
-      const summonerId = riotResponseAccount.data.id;
+      const leagueUrl = `https://${platformRegion}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}?api_key=${RIOT_API_KEY}`;
+      const leagueResponse = await axios.get(leagueUrl);
+      const rankedSoloDuo = leagueResponse.data.find(
+        (entry) => entry.queueType === "RANKED_SOLO_5x5"
+      );
 
-      const riotApiUrlRank = `https://${platformRegion}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}`;
-      const riotResponseRank = await axios.get(riotApiUrlRank, {
-        headers: {
-          "X-Riot-Token": RIOT_API_KEY,
-        },
-      });
-      
-      const rankData = riotResponseRank.data.find(entry => entry.queueType === 'RANKED_SOLO_5x5') || {};
-      const tier = rankData.tier || "UNRANKED";
-      const rank = rankData.rank || "";
+      const tier = rankedSoloDuo ? rankedSoloDuo.tier : "Unranked";
+      const rank = rankedSoloDuo ? rankedSoloDuo.rank : "";
 
-      const riotApiUrlMatches = `https://${routingRegion}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=${matchCount}`;
-      const riotResponseMatches = await axios.get(riotApiUrlMatches, {
-        headers: {
-          "X-Riot-Token": RIOT_API_KEY,
-        },
-      });
-      const matchIds = riotResponseMatches.data;
+      console.log(
+        `[LOG] Buscando histórico de partidas para o invocador ${summonerName}...`
+      );
+      const matchHistoryUrl = `https://${lolRegion}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=${matchCount}&api_key=${RIOT_API_KEY}`;
+      const matchHistoryResponse = await axios.get(matchHistoryUrl);
+      const matchIds = matchHistoryResponse.data;
+      console.log(`[LOG] Encontradas ${matchIds.length} partidas.`);
 
-      const matchHistory = [];
-      if (matchIds && matchIds.length > 0) {
-        for (const matchId of matchIds) {
-          try {
-            const riotApiUrlMatch = `https://${routingRegion}.api.riotgames.com/lol/match/v5/matches/${matchId}`;
-            const riotResponseMatch = await axios.get(riotApiUrlMatch, {
-              headers: {
-                "X-Riot-Token": RIOT_API_KEY,
-              },
-            });
-            matchHistory.push(riotResponseMatch.data);
-          } catch (error) {
-            console.error(
-              `Erro ao buscar detalhes da partida ${matchId}:`,
-              error.response?.status,
-              error.message
-            );
-          }
-        }
-      }
+      const matchDetails = await Promise.all(
+        matchIds.map((matchId) =>
+          axios.get(
+            `https://${lolRegion}.api.riotgames.com/lol/match/v5/matches/${matchId}?api_key=${RIOT_API_KEY}`
+          )
+        )
+      );
+
+      const matchHistory = matchDetails.map((response) => response.data);
 
       const summonerInfo = {
         summonerName,
         summonerTag,
         platformRegion,
         puuid,
-        matchHistory,
         tier,
         rank,
+        summonerLevel,
+        matchHistory,
       };
 
       summonerCache[cacheKey] = {
-        timestamp: Date.now(),
         data: summonerInfo,
+        timestamp: now,
       };
 
-      if (isInitialFetch) {
+      if (!question) {
+        console.log("[LOG] Retornando dados do invocador para o cliente.");
         return res.json(summonerInfo);
       } else {
         const prompt = getPromptForGame(game, question, summonerInfo);
@@ -151,15 +151,23 @@ app.post("/api/gemini-ask", async (req, res) => {
       }
     } catch (error) {
       console.error(
-        "Erro na cadeia de requisições:",
-        error.response?.data || error.message
+        "[ERRO] Ocorreu um erro na requisição da Riot API:",
+        error.message
       );
-
       if (error.response) {
+        console.error(
+          `[ERRO DETALHADO] Status: ${error.response.status}, Data:`,
+          error.response.data
+        );
         switch (error.response.status) {
+          case 401:
+            return res.status(401).json({
+              error: "Sua chave de API da Riot está inválida ou expirou.",
+            });
           case 403:
             return res.status(403).json({
-              error: "Sua chave de API da Riot está inválida ou expirou.",
+              error:
+                "Acesso negado à API da Riot. Verifique as permissões da sua chave.",
             });
           case 404:
             return res.status(404).json({
@@ -197,7 +205,7 @@ app.post("/api/gemini-ask", async (req, res) => {
       console.error("Erro ao obter resposta da IA:", error);
       return res.status(500).json({
         error:
-          "Ocorreu um erro ao processar sua solicitação. Tente novamente mais tarde.",
+          "Ocorreu um erro ao processar sua solicitação. Verifique o console do servidor para mais detalhes.",
       });
     }
   }
