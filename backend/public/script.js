@@ -26,6 +26,8 @@ const matchSummaryContainer = document.getElementById("matchSummaryContainer");
 const matchSummaryInfo = document.getElementById("matchSummaryInfo");
 const matchSummaryTitle = document.getElementById("matchSummaryTitle");
 const matchCountInput = document.getElementById("matchCountInput");
+const suggestedQuestionsContainer = document.getElementById("suggestedQuestionsContainer");
+const suggestedQuestionsList = document.getElementById("suggestedQuestionsList");
 
 let selectedGame = "";
 let wantsSummonerInfo = false;
@@ -111,6 +113,7 @@ const showMainFormArea = (game, image) => {
   selectedGameDisplay.style.backgroundImage = `url(${image})`;
   hideElement(gameSelectionSection);
   showElement(mainFormArea);
+  showElement(questionFormContainer);
   setBackgroundImage(image);
   updateSuggestedQuestions();
 };
@@ -224,15 +227,12 @@ summonerTagInput.addEventListener("input", () => {
   platformRegionDisplay.value = regionName;
 });
 
-// Listener para o botão "Atualizar Histórico"
 refreshDataButton.addEventListener("click", () => {
   sendFormWithRefresh(true);
 });
 
-// Listener para o formulário principal
 aiForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  // Se os dados não foram carregados, o botão de perguntar age como o de atualizar.
   if (!summonerDataLoaded) {
     sendFormWithRefresh(true);
   } else {
@@ -240,7 +240,6 @@ aiForm.addEventListener("submit", (e) => {
   }
 });
 
-// Função para exibir as estatísticas do invocador
 function displaySummonerData(summonerInfo) {
   const matchCount = summonerInfo.matchHistory.length;
   matchSummaryTitle.textContent = `Resumo das Últimas ${matchCount} Partidas:`;
@@ -299,7 +298,6 @@ function displaySummonerData(summonerInfo) {
   `;
 }
 
-// Função centralizada para enviar o formulário
 async function sendFormWithRefresh(forceRefresh) {
   const question = questionInput.value.trim();
   const summonerName = wantsSummonerInfo ? summonerNameInput.value.trim() : null;
@@ -318,7 +316,6 @@ async function sendFormWithRefresh(forceRefresh) {
       return;
   }
 
-  // Se o botão de atualização for clicado, mostra o spinner nele
   if (forceRefresh) {
     refreshDataButton.disabled = true;
     refreshDataButton.innerHTML = `<div class="spinner"></div>`;
@@ -360,7 +357,6 @@ async function sendFormWithRefresh(forceRefresh) {
       alert(
         "Formato de tag de invocador inválido. Por favor, use o formato 'Nome#TAG'."
       );
-      // Remove o loading se a validação falhar
       refreshDataButton.disabled = false;
       refreshDataButton.innerHTML = `Atualizar Histórico`;
       refreshDataButton.classList.remove('loading');
@@ -415,10 +411,11 @@ async function sendFormWithRefresh(forceRefresh) {
     }
     showElement(aiResponse);
   } finally {
-    // Sempre remove o estado de loading ao final
-    refreshDataButton.disabled = false;
-    refreshDataButton.innerHTML = `Atualizar Histórico`;
-    refreshDataButton.classList.remove('loading');
+    if (forceRefresh) {
+      refreshDataButton.disabled = false;
+      refreshDataButton.innerHTML = `Atualizar Histórico`;
+      refreshDataButton.classList.remove('loading');
+    }
 
     askButton.disabled = false;
     askButton.textContent = "Perguntar";

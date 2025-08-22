@@ -263,7 +263,6 @@ section h2 {
   background-color: #5d5868;
 }
 
-/* NOVO: ESTADO DE LOADING PARA OS BOTÕES */
 #refreshDataButton.loading {
   cursor: not-allowed;
   color: transparent;
