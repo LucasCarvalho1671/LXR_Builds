@@ -81,7 +81,8 @@ O usuário está jogando Teamfight Tactics. A análise deve focar em composiçõ
       break;
     case "delta":
       prompt += `\n\n### Contexto Adicional:
-O usuário está jogando Delta Force. A análise deve focar em estratégias de combate, classes de operadores, itens e armas ideais para cada situação e dicas de rotação no mapa. Se o usuário perguntar sobre builds de armas, deve informar os componentes e o código referente para importar no jogo. Se o modo de jogo não for mencionado, assuma o modo "Conquista".
+O usuário está jogando Delta Force. A análise deve focar em estratégias de combate, classes de operadores, itens e armas ideais para cada situação e dicas de rotação no mapa. Se o usuário perguntar sobre builds de armas, deve informar os componentes e o código referente para importar no jogo, utilize as ferramentas de consulta para dar uma resposta correta e um codigo valido. Exemplo de um codigo valido para a arma AK-12 "Fuzil de assalto AK-12-Conquista-6H6PVIO05HUE92EIHDOCA"
+Se o modo de jogo não for mencionado, assuma o modo "Conquista".
 `;
       break;
     default:
