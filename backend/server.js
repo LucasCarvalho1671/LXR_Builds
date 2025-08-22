@@ -16,6 +16,9 @@ app.use(express.static(path.join(__dirname, "public")));
 const API_KEY = process.env.GEMINI_API_KEY;
 const RIOT_API_KEY = process.env.RIOT_API_KEY;
 
+// Adicionado para depuração: verifica se a chave da Riot está sendo lida.
+console.log("[DEBUG] Valor da RIOT_API_KEY:", RIOT_API_KEY);
+
 if (!API_KEY || !RIOT_API_KEY) {
   console.error(
     "Erro: Chaves de API não configuradas. Verifique seu arquivo .env."
