@@ -29,7 +29,11 @@ if (!API_KEY || !RIOT_API_KEY) {
 
 // Configuração da IA
 const genAI = new GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
+
+// Objeto de cache simples
+const summonerCache = {};
+const CACHE_LIFETIME = 10 * 60 * 1000; // 10 minutos em milissegundos
 
 // Mapeamento de regiões de servidor para regiões de roteamento da API da Riot
 const regionMapping = {
@@ -48,10 +52,30 @@ const regionMapping = {
 
 // Rota para a comunicação com a API do Gemini
 app.post("/api/gemini-ask", async (req, res) => {
-  const { game, question, summonerName, summonerTag, platformRegion } =
-    req.body;
+  const { game, question, summonerName, summonerTag, platformRegion, forceRefresh } = req.body;
 
   if (game === "lol" && summonerName && summonerTag && platformRegion) {
+    const cacheKey = `${summonerName.toLowerCase()}${summonerTag.toLowerCase()}`;
+    const cachedData = summonerCache[cacheKey];
+
+    if (cachedData && Date.now() - cachedData.timestamp < CACHE_LIFETIME && !forceRefresh) {
+      console.log("Usando dados do cache para o invocador:", cacheKey);
+      const summonerInfo = cachedData.data;
+      const prompt = getPromptForGame(game, question, summonerInfo);
+
+      try {
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+        return res.json({ response: text });
+      } catch (error) {
+        console.error("Erro ao gerar conteúdo com a IA:", error.message);
+        return res.status(500).json({
+          error: "Ocorreu um erro ao processar sua solicitação com a IA. Tente novamente mais tarde.",
+        });
+      }
+    }
+
     try {
       const routingRegion = regionMapping[platformRegion.toLowerCase()];
       if (!routingRegion) {
@@ -61,10 +85,7 @@ app.post("/api/gemini-ask", async (req, res) => {
       }
 
       // Requisição 1: Obter PUUID
-      const riotApiUrlAccount = `https://${routingRegion}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${summonerName}/${summonerTag.replace(
-        "#",
-        ""
-      )}`;
+      const riotApiUrlAccount = `https://${routingRegion}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${summonerName}/${summonerTag.replace("#", "")}`;
       const riotResponseAccount = await axios.get(riotApiUrlAccount, {
         headers: {
           "X-Riot-Token": RIOT_API_KEY,
@@ -100,7 +121,6 @@ app.post("/api/gemini-ask", async (req, res) => {
               error.response?.status,
               error.message
             );
-            // Continua para a próxima partida mesmo se uma falhar
           }
         }
       }
@@ -111,6 +131,11 @@ app.post("/api/gemini-ask", async (req, res) => {
         platformRegion,
         puuid,
         matchHistory,
+      };
+
+      summonerCache[cacheKey] = {
+        timestamp: Date.now(),
+        data: summonerInfo,
       };
 
       const prompt = getPromptForGame(game, question, summonerInfo);
@@ -127,7 +152,6 @@ app.post("/api/gemini-ask", async (req, res) => {
       );
 
       if (error.response) {
-        // Erros de status da API da Riot
         switch (error.response.status) {
           case 403:
             return res.status(403).json({
@@ -150,14 +174,12 @@ app.post("/api/gemini-ask", async (req, res) => {
         }
       }
 
-      // Outros erros
       return res.status(500).json({
         error:
           "Ocorreu um erro ao processar sua solicitação. Verifique o console do servidor para mais detalhes.",
       });
     }
   } else {
-    // Lógica para outros jogos ou LoL sem informações de invocador
     try {
       const summonerInfo = null;
       const prompt = getPromptForGame(game, question, summonerInfo);

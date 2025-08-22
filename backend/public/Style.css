@@ -247,6 +247,23 @@ section h2 {
   animation: none;
 }
 
+#refreshDataButton {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #4a4552;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#refreshDataButton:hover {
+  background-color: #5d5868;
+}
+
 .ai-response {
   margin-top: 2rem;
 }

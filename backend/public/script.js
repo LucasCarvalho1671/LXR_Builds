@@ -14,6 +14,7 @@ const lolSpecificFields = document.getElementById("lolSpecificFields");
 const summonerNameInput = document.getElementById("summonerNameInput");
 const summonerTagInput = document.getElementById("summonerTagInput");
 const platformRegionDisplay = document.getElementById("platformRegionDisplay");
+const refreshDataButton = document.getElementById("refreshDataButton");
 
 const blurBackgroundOverlay = document.getElementById("blurBackgroundOverlay");
 
@@ -174,11 +175,9 @@ btnNoSummoner.addEventListener("click", () => {
   showMainFormArea("lol", "./img/lol_capa.jpg");
 });
 
-// Listener para preencher o campo de região automaticamente
 summonerTagInput.addEventListener("input", () => {
   let tag = summonerTagInput.value.trim();
 
-  // Adiciona o '#' se não estiver presente
   if (tag && tag.charAt(0) !== "#") {
     tag = "#" + tag;
   }
@@ -195,16 +194,21 @@ summonerTagInput.addEventListener("input", () => {
   platformRegionDisplay.value = regionName;
 });
 
-aiForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+refreshDataButton.addEventListener("click", () => {
+  sendFormWithRefresh(true);
+});
 
+aiForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  sendFormWithRefresh(false);
+});
+
+async function sendFormWithRefresh(forceRefresh) {
   const question = questionInput.value.trim();
-  const summonerName = wantsSummonerInfo
-    ? summonerNameInput.value.trim()
-    : null;
+  const summonerName = wantsSummonerInfo ? summonerNameInput.value.trim() : null;
   let summonerTag = wantsSummonerInfo ? summonerTagInput.value.trim() : null;
 
-  if (question === "") {
+  if (question === "" && !forceRefresh) {
     alert("Por favor, digite sua pergunta.");
     return;
   }
@@ -231,13 +235,13 @@ aiForm.addEventListener("submit", async (e) => {
   const requestBody = {
     game: selectedGame,
     question: question,
+    forceRefresh: forceRefresh,
   };
 
   if (selectedGame === "lol" && wantsSummonerInfo) {
-    // Adiciona o '#' se o usuário não o tiver digitado
     if (summonerTag && summonerTag.charAt(0) !== "#") {
       summonerTag = "#" + summonerTag;
-      summonerTagInput.value = summonerTag; // Atualiza o campo de input
+      summonerTagInput.value = summonerTag;
     }
 
     const regionMatch = summonerTag.match(/#(.*)$/);
@@ -291,7 +295,7 @@ aiForm.addEventListener("submit", async (e) => {
     askButton.textContent = "Perguntar";
     askButton.classList.remove("loading");
   }
-});
+}
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {

@@ -29,7 +29,8 @@ function getPromptForGame(game, question, summonerInfo = null) {
           }
         });
       } else {
-        prompt += "\nO histórico de partidas do invocador não foi encontrado ou está vazio.";
+        prompt +=
+          "\nO histórico de partidas do invocador não foi encontrado ou está vazio.";
       }
     }
   } else if (game === "valorant") {
