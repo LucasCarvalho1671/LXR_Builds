@@ -435,3 +435,23 @@ section h2 {
   font-size: 0.8rem;
   color: #a1a1a1;
 }
+
+.rank-display-container {
+  background-color: #1f1d24;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.rank-display-container h3 {
+  color: #9572fc;
+  margin-bottom: 0.5rem;
+}
+
+.rank-display-container .rank-info p {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #e1e1e6;
+  text-transform: capitalize;
+}
