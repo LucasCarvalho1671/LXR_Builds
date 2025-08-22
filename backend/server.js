@@ -9,7 +9,7 @@ const path = require("path");
 require("dotenv").config();
 
 const app = express();
-const PORT = process.env.env || 3000;
+const PORT = process.env.PORT || 3000;
 
 // Configuração do Express
 app.use(express.json());
@@ -29,7 +29,7 @@ if (!API_KEY || !RIOT_API_KEY) {
 
 // Configuração da IA
 const genAI = new GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 // Mapeamento de regiões de servidor para regiões de roteamento da API da Riot
 const regionMapping = {
@@ -53,7 +53,6 @@ app.post("/api/gemini-ask", async (req, res) => {
 
   if (game === "lol" && summonerName && summonerTag && platformRegion) {
     try {
-      // 1. Obter a região de roteamento a partir da região do servidor
       const routingRegion = regionMapping[platformRegion.toLowerCase()];
       if (!routingRegion) {
         return res.status(400).json({
@@ -61,7 +60,7 @@ app.post("/api/gemini-ask", async (req, res) => {
         });
       }
 
-      // 2. Usar a região de roteamento para obter o PUUID
+      // Requisição 1: Obter PUUID
       const riotApiUrlAccount = `https://${routingRegion}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${summonerName}/${summonerTag.replace(
         "#",
         ""
@@ -74,7 +73,7 @@ app.post("/api/gemini-ask", async (req, res) => {
 
       const puuid = riotResponseAccount.data.puuid;
 
-      // 3. Buscar os IDs das partidas mais recentes
+      // Requisição 2: Buscar os IDs das partidas mais recentes
       const riotApiUrlMatches = `https://${routingRegion}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=5`;
       const riotResponseMatches = await axios.get(riotApiUrlMatches, {
         headers: {
@@ -83,16 +82,27 @@ app.post("/api/gemini-ask", async (req, res) => {
       });
       const matchIds = riotResponseMatches.data;
 
-      // 4. Buscar os detalhes de cada partida
+      // Requisição 3: Buscar os detalhes de cada partida
       const matchHistory = [];
-      for (const matchId of matchIds) {
-        const riotApiUrlMatch = `https://${routingRegion}.api.riotgames.com/lol/match/v5/matches/${matchId}`;
-        const riotResponseMatch = await axios.get(riotApiUrlMatch, {
-          headers: {
-            "X-Riot-Token": RIOT_API_KEY,
-          },
-        });
-        matchHistory.push(riotResponseMatch.data);
+      if (matchIds && matchIds.length > 0) {
+        for (const matchId of matchIds) {
+          try {
+            const riotApiUrlMatch = `https://${routingRegion}.api.riotgames.com/lol/match/v5/matches/${matchId}`;
+            const riotResponseMatch = await axios.get(riotApiUrlMatch, {
+              headers: {
+                "X-Riot-Token": RIOT_API_KEY,
+              },
+            });
+            matchHistory.push(riotResponseMatch.data);
+          } catch (error) {
+            console.error(
+              `Erro ao buscar detalhes da partida ${matchId}:`,
+              error.response?.status,
+              error.message
+            );
+            // Continua para a próxima partida mesmo se uma falhar
+          }
+        }
       }
 
       const summonerInfo = {
@@ -100,7 +110,7 @@ app.post("/api/gemini-ask", async (req, res) => {
         summonerTag,
         platformRegion,
         puuid,
-        matchHistory, // Agora contém os detalhes completos
+        matchHistory,
       };
 
       const prompt = getPromptForGame(game, question, summonerInfo);
@@ -112,18 +122,38 @@ app.post("/api/gemini-ask", async (req, res) => {
       return res.json({ response: text });
     } catch (error) {
       console.error(
-        "Erro ao obter resposta:",
+        "Erro na cadeia de requisições:",
         error.response?.data || error.message
       );
-      if (error.response?.status === 404) {
-        return res.status(404).json({
-          error:
-            "Invocador não encontrado. Por favor, verifique o nome e a tag.",
-        });
+
+      if (error.response) {
+        // Erros de status da API da Riot
+        switch (error.response.status) {
+          case 403:
+            return res.status(403).json({
+              error: "Sua chave de API da Riot está inválida ou expirou.",
+            });
+          case 404:
+            return res.status(404).json({
+              error:
+                "Invocador não encontrado. Por favor, verifique o nome e a tag.",
+            });
+          case 429:
+            return res.status(429).json({
+              error:
+                "Limite de requisições à API da Riot excedido. Tente novamente em um minuto.",
+            });
+          default:
+            return res.status(error.response.status).json({
+              error: `Erro da API da Riot: ${error.response.status}. Tente novamente mais tarde.`,
+            });
+        }
       }
+
+      // Outros erros
       return res.status(500).json({
         error:
-          "Ocorreu um erro ao processar sua solicitação. Tente novamente mais tarde.",
+          "Ocorreu um erro ao processar sua solicitação. Verifique o console do servidor para mais detalhes.",
       });
     }
   } else {

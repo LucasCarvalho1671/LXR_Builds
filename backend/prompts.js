@@ -7,31 +7,30 @@ function getPromptForGame(game, question, summonerInfo = null) {
   if (game === "lol") {
     prompt += `\nO usuário está jogando League of Legends.`;
     if (summonerInfo) {
-      // Formata os dados das partidas para um formato legível pela IA
-      let matchHistoryText = "";
+      prompt += `\nInformações do Invocador:\n- Nome: ${summonerInfo.summonerName}\n- Tag: ${summonerInfo.summonerTag}\n- Região: ${summonerInfo.platformRegion}\n`;
+
       if (summonerInfo.matchHistory && summonerInfo.matchHistory.length > 0) {
-        matchHistoryText = "\n\nDados das últimas 5 partidas do invocador:\n";
+        prompt += "\nDados das últimas 5 partidas do invocador:\n";
         summonerInfo.matchHistory.forEach((match, index) => {
-          // Extrair informações relevantes para o invocador
           const participant = match.info.participants.find(
             (p) => p.puuid === summonerInfo.puuid
           );
           if (participant) {
-            matchHistoryText += `\nPartida ${index + 1}:\n`;
-            matchHistoryText += `- Resultado: ${
+            prompt += `\nPartida ${index + 1}:\n`;
+            prompt += `- Resultado: ${
               participant.win ? "Vitória" : "Derrota"
             }\n`;
-            matchHistoryText += `- Campeão: ${participant.championName}\n`;
-            matchHistoryText += `- KDA: ${participant.kills}/${participant.deaths}/${participant.assists}\n`;
-            matchHistoryText += `- Dano Causado: ${participant.totalDamageDealtToChampions}\n`;
-            matchHistoryText += `- Ouro Ganhado: ${participant.goldEarned}\n`;
-            matchHistoryText += `- Posição: ${participant.individualPosition}\n`;
-            matchHistoryText += `\n`;
+            prompt += `- Campeão: ${participant.championName}\n`;
+            prompt += `- KDA: ${participant.kills}/${participant.deaths}/${participant.assists}\n`;
+            prompt += `- Dano Causado: ${participant.totalDamageDealtToChampions}\n`;
+            prompt += `- Ouro Ganhado: ${participant.goldEarned}\n`;
+            prompt += `- Posição: ${participant.individualPosition}\n`;
+            prompt += `\n`;
           }
         });
+      } else {
+        prompt += "\nO histórico de partidas do invocador não foi encontrado ou está vazio.";
       }
-
-      prompt += `\nInformações do Invocador:\n- Nome: ${summonerInfo.summonerName}\n- Tag: ${summonerInfo.summonerTag}\n- Região: ${summonerInfo.platformRegion}\n${matchHistoryText}\n`;
     }
   } else if (game === "valorant") {
     prompt += `\nO usuário está jogando Valorant.`;
