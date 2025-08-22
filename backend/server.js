@@ -103,15 +103,9 @@ app.post("/api/gemini-ask", async (req, res) => {
       const summonerId = summonerIdResponse.data.id;
       const summonerLevel = summonerIdResponse.data.summonerLevel;
 
-      const leagueUrl = `https://${platformRegion}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}?api_key=${RIOT_API_KEY}`;
-      console.log(`[DEBUG] Requisição para Elo/Liga: ${leagueUrl}`);
-      const leagueResponse = await axios.get(leagueUrl);
-      const rankedSoloDuo = leagueResponse.data.find(
-        (entry) => entry.queueType === "RANKED_SOLO_5x5"
-      );
-
-      const tier = rankedSoloDuo ? rankedSoloDuo.tier : "Unranked";
-      const rank = rankedSoloDuo ? rankedSoloDuo.rank : "";
+      // Código para obter Elo/Liga removido
+      const tier = null;
+      const rank = null;
 
       console.log(
         `[LOG] Buscando histórico de partidas para o invocador ${summonerName}...`
