@@ -24,7 +24,6 @@ const headerContent = document.querySelector("header");
 const questionFormContainer = document.getElementById("questionFormContainer");
 const matchSummaryContainer = document.getElementById("matchSummaryContainer");
 const matchSummaryInfo = document.getElementById("matchSummaryInfo");
-// NOVA CONSTANTE
 const matchSummaryTitle = document.getElementById("matchSummaryTitle");
 const matchCountInput = document.getElementById("matchCountInput");
 
@@ -225,12 +224,15 @@ summonerTagInput.addEventListener("input", () => {
   platformRegionDisplay.value = regionName;
 });
 
+// Listener para o botão "Atualizar Histórico"
 refreshDataButton.addEventListener("click", () => {
   sendFormWithRefresh(true);
 });
 
+// Listener para o formulário principal
 aiForm.addEventListener("submit", (e) => {
   e.preventDefault();
+  // Se os dados não foram carregados, o botão de perguntar age como o de atualizar.
   if (!summonerDataLoaded) {
     sendFormWithRefresh(true);
   } else {
@@ -238,9 +240,9 @@ aiForm.addEventListener("submit", (e) => {
   }
 });
 
+// Função para exibir as estatísticas do invocador
 function displaySummonerData(summonerInfo) {
   const matchCount = summonerInfo.matchHistory.length;
-  // ATUALIZA O TÍTULO COM O NÚMERO DE PARTIDAS
   matchSummaryTitle.textContent = `Resumo das Últimas ${matchCount} Partidas:`;
 
   if (!summonerInfo || !summonerInfo.matchHistory || matchCount === 0) {
@@ -297,11 +299,11 @@ function displaySummonerData(summonerInfo) {
   `;
 }
 
+// Função centralizada para enviar o formulário
 async function sendFormWithRefresh(forceRefresh) {
   const question = questionInput.value.trim();
   const summonerName = wantsSummonerInfo ? summonerNameInput.value.trim() : null;
   let summonerTag = wantsSummonerInfo ? summonerTagInput.value.trim() : null;
-  // NOVA VARIÁVEL PARA O NÚMERO DE PARTIDAS
   const matchCount = matchCountInput.value;
 
   const isInitialFetch = !question && wantsSummonerInfo;
@@ -316,11 +318,17 @@ async function sendFormWithRefresh(forceRefresh) {
       return;
   }
 
-  askButton.disabled = true;
-  askButton.textContent = isInitialFetch ? "Buscando dados..." : "Perguntando...";
-  askButton.classList.add("loading");
+  // Se o botão de atualização for clicado, mostra o spinner nele
+  if (forceRefresh) {
+    refreshDataButton.disabled = true;
+    refreshDataButton.innerHTML = `<div class="spinner"></div>`;
+    refreshDataButton.classList.add('loading');
+  }
   
   if (!isInitialFetch) {
+    askButton.disabled = true;
+    askButton.textContent = "Perguntando...";
+    askButton.classList.add("loading");
     aiResponse.querySelector(".response-content").innerHTML = `
       <div class="loading-container">
         <div class="spinner"></div>
@@ -352,16 +360,17 @@ async function sendFormWithRefresh(forceRefresh) {
       alert(
         "Formato de tag de invocador inválido. Por favor, use o formato 'Nome#TAG'."
       );
-      askButton.disabled = false;
-      askButton.textContent = "Perguntar";
-      askButton.classList.remove("loading");
+      // Remove o loading se a validação falhar
+      refreshDataButton.disabled = false;
+      refreshDataButton.innerHTML = `Atualizar Histórico`;
+      refreshDataButton.classList.remove('loading');
       return;
     }
 
     requestBody.summonerName = summonerName;
     requestBody.summonerTag = summonerTag;
     requestBody.platformRegion = platformRegion;
-    requestBody.matchCount = matchCount; // ADICIONA O NÚMERO DE PARTIDAS AO CORPO DA REQUISIÇÃO
+    requestBody.matchCount = matchCount;
   }
 
   try {
@@ -397,11 +406,20 @@ async function sendFormWithRefresh(forceRefresh) {
 
   } catch (error) {
     console.error("Erro ao obter resposta da IA:", error);
-    aiResponse.querySelector(
-      ".response-content"
-    ).innerHTML = `<p style="color: red;">Ocorreu um erro: ${error.message}. Tente novamente mais tarde.</p>`;
+    if (isInitialFetch) {
+      matchSummaryInfo.innerHTML = `<p style="color: red;">Ocorreu um erro: ${error.message}.</p>`;
+    } else {
+      aiResponse.querySelector(
+        ".response-content"
+      ).innerHTML = `<p style="color: red;">Ocorreu um erro: ${error.message}. Tente novamente mais tarde.</p>`;
+    }
     showElement(aiResponse);
   } finally {
+    // Sempre remove o estado de loading ao final
+    refreshDataButton.disabled = false;
+    refreshDataButton.innerHTML = `Atualizar Histórico`;
+    refreshDataButton.classList.remove('loading');
+
     askButton.disabled = false;
     askButton.textContent = "Perguntar";
     askButton.classList.remove("loading");

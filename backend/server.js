@@ -84,7 +84,6 @@ app.post("/api/gemini-ask", async (req, res) => {
 
       const puuid = riotResponseAccount.data.puuid;
 
-      // ATUALIZA A CHAMADA DA API COM O NOVO PARÂMETRO 'matchCount'
       const riotApiUrlMatches = `https://${routingRegion}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=${matchCount}`;
       const riotResponseMatches = await axios.get(riotApiUrlMatches, {
         headers: {
