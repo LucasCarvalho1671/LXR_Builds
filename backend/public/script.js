@@ -13,7 +13,7 @@ const btnNoSummoner = document.getElementById("btnNoSummoner");
 const lolSpecificFields = document.getElementById("lolSpecificFields");
 const summonerNameInput = document.getElementById("summonerNameInput");
 const summonerTagInput = document.getElementById("summonerTagInput");
-const platformRegionDisplay = document.getElementById("platformRegionDisplay"); // Novo campo de display
+const platformRegionDisplay = document.getElementById("platformRegionDisplay");
 
 const blurBackgroundOverlay = document.getElementById("blurBackgroundOverlay");
 
@@ -56,7 +56,6 @@ const gameSuggestions = {
   ],
 };
 
-// Mapeamento de códigos de região para nomes de exibição
 const displayRegionMapping = {
   br1: "Brasil",
   na1: "América do Norte",
@@ -177,12 +176,18 @@ btnNoSummoner.addEventListener("click", () => {
 
 // Listener para preencher o campo de região automaticamente
 summonerTagInput.addEventListener("input", () => {
-  const tag = summonerTagInput.value.trim();
-  const regionMatch = tag.match(/^(#)?(.*)$/);
+  let tag = summonerTagInput.value.trim();
+
+  // Adiciona o '#' se não estiver presente
+  if (tag && tag.charAt(0) !== "#") {
+    tag = "#" + tag;
+  }
+
+  const regionMatch = tag.match(/#(.*)$/);
 
   let platformRegion = null;
-  if (regionMatch && regionMatch[2]) {
-    platformRegion = regionMatch[2].toLowerCase();
+  if (regionMatch && regionMatch[1]) {
+    platformRegion = regionMatch[1].toLowerCase();
   }
 
   const regionName =
@@ -197,7 +202,7 @@ aiForm.addEventListener("submit", async (e) => {
   const summonerName = wantsSummonerInfo
     ? summonerNameInput.value.trim()
     : null;
-  const summonerTag = wantsSummonerInfo ? summonerTagInput.value.trim() : null;
+  let summonerTag = wantsSummonerInfo ? summonerTagInput.value.trim() : null;
 
   if (question === "") {
     alert("Por favor, digite sua pergunta.");
@@ -229,6 +234,12 @@ aiForm.addEventListener("submit", async (e) => {
   };
 
   if (selectedGame === "lol" && wantsSummonerInfo) {
+    // Adiciona o '#' se o usuário não o tiver digitado
+    if (summonerTag && summonerTag.charAt(0) !== "#") {
+      summonerTag = "#" + summonerTag;
+      summonerTagInput.value = summonerTag; // Atualiza o campo de input
+    }
+
     const regionMatch = summonerTag.match(/#(.*)$/);
     let platformRegion = null;
     if (regionMatch && regionMatch[1]) {

@@ -1,159 +1,152 @@
-// 1. Carrega as variáveis de ambiente do arquivo .env
+// server.js
+
+// Importações necessárias
+const express = require("express");
+const axios = require("axios");
+const { getPromptForGame } = require("./prompts.js");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const path = require("path");
 require("dotenv").config();
 
-// 2. Importa os módulos necessários
-const express = require("express");
-const cors = require("cors");
-const axios = require("axios");
-const path = require("path");
-const { getPromptForGame } = require("./prompts.js"); // Importa a lógica dos prompts
-
-// 3. Inicializa o aplicativo Express
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.env || 3000;
 
-// 4. Configura middlewares
-app.use(cors());
+// Configuração do Express
 app.use(express.json());
-
-// Adiciona esta linha para servir arquivos estáticos da pasta 'public'
 app.use(express.static(path.join(__dirname, "public")));
 
-// 5. Acessa as chaves de API das variáveis de ambiente
+// Chaves de API
+const API_KEY = process.env.GEMINI_API_KEY;
 const RIOT_API_KEY = process.env.RIOT_API_KEY;
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-// Verifica se as chaves de API estão definidas
-if (!RIOT_API_KEY) {
+// Verificação das chaves de API
+if (!API_KEY || !RIOT_API_KEY) {
   console.error(
-    "Erro: A variável de ambiente RIOT_API_KEY não está definida no arquivo .env"
-  );
-}
-
-if (!GEMINI_API_KEY) {
-  console.error(
-    "Erro: A variável de ambiente GEMINI_API_KEY não está definida no arquivo .env"
+    "Erro: Chaves de API não configuradas. Verifique seu arquivo .env."
   );
   process.exit(1);
-} else {
-  console.log("Variável GEMINI_API_KEY carregada com sucesso.");
 }
 
-// 6. Define a rota para a comunicação com a API do Gemini
+// Configuração da IA
+const genAI = new GoogleGenerativeAI(API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
+
+// Mapeamento de regiões de servidor para regiões de roteamento da API da Riot
+const regionMapping = {
+  br1: "americas",
+  na1: "americas",
+  euw1: "europe",
+  eun1: "europe",
+  la1: "americas",
+  la2: "americas",
+  kr: "asia",
+  jp1: "asia",
+  oc1: "sea",
+  ru: "europe",
+  tr1: "europe",
+};
+
+// Rota para a comunicação com a API do Gemini
 app.post("/api/gemini-ask", async (req, res) => {
   const { game, question, summonerName, summonerTag, platformRegion } =
     req.body;
-  const summonerInfo =
-    summonerName && summonerTag && platformRegion
-      ? { summonerName, summonerTag, platformRegion }
-      : null;
-  const prompt = getPromptForGame(game, question, summonerInfo);
 
-  if (prompt.includes("não consegui")) {
-    return res.status(400).json({ error: prompt });
-  }
-
-  try {
-    const geminiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-
-    const tools = [
-      {
-        google_search: {},
-      },
-    ];
-
-    const response = await axios.post(
-      geminiURL,
-      {
-        contents: [
-          {
-            parts: [{ text: prompt }],
-          },
-        ],
-        tools,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const geminiResponse = response.data.candidates[0].content.parts[0].text;
-    res.json({ response: geminiResponse });
-  } catch (error) {
-    let errorMessage = "Erro desconhecido ao se comunicar com a API do Gemini.";
-
-    if (error.response) {
-      console.error("Erro de resposta da API do Gemini:", error.response.data);
-      if (error.response.data.error && error.response.data.error.message) {
-        errorMessage = `Erro da API: ${error.response.data.error.message}`;
-      } else {
-        errorMessage = `Erro do servidor: ${error.response.status} - ${error.response.statusText}`;
-      }
-    } else if (error.request) {
-      console.error("Erro de requisição para a API do Gemini:", error.request);
-      errorMessage = "A requisição para a API do Gemini não obteve resposta.";
-    } else {
-      console.error("Erro geral:", error.message);
-      errorMessage = `Erro interno: ${error.message}`;
-    }
-
-    res.status(500).json({ error: errorMessage });
-  }
-});
-
-// 7. Rotas para a API da Riot Games
-app.get(
-  "/api/lol/puuid/:gameName/:tagLine/:platformRegion",
-  async (req, res) => {
-    const { gameName, tagLine, platformRegion } = req.params;
-    const url = `https://${platformRegion}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${gameName}/${tagLine}`;
-
+  if (game === "lol" && summonerName && summonerTag && platformRegion) {
     try {
-      const response = await axios.get(url, {
+      // 1. Obter a região de roteamento a partir da região do servidor
+      const routingRegion = regionMapping[platformRegion.toLowerCase()];
+      if (!routingRegion) {
+        return res.status(400).json({
+          error: "Região do invocador inválida. Por favor, verifique a tag.",
+        });
+      }
+
+      // 2. Usar a região de roteamento para obter o PUUID
+      const riotApiUrlAccount = `https://${routingRegion}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${summonerName}/${summonerTag.replace(
+        "#",
+        ""
+      )}`;
+      const riotResponseAccount = await axios.get(riotApiUrlAccount, {
         headers: {
           "X-Riot-Token": RIOT_API_KEY,
         },
       });
-      res.json(response.data);
+
+      const puuid = riotResponseAccount.data.puuid;
+
+      // 3. Buscar os IDs das partidas mais recentes
+      const riotApiUrlMatches = `https://${routingRegion}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=5`;
+      const riotResponseMatches = await axios.get(riotApiUrlMatches, {
+        headers: {
+          "X-Riot-Token": RIOT_API_KEY,
+        },
+      });
+      const matchIds = riotResponseMatches.data;
+
+      // 4. Buscar os detalhes de cada partida
+      const matchHistory = [];
+      for (const matchId of matchIds) {
+        const riotApiUrlMatch = `https://${routingRegion}.api.riotgames.com/lol/match/v5/matches/${matchId}`;
+        const riotResponseMatch = await axios.get(riotApiUrlMatch, {
+          headers: {
+            "X-Riot-Token": RIOT_API_KEY,
+          },
+        });
+        matchHistory.push(riotResponseMatch.data);
+      }
+
+      const summonerInfo = {
+        summonerName,
+        summonerTag,
+        platformRegion,
+        puuid,
+        matchHistory, // Agora contém os detalhes completos
+      };
+
+      const prompt = getPromptForGame(game, question, summonerInfo);
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+
+      return res.json({ response: text });
     } catch (error) {
       console.error(
-        "Erro na busca do PUUID:",
+        "Erro ao obter resposta:",
         error.response?.data || error.message
       );
-      res.status(error.response?.status || 500).json({
+      if (error.response?.status === 404) {
+        return res.status(404).json({
+          error:
+            "Invocador não encontrado. Por favor, verifique o nome e a tag.",
+        });
+      }
+      return res.status(500).json({
         error:
-          "Erro ao buscar informações do invocador. Verifique o nome/tag e a chave da API da Riot.",
+          "Ocorreu um erro ao processar sua solicitação. Tente novamente mais tarde.",
+      });
+    }
+  } else {
+    // Lógica para outros jogos ou LoL sem informações de invocador
+    try {
+      const summonerInfo = null;
+      const prompt = getPromptForGame(game, question, summonerInfo);
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+
+      return res.json({ response: text });
+    } catch (error) {
+      console.error("Erro ao obter resposta da IA:", error);
+      return res.status(500).json({
+        error:
+          "Ocorreu um erro ao processar sua solicitação. Tente novamente mais tarde.",
       });
     }
   }
-);
-
-app.get("/api/lol/match-history/:puuid/:platformRegion", async (req, res) => {
-  const { puuid, platformRegion } = req.params;
-  const url = `https://${platformRegion}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids`;
-
-  try {
-    const response = await axios.get(url, {
-      headers: {
-        "X-Riot-Token": RIOT_API_KEY,
-      },
-    });
-    res.json(response.data);
-  } catch (error) {
-    console.error(
-      "Erro na busca do histórico de partidas:",
-      error.response?.data || error.message
-    );
-    res.status(error.response?.status || 500).json({
-      error:
-        "Erro ao buscar histórico de partidas. Verifique o PUUID e a região.",
-    });
-  }
 });
 
-// 8. Inicia o servidor e o faz escutar na porta definida
 app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
+  console.log(`Servidor rodando na porta ${PORT}`);
 });

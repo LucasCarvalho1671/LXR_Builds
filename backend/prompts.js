@@ -1,79 +1,54 @@
 // prompts.js
 
-// Lógica de prompts para cada jogo
-const getPromptForGame = (game, question, summonerInfo) => {
-  const date = new Date().toLocaleDateString();
+function getPromptForGame(game, question, summonerInfo = null) {
+  let prompt = `Você é um assistente de IA focado em jogos. Sua missão é responder às perguntas dos usuários com base no seu conhecimento de jogo. Seja amigável, útil e objetivo. Se a pergunta for sobre um jogo para o qual você não tem informações de contexto, responda com base no seu conhecimento geral. Se a pergunta for sobre um jogo específico e informações de invocador forem fornecidas, use esses dados para dar uma resposta personalizada e precisa.
+    \n\n---`;
 
-  const basePrompt = `
-    ## Especialidade
-    Você é um assistente especializado em meta e estratégias para o jogo ${game}.
-
-    ## Tarefa
-    Você deve responder as perguntas do usuário com base no seu conhecimento do jogo, estratégias, builds, composições e dicas. Use suas ferramentas para obter informações atualizadas, se necessário.
-
-    ## Regras
-    - Se você não sabe a resposta, responda com 'Não sei' e não tente inventar uma resposta.
-    - Se a pergunta não está relacionada ao jogo, responda com 'Essa pergunta não está relacionada ao jogo'.
-    - Considere a data atual ${date}.
-    - Faça pesquisas atualizadas sobre o patch atual, baseado na data atual, para dar uma resposta coerente.
-    - Nunca responda itens que você não tenha certeza de que existe no patch atual.
-    - Seja direto e objetivo.
-    - Não precisa fazer saudação ou despedida.
-    - A resposta deve ser formatada em Markdown.
-    - Verificar se o jogo tem mecanicas de temporada, se caso tiver, levar em consideração o a temporada atual.
-  `;
-
-  // Padronize os nomes dos jogos para minúsculas
   if (game === "lol") {
-    let summonerSection = "";
-    if (summonerInfo && summonerInfo.summonerName && summonerInfo.summonerTag) {
-      summonerSection = `
-        ## Informações de Invocador
-        - Nome: ${summonerInfo.summonerName}
-        - Tag: ${summonerInfo.summonerTag}
-        - Região: ${summonerInfo.platformRegion}
-        - OBSERVAÇÃO: Use essas informações para obter dados do invocador através de suas ferramentas e analisar o perfil do usuário para responder à pergunta.
-      `;
+    prompt += `\nO usuário está jogando League of Legends.`;
+    if (summonerInfo) {
+      // Formata os dados das partidas para um formato legível pela IA
+      let matchHistoryText = "";
+      if (summonerInfo.matchHistory && summonerInfo.matchHistory.length > 0) {
+        matchHistoryText = "\n\nDados das últimas 5 partidas do invocador:\n";
+        summonerInfo.matchHistory.forEach((match, index) => {
+          // Extrair informações relevantes para o invocador
+          const participant = match.info.participants.find(
+            (p) => p.puuid === summonerInfo.puuid
+          );
+          if (participant) {
+            matchHistoryText += `\nPartida ${index + 1}:\n`;
+            matchHistoryText += `- Resultado: ${
+              participant.win ? "Vitória" : "Derrota"
+            }\n`;
+            matchHistoryText += `- Campeão: ${participant.championName}\n`;
+            matchHistoryText += `- KDA: ${participant.kills}/${participant.deaths}/${participant.assists}\n`;
+            matchHistoryText += `- Dano Causado: ${participant.totalDamageDealtToChampions}\n`;
+            matchHistoryText += `- Ouro Ganhado: ${participant.goldEarned}\n`;
+            matchHistoryText += `- Posição: ${participant.individualPosition}\n`;
+            matchHistoryText += `\n`;
+          }
+        });
+      }
+
+      prompt += `\nInformações do Invocador:\n- Nome: ${summonerInfo.summonerName}\n- Tag: ${summonerInfo.summonerTag}\n- Região: ${summonerInfo.platformRegion}\n${matchHistoryText}\n`;
     }
-
-    return `${basePrompt}
-      ${summonerSection}
-      ---
-      Pergunta do usuário: ${question}
-    `;
+  } else if (game === "valorant") {
+    prompt += `\nO usuário está jogando Valorant.`;
+  } else if (game === "bdo") {
+    prompt += `\nO usuário está jogando Black Desert Online.`;
+  } else if (game === "tft") {
+    prompt += `\nO usuário está jogando Teamfight Tactics.`;
+  } else if (game === "delta") {
+    prompt += `\nO usuário está jogando Delta Force.`;
   }
 
-  // Lógica para os outros jogos
-  if (game === "valorant") {
-    return `${basePrompt}
-      ---
-      Pergunta do usuário: ${question}
-    `;
-  }
+  prompt += `\n\n---`;
+  prompt += `\n\nPergunta do usuário:\n${question}`;
 
-  if (game === "tft") {
-    return `${basePrompt}
-      ---
-      Pergunta do usuário: ${question}
-    `;
-  }
+  return prompt;
+}
 
-  if (game === "bdo") {
-    return `${basePrompt}
-      ---
-      Pergunta do usuário: ${question}
-    `;
-  }
-
-  if (game === "delta") {
-    return `${basePrompt}
-      ---
-      Pergunta do usuário: ${question}
-    `;
-  }
-
-  // Caso o jogo não seja encontrado
-  return "não consegui encontrar a logica para o jogo";
+module.exports = {
+  getPromptForGame,
 };
-
-module.exports = { getPromptForGame };
