@@ -121,6 +121,31 @@ const showMainFormArea = (game, image) => {
   updateSuggestedQuestions();
 };
 
+const updateSuggestedQuestions = () => {
+  let suggestions = [];
+  if (selectedGame === "lol" && wantsSummonerInfo && summonerDataLoaded) {
+    suggestions = gameSuggestions.lolSummoner || [];
+  } else {
+    suggestions = gameSuggestions[selectedGame] || [];
+  }
+
+  suggestedQuestionsList.innerHTML = "";
+  if (suggestions.length > 0) {
+    suggestions.forEach((suggestion) => {
+      const button = document.createElement("button");
+      button.textContent = suggestion;
+      button.classList.add("suggested-question-button");
+      button.addEventListener("click", () => {
+        questionInput.value = suggestion;
+      });
+      suggestedQuestionsList.appendChild(button);
+    });
+    showElement(suggestedQuestionsContainer);
+  } else {
+    hideElement(suggestedQuestionsContainer);
+  }
+};
+
 const resetToGameSelection = () => {
   selectedGame = "";
   wantsSummonerInfo = false;
@@ -349,17 +374,14 @@ async function sendFormWithRefresh(forceRefresh) {
       showElement(questionFormContainer);
       showElement(rankDisplayContainer);
       hideElement(aiResponse);
-      updateSuggestedQuestions();
+      // Chamada adicionada aqui para exibir as perguntas sugeridas após o carregamento dos dados do invocador
+      updateSuggestedQuestions(); 
     } else {
       aiResponse.querySelector(".response-content").innerHTML = markdownToHTML(
         data.response
       );
       showElement(aiResponse);
     }
-    
-    // Novo código adicionado para rolagem
-    aiResponse.scrollIntoView({ behavior: 'smooth' });
-
   } catch (error) {
     console.error("Erro ao obter resposta da IA:", error);
     if (isInitialFetch) {
@@ -370,10 +392,6 @@ async function sendFormWithRefresh(forceRefresh) {
       ).innerHTML = `<p style="color: red;">Ocorreu um erro: ${error.message}. Tente novamente mais tarde.</p>`;
     }
     showElement(aiResponse);
-    
-    // Novo código adicionado para rolagem em caso de erro
-    aiResponse.scrollIntoView({ behavior: 'smooth' });
-
   } finally {
     if (forceRefresh) {
       refreshDataButton.disabled = false;
