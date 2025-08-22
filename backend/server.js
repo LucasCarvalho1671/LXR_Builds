@@ -17,7 +17,10 @@ const API_KEY = process.env.GEMINI_API_KEY;
 const RIOT_API_KEY = process.env.RIOT_API_KEY;
 
 // Adicionado para depuração: verifica se a chave da Riot está sendo lida.
-console.log("[DEBUG] Valor da RIOT_API_KEY:", RIOT_API_KEY);
+console.log(
+  "[DEBUG] Valor da RIOT_API_KEY:",
+  RIOT_API_KEY ? "Chave carregada" : "Chave não encontrada"
+);
 
 if (!API_KEY || !RIOT_API_KEY) {
   console.error(
@@ -88,18 +91,22 @@ app.post("/api/gemini-ask", async (req, res) => {
       console.log(
         `[LOG] Buscando dados do invocador ${summonerName} na Riot API...`
       );
+
       const summonerUrl = `https://${platformRegion}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${summonerName}/${summonerTag}?api_key=${RIOT_API_KEY}`;
+      console.log(`[DEBUG] Requisição para Invocador: ${summonerUrl}`);
       const summonerResponse = await axios.get(summonerUrl);
       const puuid = summonerResponse.data.puuid;
       console.log(`[LOG] PUUID do invocador ${summonerName}: ${puuid}`);
 
       const lolRegion = regionMapping[platformRegion];
       const summonerIdUrl = `https://${platformRegion}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}?api_key=${RIOT_API_KEY}`;
+      console.log(`[DEBUG] Requisição para ID do Invocador: ${summonerIdUrl}`);
       const summonerIdResponse = await axios.get(summonerIdUrl);
       const summonerId = summonerIdResponse.data.id;
       const summonerLevel = summonerIdResponse.data.summonerLevel;
 
       const leagueUrl = `https://${platformRegion}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}?api_key=${RIOT_API_KEY}`;
+      console.log(`[DEBUG] Requisição para Elo/Liga: ${leagueUrl}`);
       const leagueResponse = await axios.get(leagueUrl);
       const rankedSoloDuo = leagueResponse.data.find(
         (entry) => entry.queueType === "RANKED_SOLO_5x5"
@@ -112,6 +119,9 @@ app.post("/api/gemini-ask", async (req, res) => {
         `[LOG] Buscando histórico de partidas para o invocador ${summonerName}...`
       );
       const matchHistoryUrl = `https://${lolRegion}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=${matchCount}&api_key=${RIOT_API_KEY}`;
+      console.log(
+        `[DEBUG] Requisição para Histórico de Partidas: ${matchHistoryUrl}`
+      );
       const matchHistoryResponse = await axios.get(matchHistoryUrl);
       const matchIds = matchHistoryResponse.data;
       console.log(`[LOG] Encontradas ${matchIds.length} partidas.`);
