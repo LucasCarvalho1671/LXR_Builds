@@ -29,7 +29,7 @@ if (!API_KEY || !RIOT_API_KEY) {
 
 // Configuração da IA
 const genAI = new GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 // Objeto de cache simples
 const summonerCache = {};
@@ -52,13 +52,24 @@ const regionMapping = {
 
 // Rota para a comunicação com a API do Gemini
 app.post("/api/gemini-ask", async (req, res) => {
-  const { game, question, summonerName, summonerTag, platformRegion, forceRefresh } = req.body;
+  const {
+    game,
+    question,
+    summonerName,
+    summonerTag,
+    platformRegion,
+    forceRefresh,
+  } = req.body;
 
   if (game === "lol" && summonerName && summonerTag && platformRegion) {
     const cacheKey = `${summonerName.toLowerCase()}${summonerTag.toLowerCase()}`;
     const cachedData = summonerCache[cacheKey];
 
-    if (cachedData && Date.now() - cachedData.timestamp < CACHE_LIFETIME && !forceRefresh) {
+    if (
+      cachedData &&
+      Date.now() - cachedData.timestamp < CACHE_LIFETIME &&
+      !forceRefresh
+    ) {
       console.log("Usando dados do cache para o invocador:", cacheKey);
       const summonerInfo = cachedData.data;
       const prompt = getPromptForGame(game, question, summonerInfo);
@@ -71,7 +82,8 @@ app.post("/api/gemini-ask", async (req, res) => {
       } catch (error) {
         console.error("Erro ao gerar conteúdo com a IA:", error.message);
         return res.status(500).json({
-          error: "Ocorreu um erro ao processar sua solicitação com a IA. Tente novamente mais tarde.",
+          error:
+            "Ocorreu um erro ao processar sua solicitação com a IA. Tente novamente mais tarde.",
         });
       }
     }
@@ -85,7 +97,10 @@ app.post("/api/gemini-ask", async (req, res) => {
       }
 
       // Requisição 1: Obter PUUID
-      const riotApiUrlAccount = `https://${routingRegion}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${summonerName}/${summonerTag.replace("#", "")}`;
+      const riotApiUrlAccount = `https://${routingRegion}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${summonerName}/${summonerTag.replace(
+        "#",
+        ""
+      )}`;
       const riotResponseAccount = await axios.get(riotApiUrlAccount, {
         headers: {
           "X-Riot-Token": RIOT_API_KEY,
