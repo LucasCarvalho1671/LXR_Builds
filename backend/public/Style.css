@@ -44,7 +44,6 @@ main {
   transition: filter 0.3s ease-in-out, pointer-events 0.3s ease-in-out;
 }
 
-/* Efeito de blur para quando o modal está ativo */
 .blur-content {
   filter: blur(5px);
   pointer-events: none;
@@ -89,7 +88,6 @@ section h2 {
   display: none;
 }
 
-/* --- ESTILOS PARA A SELEÇÃO DE JOGOS (CORRIGIDOS) --- */
 #gameSelectionSection > div > div {
   display: flex;
   flex-wrap: wrap;
@@ -143,12 +141,10 @@ section h2 {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
-/* --- ESTILOS MELHORADOS DO FORMULÁRIO --- */
 .main-form-area {
   margin-top: 1rem;
 }
 
-/* Estilo melhorado para o display do jogo selecionado */
 #selectedGameDisplay {
   background-size: cover;
   background-position: center;
@@ -175,7 +171,6 @@ section h2 {
   z-index: -1;
 }
 
-/* Estilo para o botão de voltar */
 #backButton {
   background: none;
   border: none;
@@ -284,7 +279,6 @@ section h2 {
   font-size: 0.9375rem;
 }
 
-/* Estilos para o modal de pergunta sobre invocador */
 .modal {
   position: fixed;
   top: 50%;
@@ -337,7 +331,6 @@ section h2 {
   background-color: #cbbd4b;
 }
 
-/* Sugestões de Perguntas */
 .suggested-questions-container {
   background-color: #1f1d24;
   border-radius: 0.5rem;
@@ -372,7 +365,6 @@ section h2 {
   background-color: #4a4552;
 }
 
-/* Feedback visual durante o carregamento */
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -396,4 +388,41 @@ section h2 {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* NOVOS ESTILOS PARA O RESUMO DE PARTIDAS */
+.match-summary-container {
+  background-color: #1f1d24;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 1.5rem;
+}
+
+.match-summary-container h3 {
+  text-align: center;
+  color: #43e7ad;
+  margin-bottom: 0.75rem;
+}
+
+.match-summary-container .summary-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  text-align: center;
+}
+
+.match-summary-container .summary-item {
+  background-color: #3a3642;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+}
+
+.match-summary-container .summary-item p {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.match-summary-container .summary-item span {
+  font-size: 0.8rem;
+  color: #a1a1a1;
 }

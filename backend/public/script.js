@@ -21,8 +21,13 @@ const blurBackgroundOverlay = document.getElementById("blurBackgroundOverlay");
 const mainContent = document.querySelector("main");
 const headerContent = document.querySelector("header");
 
+const questionFormContainer = document.getElementById("questionFormContainer");
+const matchSummaryContainer = document.getElementById("matchSummaryContainer");
+const matchSummaryInfo = document.getElementById("matchSummaryInfo");
+
 let selectedGame = "";
 let wantsSummonerInfo = false;
+let summonerDataLoaded = false;
 
 const gameSuggestions = {
   lol: [
@@ -30,6 +35,12 @@ const gameSuggestions = {
     "Como jogar de caçador no LoL?",
     "Melhores itens para o campeão X?",
     "Análise o meta atual!",
+  ],
+  lolSummoner: [
+    "Como foi minha última partida?",
+    "Quais erros cometi nas minhas últimas partidas?",
+    "Por que perdi minhas últimas partidas?",
+    "Qual meu desempenho com o campeão X recentemente?",
   ],
   valorant: [
     "Melhores agentes para iniciantes no Valorant.",
@@ -99,8 +110,17 @@ const showMainFormArea = (game, image) => {
   hideElement(gameSelectionSection);
   showElement(mainFormArea);
   setBackgroundImage(image);
+  updateSuggestedQuestions();
+};
 
-  const suggestions = gameSuggestions[game] || [];
+const updateSuggestedQuestions = () => {
+  let suggestions = [];
+  if (selectedGame === "lol" && wantsSummonerInfo && summonerDataLoaded) {
+    suggestions = gameSuggestions.lolSummoner || [];
+  } else {
+    suggestions = gameSuggestions[selectedGame] || [];
+  }
+
   suggestedQuestionsList.innerHTML = "";
   if (suggestions.length > 0) {
     suggestions.forEach((suggestion) => {
@@ -121,11 +141,14 @@ const showMainFormArea = (game, image) => {
 const resetToGameSelection = () => {
   selectedGame = "";
   wantsSummonerInfo = false;
+  summonerDataLoaded = false;
   hideElement(mainFormArea);
   hideElement(aiResponse);
   showElement(gameSelectionSection);
   setBackgroundImage("./img/bg.jpg");
   hideElement(lolSpecificFields);
+  hideElement(questionFormContainer);
+  hideElement(matchSummaryContainer);
 
   mainContent.classList.remove("blur-content");
   headerContent.classList.remove("blur-content");
@@ -160,11 +183,14 @@ btnYesSummoner.addEventListener("click", () => {
   headerContent.classList.remove("blur-content");
 
   showElement(lolSpecificFields);
+  hideElement(questionFormContainer);
+  hideElement(matchSummaryContainer);
   showMainFormArea("lol", "./img/lol_capa.jpg");
 });
 
 btnNoSummoner.addEventListener("click", () => {
   wantsSummonerInfo = false;
+  summonerDataLoaded = true;
   hideElement(summonerQuestionModal);
   hideElement(blurBackgroundOverlay);
 
@@ -173,6 +199,8 @@ btnNoSummoner.addEventListener("click", () => {
 
   hideElement(lolSpecificFields);
   showMainFormArea("lol", "./img/lol_capa.jpg");
+  showElement(questionFormContainer);
+  hideElement(matchSummaryContainer);
 });
 
 summonerTagInput.addEventListener("input", () => {
@@ -200,37 +228,98 @@ refreshDataButton.addEventListener("click", () => {
 
 aiForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  sendFormWithRefresh(false);
+  if (!summonerDataLoaded) {
+    sendFormWithRefresh(true);
+  } else {
+    sendFormWithRefresh(false);
+  }
 });
+
+function displaySummonerData(summonerInfo) {
+  if (!summonerInfo || !summonerInfo.matchHistory || summonerInfo.matchHistory.length === 0) {
+    matchSummaryInfo.innerHTML = "<p>Nenhum histórico de partida encontrado.</p>";
+    return;
+  }
+
+  const matchHistory = summonerInfo.matchHistory;
+  let totalKills = 0;
+  let totalDeaths = 0;
+  let totalAssists = 0;
+  let totalDamage = 0;
+  let totalGold = 0;
+  let totalCs = 0;
+
+  matchHistory.forEach(match => {
+    const participant = match.info.participants.find(p => p.puuid === summonerInfo.puuid);
+    if (participant) {
+      totalKills += participant.kills;
+      totalDeaths += participant.deaths;
+      totalAssists += participant.assists;
+      totalDamage += participant.totalDamageDealtToChampions;
+      totalGold += participant.goldEarned;
+      totalCs += (participant.totalMinionsKilled + participant.neutralMinionsKilled);
+    }
+  });
+
+  const numMatches = matchHistory.length;
+  const avgKills = (totalKills / numMatches).toFixed(1);
+  const avgDeaths = (totalDeaths / numMatches).toFixed(1);
+  const avgAssists = (totalAssists / numMatches).toFixed(1);
+  const avgKDA = (totalKills + totalAssists) / Math.max(1, totalDeaths);
+  const avgDamage = (totalDamage / numMatches).toLocaleString('pt-BR');
+  const avgGold = (totalGold / numMatches).toLocaleString('pt-BR');
+  const avgCs = (totalCs / numMatches).toFixed(1);
+
+  matchSummaryInfo.innerHTML = `
+    <div class="summary-item">
+      <p>${avgKDA.toFixed(2)}</p>
+      <span>KDA Médio</span>
+    </div>
+    <div class="summary-item">
+      <p>${avgDamage}</p>
+      <span>Dano Médio</span>
+    </div>
+    <div class="summary-item">
+      <p>${avgGold}</p>
+      <span>Ouro Médio</span>
+    </div>
+    <div class="summary-item">
+      <p>${avgCs}</p>
+      <span>CS Médio</span>
+    </div>
+  `;
+}
 
 async function sendFormWithRefresh(forceRefresh) {
   const question = questionInput.value.trim();
   const summonerName = wantsSummonerInfo ? summonerNameInput.value.trim() : null;
   let summonerTag = wantsSummonerInfo ? summonerTagInput.value.trim() : null;
 
-  if (question === "" && !forceRefresh) {
-    alert("Por favor, digite sua pergunta.");
+  const isInitialFetch = !question && wantsSummonerInfo;
+  
+  if (isInitialFetch && (!summonerName || !summonerTag)) {
+    alert("Por favor, preencha o nome e a tag do invocador.");
     return;
   }
-
-  if (selectedGame === "lol" && wantsSummonerInfo) {
-    if (summonerName === "" || summonerTag === "") {
-      alert("Por favor, preencha o nome e a tag do invocador.");
+  
+  if (question === "" && !isInitialFetch) {
+      alert("Por favor, digite sua pergunta.");
       return;
-    }
   }
 
   askButton.disabled = true;
-  askButton.textContent = "Perguntando...";
+  askButton.textContent = isInitialFetch ? "Buscando dados..." : "Perguntando...";
   askButton.classList.add("loading");
-
-  aiResponse.querySelector(".response-content").innerHTML = `
-    <div class="loading-container">
-      <div class="spinner"></div>
-      <p>Gerando resposta... Por favor, aguarde.</p>
-    </div>
-  `;
-  showElement(aiResponse);
+  
+  if (!isInitialFetch) {
+    aiResponse.querySelector(".response-content").innerHTML = `
+      <div class="loading-container">
+        <div class="spinner"></div>
+        <p>Gerando resposta... Por favor, aguarde.</p>
+      </div>
+    `;
+    showElement(aiResponse);
+  }
 
   const requestBody = {
     game: selectedGame,
@@ -280,10 +369,22 @@ async function sendFormWithRefresh(forceRefresh) {
     }
 
     const data = await response.json();
-    aiResponse.querySelector(".response-content").innerHTML = markdownToHTML(
-      data.response
-    );
-    showElement(aiResponse);
+
+    if (isInitialFetch) {
+      const summonerInfo = data;
+      displaySummonerData(summonerInfo);
+      summonerDataLoaded = true;
+      showElement(matchSummaryContainer);
+      showElement(questionFormContainer);
+      hideElement(aiResponse);
+      updateSuggestedQuestions();
+    } else {
+      aiResponse.querySelector(".response-content").innerHTML = markdownToHTML(
+        data.response
+      );
+      showElement(aiResponse);
+    }
+
   } catch (error) {
     console.error("Erro ao obter resposta da IA:", error);
     aiResponse.querySelector(

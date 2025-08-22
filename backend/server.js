@@ -1,6 +1,5 @@
 // server.js
 
-// Importações necessárias
 const express = require("express");
 const axios = require("axios");
 const { getPromptForGame } = require("./prompts.js");
@@ -11,15 +10,12 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configuração do Express
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-// Chaves de API
 const API_KEY = process.env.GEMINI_API_KEY;
 const RIOT_API_KEY = process.env.RIOT_API_KEY;
 
-// Verificação das chaves de API
 if (!API_KEY || !RIOT_API_KEY) {
   console.error(
     "Erro: Chaves de API não configuradas. Verifique seu arquivo .env."
@@ -27,15 +23,12 @@ if (!API_KEY || !RIOT_API_KEY) {
   process.exit(1);
 }
 
-// Configuração da IA
 const genAI = new GoogleGenerativeAI(API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-// Objeto de cache simples
 const summonerCache = {};
-const CACHE_LIFETIME = 10 * 60 * 1000; // 10 minutos em milissegundos
+const CACHE_LIFETIME = 10 * 60 * 1000;
 
-// Mapeamento de regiões de servidor para regiões de roteamento da API da Riot
 const regionMapping = {
   br1: "americas",
   na1: "americas",
@@ -50,41 +43,27 @@ const regionMapping = {
   tr1: "europe",
 };
 
-// Rota para a comunicação com a API do Gemini
 app.post("/api/gemini-ask", async (req, res) => {
-  const {
-    game,
-    question,
-    summonerName,
-    summonerTag,
-    platformRegion,
-    forceRefresh,
-  } = req.body;
+  const { game, question, summonerName, summonerTag, platformRegion, forceRefresh } = req.body;
 
   if (game === "lol" && summonerName && summonerTag && platformRegion) {
     const cacheKey = `${summonerName.toLowerCase()}${summonerTag.toLowerCase()}`;
     const cachedData = summonerCache[cacheKey];
 
-    if (
-      cachedData &&
-      Date.now() - cachedData.timestamp < CACHE_LIFETIME &&
-      !forceRefresh
-    ) {
+    const isInitialFetch = !question;
+    
+    if (cachedData && Date.now() - cachedData.timestamp < CACHE_LIFETIME && !forceRefresh) {
       console.log("Usando dados do cache para o invocador:", cacheKey);
       const summonerInfo = cachedData.data;
-      const prompt = getPromptForGame(game, question, summonerInfo);
 
-      try {
+      if (isInitialFetch) {
+        return res.json(summonerInfo);
+      } else {
+        const prompt = getPromptForGame(game, question, summonerInfo);
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const text = response.text();
         return res.json({ response: text });
-      } catch (error) {
-        console.error("Erro ao gerar conteúdo com a IA:", error.message);
-        return res.status(500).json({
-          error:
-            "Ocorreu um erro ao processar sua solicitação com a IA. Tente novamente mais tarde.",
-        });
       }
     }
 
@@ -96,11 +75,7 @@ app.post("/api/gemini-ask", async (req, res) => {
         });
       }
 
-      // Requisição 1: Obter PUUID
-      const riotApiUrlAccount = `https://${routingRegion}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${summonerName}/${summonerTag.replace(
-        "#",
-        ""
-      )}`;
+      const riotApiUrlAccount = `https://${routingRegion}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${summonerName}/${summonerTag.replace("#", "")}`;
       const riotResponseAccount = await axios.get(riotApiUrlAccount, {
         headers: {
           "X-Riot-Token": RIOT_API_KEY,
@@ -109,7 +84,6 @@ app.post("/api/gemini-ask", async (req, res) => {
 
       const puuid = riotResponseAccount.data.puuid;
 
-      // Requisição 2: Buscar os IDs das partidas mais recentes
       const riotApiUrlMatches = `https://${routingRegion}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=5`;
       const riotResponseMatches = await axios.get(riotApiUrlMatches, {
         headers: {
@@ -118,7 +92,6 @@ app.post("/api/gemini-ask", async (req, res) => {
       });
       const matchIds = riotResponseMatches.data;
 
-      // Requisição 3: Buscar os detalhes de cada partida
       const matchHistory = [];
       if (matchIds && matchIds.length > 0) {
         for (const matchId of matchIds) {
@@ -153,13 +126,15 @@ app.post("/api/gemini-ask", async (req, res) => {
         data: summonerInfo,
       };
 
-      const prompt = getPromptForGame(game, question, summonerInfo);
-
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-
-      return res.json({ response: text });
+      if (isInitialFetch) {
+        return res.json(summonerInfo);
+      } else {
+        const prompt = getPromptForGame(game, question, summonerInfo);
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+        return res.json({ response: text });
+      }
     } catch (error) {
       console.error(
         "Erro na cadeia de requisições:",

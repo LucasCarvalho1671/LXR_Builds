@@ -113,11 +113,7 @@
           <div class="lol-fields hidden" id="lolSpecificFields">
             <div class="input-group">
               <label for="summonerNameInput">Nome de Invocador:</label>
-              <input
-                type="text"
-                id="summonerNameInput"
-                placeholder="Nome do Invocador"
-              />
+              <input type="text" id="summonerNameInput" placeholder="Nome do Invocador" />
             </div>
             <div class="input-group">
               <label for="summonerTagInput">Tag de Invocador:</label>
@@ -137,31 +133,35 @@
                 Atualizar Histórico
               </button>
             </div>
+            
+            <div class="match-summary-container hidden" id="matchSummaryContainer">
+              <h3>Resumo das Últimas Partidas:</h3>
+              <div class="summary-info" id="matchSummaryInfo"></div>
+            </div>
           </div>
 
-          <div
-            class="suggested-questions-container hidden"
-            id="suggestedQuestionsContainer"
-          >
-            <h3>Perguntas Sugeridas:</h3>
+          <div class="question-form-container hidden" id="questionFormContainer">
             <div
-              class="suggested-questions-list"
-              id="suggestedQuestionsList"
-            ></div>
-          </div>
-
-          <form id="aiForm">
-            <div class="input-group">
-              <label for="questionInput">Faça sua pergunta:</label>
-              <textarea
-                id="questionInput"
-                rows="4"
-                placeholder="Ex: Qual a melhor build ?"
-              ></textarea>
+              class="suggested-questions-container hidden"
+              id="suggestedQuestionsContainer"
+            >
+              <h3>Perguntas Sugeridas:</h3>
+              <div class="suggested-questions-list" id="suggestedQuestionsList"></div>
             </div>
 
-            <button type="submit" id="askButton">Perguntar</button>
-          </form>
+            <form id="aiForm">
+              <div class="input-group">
+                <label for="questionInput">Faça sua pergunta:</label>
+                <textarea
+                  id="questionInput"
+                  rows="4"
+                  placeholder="Ex: Qual a melhor build ?"
+                ></textarea>
+              </div>
+
+              <button type="submit" id="askButton">Perguntar</button>
+            </form>
+          </div>
 
           <div class="ai-response hidden" id="aiResponse">
             <h2>Resposta do Assistente:</h2>
