@@ -89,9 +89,9 @@ section h2 {
   display: none;
 }
 
-/* --- CORREÇÃO DO LAYOUT DA SELEÇÃO DE JOGOS --- */
+/* --- ESTILOS PARA A SELEÇÃO DE JOGOS (CORRIGIDOS) --- */
 #gameSelectionSection > div > div {
-  display: flex; /* Usamos flexbox para mais controle */
+  display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   justify-content: center;
@@ -99,8 +99,8 @@ section h2 {
 }
 
 .game-card {
-  width: 150px; /* Largura fixa para cada card */
-  height: 180px; /* Altura fixa */
+  width: 150px;
+  height: 180px;
   background-color: #1f1d24;
   border: 2px solid transparent;
   border-radius: 0.5rem;
@@ -109,48 +109,88 @@ section h2 {
   cursor: pointer;
   transition: transform 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
-  text-align: center;
-  user-select: none;
-  background-size: cover;
-  background-position: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adiciona uma sombra para destacar */
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.game-card img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.2s ease-in-out;
 }
 
 .game-card:hover {
   transform: scale(1.05);
   border-color: #e2d45c;
-  box-shadow: 0 0 15px rgba(226, 212, 92, 0.7); /* Sombra amarela no hover */
+  box-shadow: 0 0 15px rgba(226, 212, 92, 0.7);
 }
 
 .game-card span {
-  position: absolute;
-  bottom: 0.5rem;
+  position: relative;
   z-index: 1;
   background-color: rgba(0, 0, 0, 0.6);
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
   font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
-/* --- FIM DA SEÇÃO DE CORREÇÕES --- */
 
-/* Componentes do formulário */
+/* --- ESTILOS MELHORADOS DO FORMULÁRIO --- */
 .main-form-area {
   margin-top: 1rem;
 }
 
+/* Estilo melhorado para o display do jogo selecionado */
 #selectedGameDisplay {
   background-size: cover;
   background-position: center;
-  padding: 1rem;
+  padding: 1.5rem;
   border-radius: 0.5rem;
   text-align: center;
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 0;
+  color: white;
+}
+
+#selectedGameDisplay::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: -1;
+}
+
+/* Estilo para o botão de voltar */
+#backButton {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  transition: color 0.2s ease;
+  align-self: flex-start;
+}
+
+#backButton:hover {
+  color: #e2d45c;
 }
 
 .input-group {

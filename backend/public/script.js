@@ -13,24 +13,16 @@ const btnNoSummoner = document.getElementById("btnNoSummoner");
 const lolSpecificFields = document.getElementById("lolSpecificFields");
 const summonerNameInput = document.getElementById("summonerNameInput");
 const summonerTagInput = document.getElementById("summonerTagInput");
-const platformRegionSelect = document.getElementById("platformRegionSelect");
-const suggestedQuestionsContainer = document.getElementById(
-  "suggestedQuestionsContainer"
-);
-const suggestedQuestionsList = document.getElementById(
-  "suggestedQuestionsList"
-);
+const platformRegionDisplay = document.getElementById("platformRegionDisplay"); // Novo campo de display
 
 const blurBackgroundOverlay = document.getElementById("blurBackgroundOverlay");
 
-// Adicionando referências aos elementos principais para o efeito de blur
-const mainContent = document.querySelector('main');
-const headerContent = document.querySelector('header');
+const mainContent = document.querySelector("main");
+const headerContent = document.querySelector("header");
 
 let selectedGame = "";
 let wantsSummonerInfo = false;
 
-// Objeto com as perguntas sugeridas para cada jogo
 const gameSuggestions = {
   lol: [
     "Melhor build para Ahri mid?",
@@ -62,6 +54,21 @@ const gameSuggestions = {
     "Onde encontro as melhores comunidades de Delta Force?",
     "Quais as melhores estratégias para o mapa X?",
   ],
+};
+
+// Mapeamento de códigos de região para nomes de exibição
+const displayRegionMapping = {
+  br1: "Brasil",
+  na1: "América do Norte",
+  euw1: "Europa Ocidental",
+  eun1: "Europa Nórdica e Oriental",
+  la1: "América Latina Norte",
+  la2: "América Latina Sul",
+  kr: "Coreia",
+  jp1: "Japão",
+  oc1: "Oceania",
+  ru: "Rússia",
+  tr1: "Turquia",
 };
 
 const markdownToHTML = (text) => {
@@ -119,13 +126,11 @@ const resetToGameSelection = () => {
   showElement(gameSelectionSection);
   setBackgroundImage("./img/bg.jpg");
   hideElement(lolSpecificFields);
-  
-  // CORREÇÃO: Remove a classe de blur
-  mainContent.classList.remove('blur-content');
-  headerContent.classList.remove('blur-content');
+
+  mainContent.classList.remove("blur-content");
+  headerContent.classList.remove("blur-content");
 };
 
-// Event listener para as capas de jogo
 document.querySelectorAll(".game-card").forEach((card) => {
   card.addEventListener("click", () => {
     const game = card.dataset.game;
@@ -134,10 +139,9 @@ document.querySelectorAll(".game-card").forEach((card) => {
     if (game === "lol") {
       showElement(summonerQuestionModal);
       showElement(blurBackgroundOverlay);
-      
-      // CORREÇÃO: Adiciona a classe de blur aos elementos corretos
-      mainContent.classList.add('blur-content');
-      headerContent.classList.add('blur-content');
+
+      mainContent.classList.add("blur-content");
+      headerContent.classList.add("blur-content");
     } else {
       hideElement(lolSpecificFields);
       showMainFormArea(game, image);
@@ -151,10 +155,9 @@ btnYesSummoner.addEventListener("click", () => {
   wantsSummonerInfo = true;
   hideElement(summonerQuestionModal);
   hideElement(blurBackgroundOverlay);
-  
-  // CORREÇÃO: Remove a classe de blur
-  mainContent.classList.remove('blur-content');
-  headerContent.classList.remove('blur-content');
+
+  mainContent.classList.remove("blur-content");
+  headerContent.classList.remove("blur-content");
 
   showElement(lolSpecificFields);
   showMainFormArea("lol", "./img/lol_capa.jpg");
@@ -164,33 +167,54 @@ btnNoSummoner.addEventListener("click", () => {
   wantsSummonerInfo = false;
   hideElement(summonerQuestionModal);
   hideElement(blurBackgroundOverlay);
-  
-  // CORREÇÃO: Remove a classe de blur
-  mainContent.classList.remove('blur-content');
-  headerContent.classList.remove('blur-content');
+
+  mainContent.classList.remove("blur-content");
+  headerContent.classList.remove("blur-content");
 
   hideElement(lolSpecificFields);
   showMainFormArea("lol", "./img/lol_capa.jpg");
+});
+
+// Listener para preencher o campo de região automaticamente
+summonerTagInput.addEventListener("input", () => {
+  const tag = summonerTagInput.value.trim();
+  const regionMatch = tag.match(/^(#)?(.*)$/);
+
+  let platformRegion = null;
+  if (regionMatch && regionMatch[2]) {
+    platformRegion = regionMatch[2].toLowerCase();
+  }
+
+  const regionName =
+    displayRegionMapping[platformRegion] || "Região desconhecida";
+  platformRegionDisplay.value = regionName;
 });
 
 aiForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const question = questionInput.value.trim();
-  const summonerName = wantsSummonerInfo ? summonerNameInput.value.trim() : null;
+  const summonerName = wantsSummonerInfo
+    ? summonerNameInput.value.trim()
+    : null;
   const summonerTag = wantsSummonerInfo ? summonerTagInput.value.trim() : null;
-  const platformRegion = wantsSummonerInfo ? platformRegionSelect.value : null;
 
   if (question === "") {
     alert("Por favor, digite sua pergunta.");
     return;
   }
 
+  if (selectedGame === "lol" && wantsSummonerInfo) {
+    if (summonerName === "" || summonerTag === "") {
+      alert("Por favor, preencha o nome e a tag do invocador.");
+      return;
+    }
+  }
+
   askButton.disabled = true;
   askButton.textContent = "Perguntando...";
   askButton.classList.add("loading");
 
-  // Feedback visual de carregamento
   aiResponse.querySelector(".response-content").innerHTML = `
     <div class="loading-container">
       <div class="spinner"></div>
@@ -205,8 +229,16 @@ aiForm.addEventListener("submit", async (e) => {
   };
 
   if (selectedGame === "lol" && wantsSummonerInfo) {
-    if (summonerName === "" || summonerTag === "") {
-      alert("Por favor, preencha o nome e a tag do invocador.");
+    const regionMatch = summonerTag.match(/#(.*)$/);
+    let platformRegion = null;
+    if (regionMatch && regionMatch[1]) {
+      platformRegion = regionMatch[1].toLowerCase();
+    }
+
+    if (!platformRegion) {
+      alert(
+        "Formato de tag de invocador inválido. Por favor, use o formato 'Nome#TAG'."
+      );
       askButton.disabled = false;
       askButton.textContent = "Perguntar";
       askButton.classList.remove("loading");
@@ -250,7 +282,6 @@ aiForm.addEventListener("submit", async (e) => {
   }
 });
 
-// Registro do Service Worker (para PWA)
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
