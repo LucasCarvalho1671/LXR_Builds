@@ -77,8 +77,10 @@ O usuário está jogando Teamfight Tactics. A análise deve focar em composiçõ
     prompt += `\n\n---`;
     prompt += `\n\n### Contexto Adicional:
 O usuário está jogando Delta Force. A análise deve focar em estratégias de combate, classes de operadores, itens e armas ideais para cada situação e dicas de rotação no mapa.
-Se o usuario nao informar o mod de jogo, sempre considerar o modo conquista. 
-No jogo e possivel importar codigo de composição de armas, entao sempre que indicar uma arma deve indicar tambem um codigo para importação  
+Se o usuario perguntar sobre builds de armas, deve informar os componentes e o codigo referente para o usuario importar no jogo.
+Se indicar uma arma deve tambem deve tambem indicar um codigo referente.
+Se o usuario nao mencionar o modo de jogo levar sempre em consideração o modo Conquista.
+
 `;
   }
 
