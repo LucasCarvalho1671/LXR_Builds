@@ -10,7 +10,7 @@ function getPromptForGame(game, question, summonerInfo = null) {
       prompt += `\nInformações do Invocador:\n- Nome: ${summonerInfo.summonerName}\n- Tag: ${summonerInfo.summonerTag}\n- Região: ${summonerInfo.platformRegion}\n`;
 
       if (summonerInfo.matchHistory && summonerInfo.matchHistory.length > 0) {
-        prompt += "\nDados das últimas 5 partidas do invocador:\n";
+        prompt += `\nDados das últimas ${summonerInfo.matchHistory.length} partidas do invocador:\n`;
         summonerInfo.matchHistory.forEach((match, index) => {
           const participant = match.info.participants.find(
             (p) => p.puuid === summonerInfo.puuid

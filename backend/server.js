@@ -40,14 +40,14 @@ const regionMapping = {
   jp1: "asia",
   oc1: "sea",
   ru: "europe",
-  tr1: "europe",
+  tr1: "turkey",
 };
 
 app.post("/api/gemini-ask", async (req, res) => {
-  const { game, question, summonerName, summonerTag, platformRegion, forceRefresh } = req.body;
+  const { game, question, summonerName, summonerTag, platformRegion, forceRefresh, matchCount = 5 } = req.body;
 
   if (game === "lol" && summonerName && summonerTag && platformRegion) {
-    const cacheKey = `${summonerName.toLowerCase()}${summonerTag.toLowerCase()}`;
+    const cacheKey = `${summonerName.toLowerCase()}${summonerTag.toLowerCase()}-${matchCount}`;
     const cachedData = summonerCache[cacheKey];
 
     const isInitialFetch = !question;
@@ -84,7 +84,8 @@ app.post("/api/gemini-ask", async (req, res) => {
 
       const puuid = riotResponseAccount.data.puuid;
 
-      const riotApiUrlMatches = `https://${routingRegion}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=5`;
+      // ATUALIZA A CHAMADA DA API COM O NOVO PARÂMETRO 'matchCount'
+      const riotApiUrlMatches = `https://${routingRegion}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=${matchCount}`;
       const riotResponseMatches = await axios.get(riotApiUrlMatches, {
         headers: {
           "X-Riot-Token": RIOT_API_KEY,

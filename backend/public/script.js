@@ -24,6 +24,9 @@ const headerContent = document.querySelector("header");
 const questionFormContainer = document.getElementById("questionFormContainer");
 const matchSummaryContainer = document.getElementById("matchSummaryContainer");
 const matchSummaryInfo = document.getElementById("matchSummaryInfo");
+// NOVA CONSTANTE
+const matchSummaryTitle = document.getElementById("matchSummaryTitle");
+const matchCountInput = document.getElementById("matchCountInput");
 
 let selectedGame = "";
 let wantsSummonerInfo = false;
@@ -236,7 +239,11 @@ aiForm.addEventListener("submit", (e) => {
 });
 
 function displaySummonerData(summonerInfo) {
-  if (!summonerInfo || !summonerInfo.matchHistory || summonerInfo.matchHistory.length === 0) {
+  const matchCount = summonerInfo.matchHistory.length;
+  // ATUALIZA O TÍTULO COM O NÚMERO DE PARTIDAS
+  matchSummaryTitle.textContent = `Resumo das Últimas ${matchCount} Partidas:`;
+
+  if (!summonerInfo || !summonerInfo.matchHistory || matchCount === 0) {
     matchSummaryInfo.innerHTML = "<p>Nenhum histórico de partida encontrado.</p>";
     return;
   }
@@ -294,6 +301,8 @@ async function sendFormWithRefresh(forceRefresh) {
   const question = questionInput.value.trim();
   const summonerName = wantsSummonerInfo ? summonerNameInput.value.trim() : null;
   let summonerTag = wantsSummonerInfo ? summonerTagInput.value.trim() : null;
+  // NOVA VARIÁVEL PARA O NÚMERO DE PARTIDAS
+  const matchCount = matchCountInput.value;
 
   const isInitialFetch = !question && wantsSummonerInfo;
   
@@ -352,6 +361,7 @@ async function sendFormWithRefresh(forceRefresh) {
     requestBody.summonerName = summonerName;
     requestBody.summonerTag = summonerTag;
     requestBody.platformRegion = platformRegion;
+    requestBody.matchCount = matchCount; // ADICIONA O NÚMERO DE PARTIDAS AO CORPO DA REQUISIÇÃO
   }
 
   try {
