@@ -1,11 +1,30 @@
 // prompts.js
 
 function getPromptForGame(game, question, summonerInfo = null) {
-  let prompt = `Você é um assistente de IA focado em jogos. Sua missão é responder às perguntas dos usuários com base no seu conhecimento de jogo. Seja amigável, útil e objetivo. Se a pergunta for sobre um jogo para o qual você não tem informações de contexto, responda com base no seu conhecimento geral. Se a pergunta for sobre um jogo específico e informações de invocador forem fornecidas, use esses dados para dar uma resposta personalizada e precisa.
-    \n\n---`;
+  const date = new Date().toLocaleDateString("pt-BR");
+
+  let prompt = `## Especialidade
+Você é um assistente especializado em meta e estratégias para o jogo ${game}.
+
+## Tarefa
+Você deve responder as perguntas do usuário com base no seu conhecimento do jogo, estratégias, builds, composições e dicas. Use suas ferramentas para obter informações atualizadas, se necessário.
+
+## Regras
+- Se você não sabe a resposta, responda com 'Não sei' e não tente inventar uma resposta.
+- Se a pergunta não está relacionada ao jogo, responda com 'Essa pergunta não está relacionada ao jogo'.
+- Considere a data atual ${date}.
+- Faça pesquisas atualizadas sobre o patch atual, baseado na data atual, para dar uma resposta coerente.
+- Nunca responda itens que você não tenha certeza de que existe no patch atual.
+- Seja direto e objetivo.
+- Não precisa fazer saudação ou despedida.
+- A resposta deve ser formatada em Markdown.
+`;
 
   if (game === "lol") {
-    prompt += `\nO usuário está jogando League of Legends.`;
+    prompt += `\n\n---`;
+    prompt += `\n\n### Contexto Adicional:
+O usuário está jogando League of Legends. A análise de desempenho deve focar em estratégia de rota, gerenciamento de mapa, builds de campeões, e sinergias de equipe.
+`;
     if (summonerInfo) {
       prompt += `\nInformações do Invocador:\n- Nome: ${summonerInfo.summonerName}\n- Tag: ${summonerInfo.summonerTag}\n- Região: ${summonerInfo.platformRegion}\n`;
 
@@ -14,9 +33,9 @@ function getPromptForGame(game, question, summonerInfo = null) {
       } else {
         prompt += `- Elo e Liga: Não ranqueado\n`;
       }
-      
+
       if (summonerInfo.matchHistory && summonerInfo.matchHistory.length > 0) {
-        prompt += `\nDados das últimas ${summonerInfo.matchHistory.length} partidas do invocador:\n`;
+        prompt += `\nDados das últimas ${summonerInfo.matchHistory.length} partidas do invocador (analise este histórico para uma resposta personalizada):\n`;
         summonerInfo.matchHistory.forEach((match, index) => {
           const participant = match.info.participants.find(
             (p) => p.puuid === summonerInfo.puuid
@@ -36,21 +55,35 @@ function getPromptForGame(game, question, summonerInfo = null) {
         });
       } else {
         prompt +=
-          "\nO histórico de partidas do invocador não foi encontrado ou está vazio.";
+          "\nO histórico de partidas do invocador não foi encontrado ou está vazio. Baseie sua resposta no conhecimento geral do jogo.";
       }
     }
   } else if (game === "valorant") {
-    prompt += `\nO usuário está jogando Valorant.`;
+    prompt += `\n\n---`;
+    prompt += `\n\n### Contexto Adicional:
+O usuário está jogando Valorant. A análise deve focar em estratégias de ataque e defesa, uso de habilidades de agentes, controle de economia e posicionamento em mapas específicos.
+`;
   } else if (game === "bdo") {
-    prompt += `\nO usuário está jogando Black Desert Online.`;
+    prompt += `\n\n---`;
+    prompt += `\n\n### Contexto Adicional:
+O usuário está jogando Black Desert Online. A análise deve focar em estratégias de grind, gerenciamento de vida de guilda, sistemas de vida (profissão), aprimoramento de equipamentos e rotas de comércio.
+`;
   } else if (game === "tft") {
-    prompt += `\nO usuário está jogando Teamfight Tactics.`;
+    prompt += `\n\n---`;
+    prompt += `\n\n### Contexto Adicional:
+O usuário está jogando Teamfight Tactics. A análise deve focar em composições de equipe, sinergias de traços e classes, itens ideais e posicionamento de unidades no tabuleiro.
+`;
   } else if (game === "delta") {
-    prompt += `\nO usuário está jogando Delta Force.`;
+    prompt += `\n\n---`;
+    prompt += `\n\n### Contexto Adicional:
+O usuário está jogando Delta Force. A análise deve focar em estratégias de combate, classes de operadores, itens e armas ideais para cada situação e dicas de rotação no mapa.
+Se o usuario nao informar o mod de jogo, sempre considerar o modo conquista. 
+No jogo e possivel importar codigo de composição de armas, entao sempre que indicar uma arma deve indicar tambem um codigo para importação  
+`;
   }
 
   prompt += `\n\n---`;
-  prompt += `\n\nPergunta do usuário:\n${question}`;
+  prompt += `\n\n### Pergunta do usuário:\n${question}`;
 
   return prompt;
 }
