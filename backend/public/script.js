@@ -121,31 +121,6 @@ const showMainFormArea = (game, image) => {
   updateSuggestedQuestions();
 };
 
-const updateSuggestedQuestions = () => {
-  let suggestions = [];
-  if (selectedGame === "lol" && wantsSummonerInfo && summonerDataLoaded) {
-    suggestions = gameSuggestions.lolSummoner || [];
-  } else {
-    suggestions = gameSuggestions[selectedGame] || [];
-  }
-
-  suggestedQuestionsList.innerHTML = "";
-  if (suggestions.length > 0) {
-    suggestions.forEach((suggestion) => {
-      const button = document.createElement("button");
-      button.textContent = suggestion;
-      button.classList.add("suggested-question-button");
-      button.addEventListener("click", () => {
-        questionInput.value = suggestion;
-      });
-      suggestedQuestionsList.appendChild(button);
-    });
-    showElement(suggestedQuestionsContainer);
-  } else {
-    hideElement(suggestedQuestionsContainer);
-  }
-};
-
 const resetToGameSelection = () => {
   selectedGame = "";
   wantsSummonerInfo = false;
@@ -194,7 +169,6 @@ btnYesSummoner.addEventListener("click", () => {
   showElement(lolSpecificFields);
   showMainFormArea("lol", "./img/lol_capa.jpg");
 
-  // Oculta os elementos de pergunta e histórico para forçar a entrada de dados do invocador primeiro
   hideElement(questionFormContainer);
   hideElement(matchSummaryContainer);
   hideElement(rankDisplayContainer);
@@ -382,6 +356,9 @@ async function sendFormWithRefresh(forceRefresh) {
       );
       showElement(aiResponse);
     }
+    
+    // Novo código adicionado para rolagem
+    aiResponse.scrollIntoView({ behavior: 'smooth' });
 
   } catch (error) {
     console.error("Erro ao obter resposta da IA:", error);
@@ -393,6 +370,10 @@ async function sendFormWithRefresh(forceRefresh) {
       ).innerHTML = `<p style="color: red;">Ocorreu um erro: ${error.message}. Tente novamente mais tarde.</p>`;
     }
     showElement(aiResponse);
+    
+    // Novo código adicionado para rolagem em caso de erro
+    aiResponse.scrollIntoView({ behavior: 'smooth' });
+
   } finally {
     if (forceRefresh) {
       refreshDataButton.disabled = false;
