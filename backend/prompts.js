@@ -9,6 +9,12 @@ function getPromptForGame(game, question, summonerInfo = null) {
     if (summonerInfo) {
       prompt += `\nInformações do Invocador:\n- Nome: ${summonerInfo.summonerName}\n- Tag: ${summonerInfo.summonerTag}\n- Região: ${summonerInfo.platformRegion}\n`;
 
+      if (summonerInfo.tier && summonerInfo.rank) {
+        prompt += `- Elo e Liga: ${summonerInfo.tier} ${summonerInfo.rank}\n`;
+      } else {
+        prompt += `- Elo e Liga: Não ranqueado\n`;
+      }
+      
       if (summonerInfo.matchHistory && summonerInfo.matchHistory.length > 0) {
         prompt += `\nDados das últimas ${summonerInfo.matchHistory.length} partidas do invocador:\n`;
         summonerInfo.matchHistory.forEach((match, index) => {

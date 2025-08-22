@@ -13,7 +13,7 @@ const btnNoSummoner = document.getElementById("btnNoSummoner");
 const lolSpecificFields = document.getElementById("lolSpecificFields");
 const summonerNameInput = document.getElementById("summonerNameInput");
 const summonerTagInput = document.getElementById("summonerTagInput");
-const platformRegionDisplay = document.getElementById("platformRegionDisplay");
+const platformRegionSelect = document.getElementById("platformRegionSelect");
 const refreshDataButton = document.getElementById("refreshDataButton");
 
 const blurBackgroundOverlay = document.getElementById("blurBackgroundOverlay");
@@ -28,6 +28,9 @@ const matchSummaryTitle = document.getElementById("matchSummaryTitle");
 const matchCountInput = document.getElementById("matchCountInput");
 const suggestedQuestionsContainer = document.getElementById("suggestedQuestionsContainer");
 const suggestedQuestionsList = document.getElementById("suggestedQuestionsList");
+
+const rankDisplayContainer = document.getElementById("rankDisplayContainer");
+const rankInfo = document.getElementById("rankInfo");
 
 let selectedGame = "";
 let wantsSummonerInfo = false;
@@ -154,6 +157,7 @@ const resetToGameSelection = () => {
   hideElement(lolSpecificFields);
   hideElement(questionFormContainer);
   hideElement(matchSummaryContainer);
+  hideElement(rankDisplayContainer);
 
   mainContent.classList.remove("blur-content");
   headerContent.classList.remove("blur-content");
@@ -190,6 +194,7 @@ btnYesSummoner.addEventListener("click", () => {
   showElement(lolSpecificFields);
   hideElement(questionFormContainer);
   hideElement(matchSummaryContainer);
+  hideElement(rankDisplayContainer);
   showMainFormArea("lol", "./img/lol_capa.jpg");
 });
 
@@ -206,25 +211,7 @@ btnNoSummoner.addEventListener("click", () => {
   showMainFormArea("lol", "./img/lol_capa.jpg");
   showElement(questionFormContainer);
   hideElement(matchSummaryContainer);
-});
-
-summonerTagInput.addEventListener("input", () => {
-  let tag = summonerTagInput.value.trim();
-
-  if (tag && tag.charAt(0) !== "#") {
-    tag = "#" + tag;
-  }
-
-  const regionMatch = tag.match(/#(.*)$/);
-
-  let platformRegion = null;
-  if (regionMatch && regionMatch[1]) {
-    platformRegion = regionMatch[1].toLowerCase();
-  }
-
-  const regionName =
-    displayRegionMapping[platformRegion] || "Região desconhecida";
-  platformRegionDisplay.value = regionName;
+  hideElement(rankDisplayContainer);
 });
 
 refreshDataButton.addEventListener("click", () => {
@@ -246,62 +233,76 @@ function displaySummonerData(summonerInfo) {
 
   if (!summonerInfo || !summonerInfo.matchHistory || matchCount === 0) {
     matchSummaryInfo.innerHTML = "<p>Nenhum histórico de partida encontrado.</p>";
-    return;
+  } else {
+    const matchHistory = summonerInfo.matchHistory;
+    let totalKills = 0;
+    let totalDeaths = 0;
+    let totalAssists = 0;
+    let totalDamage = 0;
+    let totalGold = 0;
+    let totalCs = 0;
+    let gamesWon = 0;
+
+    matchHistory.forEach(match => {
+      const participant = match.info.participants.find(p => p.puuid === summonerInfo.puuid);
+      if (participant) {
+        totalKills += participant.kills;
+        totalDeaths += participant.deaths;
+        totalAssists += participant.assists;
+        totalDamage += participant.totalDamageDealtToChampions;
+        totalGold += participant.goldEarned;
+        totalCs += (participant.totalMinionsKilled + participant.neutralMinionsKilled);
+        if (participant.win) {
+          gamesWon++;
+        }
+      }
+    });
+
+    const numMatches = matchHistory.length;
+    const avgKDA = (totalKills + totalAssists) / Math.max(1, totalDeaths);
+    const avgDamage = (totalDamage / numMatches).toLocaleString('pt-BR');
+    const avgGold = (totalGold / numMatches).toLocaleString('pt-BR');
+    const avgCs = (totalCs / numMatches).toFixed(1);
+    const winRate = ((gamesWon / numMatches) * 100).toFixed(0);
+
+    matchSummaryInfo.innerHTML = `
+      <div class="summary-item">
+        <p>${winRate}%</p>
+        <span>Taxa de Vitória</span>
+      </div>
+      <div class="summary-item">
+        <p>${avgKDA.toFixed(2)}</p>
+        <span>KDA Médio</span>
+      </div>
+      <div class="summary-item">
+        <p>${avgDamage}</p>
+        <span>Dano Médio</span>
+      </div>
+      <div class="summary-item">
+        <p>${avgGold}</p>
+        <span>Ouro Médio</span>
+      </div>
+      <div class="summary-item">
+        <p>${avgCs}</p>
+        <span>CS Médio</span>
+      </div>
+    `;
   }
-
-  const matchHistory = summonerInfo.matchHistory;
-  let totalKills = 0;
-  let totalDeaths = 0;
-  let totalAssists = 0;
-  let totalDamage = 0;
-  let totalGold = 0;
-  let totalCs = 0;
-
-  matchHistory.forEach(match => {
-    const participant = match.info.participants.find(p => p.puuid === summonerInfo.puuid);
-    if (participant) {
-      totalKills += participant.kills;
-      totalDeaths += participant.deaths;
-      totalAssists += participant.assists;
-      totalDamage += participant.totalDamageDealtToChampions;
-      totalGold += participant.goldEarned;
-      totalCs += (participant.totalMinionsKilled + participant.neutralMinionsKilled);
-    }
-  });
-
-  const numMatches = matchHistory.length;
-  const avgKills = (totalKills / numMatches).toFixed(1);
-  const avgDeaths = (totalDeaths / numMatches).toFixed(1);
-  const avgAssists = (totalAssists / numMatches).toFixed(1);
-  const avgKDA = (totalKills + totalAssists) / Math.max(1, totalDeaths);
-  const avgDamage = (totalDamage / numMatches).toLocaleString('pt-BR');
-  const avgGold = (totalGold / numMatches).toLocaleString('pt-BR');
-  const avgCs = (totalCs / numMatches).toFixed(1);
-
-  matchSummaryInfo.innerHTML = `
-    <div class="summary-item">
-      <p>${avgKDA.toFixed(2)}</p>
-      <span>KDA Médio</span>
-    </div>
-    <div class="summary-item">
-      <p>${avgDamage}</p>
-      <span>Dano Médio</span>
-    </div>
-    <div class="summary-item">
-      <p>${avgGold}</p>
-      <span>Ouro Médio</span>
-    </div>
-    <div class="summary-item">
-      <p>${avgCs}</p>
-      <span>CS Médio</span>
-    </div>
-  `;
+  
+  if (summonerInfo.tier && summonerInfo.rank) {
+    rankInfo.innerHTML = `<p>${summonerInfo.tier} ${summonerInfo.rank}</p>`;
+    showElement(rankDisplayContainer);
+  } else {
+    rankInfo.innerHTML = `<p>Dados de Elo não encontrados.</p>`;
+    showElement(rankDisplayContainer);
+  }
 }
 
 async function sendFormWithRefresh(forceRefresh) {
   const question = questionInput.value.trim();
   const summonerName = wantsSummonerInfo ? summonerNameInput.value.trim() : null;
-  let summonerTag = wantsSummonerInfo ? summonerTagInput.value.trim() : null;
+  const summonerTag = wantsSummonerInfo ? summonerTagInput.value.trim() : null;
+  const platformRegion = wantsSummonerInfo ? platformRegionSelect.value : null;
   const matchCount = matchCountInput.value;
 
   const isInitialFetch = !question && wantsSummonerInfo;
@@ -342,27 +343,6 @@ async function sendFormWithRefresh(forceRefresh) {
   };
 
   if (selectedGame === "lol" && wantsSummonerInfo) {
-    if (summonerTag && summonerTag.charAt(0) !== "#") {
-      summonerTag = "#" + summonerTag;
-      summonerTagInput.value = summonerTag;
-    }
-
-    const regionMatch = summonerTag.match(/#(.*)$/);
-    let platformRegion = null;
-    if (regionMatch && regionMatch[1]) {
-      platformRegion = regionMatch[1].toLowerCase();
-    }
-
-    if (!platformRegion) {
-      alert(
-        "Formato de tag de invocador inválido. Por favor, use o formato 'Nome#TAG'."
-      );
-      refreshDataButton.disabled = false;
-      refreshDataButton.innerHTML = `Atualizar Histórico`;
-      refreshDataButton.classList.remove('loading');
-      return;
-    }
-
     requestBody.summonerName = summonerName;
     requestBody.summonerTag = summonerTag;
     requestBody.platformRegion = platformRegion;

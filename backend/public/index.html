@@ -113,20 +113,31 @@
           <div class="lol-fields hidden" id="lolSpecificFields">
             <div class="input-group">
               <label for="summonerNameInput">Nome de Invocador:</label>
-              <input type="text" id="summonerNameInput" placeholder="Nome do Invocador" />
+              <input
+                type="text"
+                id="summonerNameInput"
+                placeholder="Nome do Invocador"
+              />
             </div>
             <div class="input-group">
               <label for="summonerTagInput">Tag de Invocador:</label>
               <input type="text" id="summonerTagInput" placeholder="#BR1" />
             </div>
             <div class="input-group">
-              <label for="platformRegionDisplay">Região:</label>
-              <input
-                type="text"
-                id="platformRegionDisplay"
-                readonly
-                placeholder="Preenchido automaticamente"
-              />
+              <label for="platformRegionSelect">Região:</label>
+              <select id="platformRegionSelect">
+                <option value="br1">Brasil (BR1)</option>
+                <option value="eun1">Europa Nórdica e Oriental (EUN1)</option>
+                <option value="euw1">Europa Ocidental (EUW1)</option>
+                <option value="jp1">Japão (JP1)</option>
+                <option value="kr">Coreia (KR)</option>
+                <option value="la1">América Latina Norte (LA1)</option>
+                <option value="la2">América Latina Sul (LA2)</option>
+                <option value="na1">América do Norte (NA1)</option>
+                <option value="oc1">Oceania (OC1)</option>
+                <option value="tr1">Turquia (TR1)</option>
+                <option value="ru">Rússia (RU)</option>
+              </select>
             </div>
             
             <div class="input-group">
@@ -149,6 +160,11 @@
               <h3 id="matchSummaryTitle">Resumo das Últimas Partidas:</h3>
               <div class="summary-info" id="matchSummaryInfo"></div>
             </div>
+
+            <div class="rank-display-container hidden" id="rankDisplayContainer">
+              <h3>Elo e Liga:</h3>
+              <div class="rank-info" id="rankInfo"></div>
+            </div>
           </div>
 
           <div class="question-form-container hidden" id="questionFormContainer">
@@ -157,7 +173,10 @@
               id="suggestedQuestionsContainer"
             >
               <h3>Perguntas Sugeridas:</h3>
-              <div class="suggested-questions-list" id="suggestedQuestionsList"></div>
+              <div
+                class="suggested-questions-list"
+                id="suggestedQuestionsList"
+              ></div>
             </div>
 
             <form id="aiForm">

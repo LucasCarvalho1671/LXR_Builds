@@ -83,6 +83,18 @@ app.post("/api/gemini-ask", async (req, res) => {
       });
 
       const puuid = riotResponseAccount.data.puuid;
+      const summonerId = riotResponseAccount.data.id;
+
+      const riotApiUrlRank = `https://${platformRegion}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}`;
+      const riotResponseRank = await axios.get(riotApiUrlRank, {
+        headers: {
+          "X-Riot-Token": RIOT_API_KEY,
+        },
+      });
+      
+      const rankData = riotResponseRank.data.find(entry => entry.queueType === 'RANKED_SOLO_5x5') || {};
+      const tier = rankData.tier || "UNRANKED";
+      const rank = rankData.rank || "";
 
       const riotApiUrlMatches = `https://${routingRegion}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=${matchCount}`;
       const riotResponseMatches = await axios.get(riotApiUrlMatches, {
@@ -119,6 +131,8 @@ app.post("/api/gemini-ask", async (req, res) => {
         platformRegion,
         puuid,
         matchHistory,
+        tier,
+        rank,
       };
 
       summonerCache[cacheKey] = {
