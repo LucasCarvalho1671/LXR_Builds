@@ -1,4 +1,4 @@
-const CACHE_NAME = "assistente-meta-cache-v2.43"; // Mude a versão se alterar os arquivos
+const CACHE_NAME = "assistente-meta-cache-v2.44"; // Mude a versão se alterar os arquivos
 const urlsToCache = [
   "/",
   "/index.html",
@@ -38,6 +38,11 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
+  // Ignora requisições POST e de API
+  if (event.request.method !== "GET" || event.request.url.includes("/api/")) {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((response) => {
       if (response) {
