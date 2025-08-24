@@ -32,68 +32,75 @@
       sizes="16x16"
       href="/icons/favicon-16x16.png"
     />
-    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#5bbad5" />
-    <meta name="msapplication-TileColor" content="#da532c" />
-    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
   </head>
   <body>
     <header>
-      <img src="./img/logo.png" alt="Logo do Assistente de IA para Jogos" />
+      <img src="./img/logo.png" alt="logo AI Game Helper" />
     </header>
 
-    <main>
-      <section id="gameSelectionSection" class="main-container">
-        <h2>Selecione um jogo</h2>
-        <div class="game-grid">
-          <div class="game-card" data-game="lol" data-image="./img/lol_capa.jpg">
-            <img src="./img/lol_capa.jpg" alt="League of Legends" />
-            <span>LoL</span>
-          </div>
-          <div
-            class="game-card"
-            data-game="valorant"
-            data-image="./img/valorant_capa.jpg"
-          >
-            <img src="./img/valorant_capa.jpg" alt="Valorant" />
-            <span>Valorant</span>
-          </div>
-          <div class="game-card" data-game="bdo" data-image="./img/bdo_capa.jpg">
-            <img src="./img/bdo_capa.jpg" alt="Black Desert Online" />
-            <span>BDO</span>
-          </div>
-          <div class="game-card" data-game="tft" data-image="./img/tft_capa.jpg">
-            <img src="./img/tft_capa.jpg" alt="Teamfight Tactics" />
-            <span>TFT</span>
-          </div>
-          <div
-            class="game-card"
-            data-game="delta"
-            data-image="./img/delta_capa.jpg"
-          >
-            <img src="./img/delta_capa.jpg" alt="Delta Force" />
-            <span>Delta Force</span>
+    <main id="mainContent">
+      <section id="gameSelectionSection">
+        <div class="main-content">
+          <h1 class="title">Escolha seu Jogo</h1>
+          <p>Selecione um jogo para que o assistente possa te ajudar!</p>
+          <div class="game-grid">
+            <div
+              class="game-card"
+              data-game="lol"
+              data-image="./img/lol_capa.jpg"
+            >
+              <img src="./img/lol_capa.jpg" alt="League of Legends" />
+              <span>LoL</span>
+            </div>
+            <div
+              class="game-card"
+              data-game="valorant"
+              data-image="./img/valorant_capa.jpg"
+            >
+              <img src="./img/valorant_capa.jpg" alt="Valorant" />
+              <span>Valorant</span>
+            </div>
+            <div
+              class="game-card"
+              data-game="bdo"
+              data-image="./img/bdo_capa.jpg"
+            >
+              <img src="./img/bdo_capa.jpg" alt="Black Desert Online" />
+              <span>BDO</span>
+            </div>
+            <div
+              class="game-card"
+              data-game="tft"
+              data-image="./img/tft_capa.jpg"
+            >
+              <img src="./img/tft_capa.jpg" alt="Teamfight Tactics" />
+              <span>TFT</span>
+            </div>
+            <div
+              class="game-card"
+              data-game="delta"
+              data-image="./img/delta_capa.jpg"
+            >
+              <img src="./img/delta_capa.jpg" alt="Delta Force" />
+              <span>Delta Force</span>
+            </div>
           </div>
         </div>
       </section>
 
       <section id="mainFormArea" class="hidden">
-        <div class="main-container">
+        <div class="main-content">
           <button id="backButton">Voltar</button>
 
           <div id="selectedGameDisplay"></div>
 
-          <div
-            class="match-summary-container hidden"
-            id="matchSummaryContainer"
-          >
+          <div class="match-summary-container hidden" id="matchSummaryContainer">
             <h3 id="matchSummaryTitle"></h3>
             <div class="summary-info" id="matchSummaryInfo"></div>
           </div>
 
-          <div
-            class="rank-display-container hidden"
-            id="rankDisplayContainer"
-          >
+          <div class="rank-display-container hidden" id="rankDisplayContainer">
             <p id="rankInfo"></p>
           </div>
 
@@ -108,7 +115,6 @@
                 id="suggestedQuestionsList"
               ></div>
             </div>
-
             <form id="aiForm">
               <div id="lolSpecificFields" class="input-group hidden">
                 <div class="input-group">
@@ -163,7 +169,7 @@
                 <textarea
                   id="questionInput"
                   rows="4"
-                  placeholder="Ex: Qual a melhor build para a Ahri?"
+                  placeholder="Ex: Qual a melhor build ?"
                 ></textarea>
               </div>
 

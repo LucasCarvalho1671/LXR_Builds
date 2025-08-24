@@ -26,8 +26,12 @@ const matchSummaryContainer = document.getElementById("matchSummaryContainer");
 const matchSummaryInfo = document.getElementById("matchSummaryInfo");
 const matchSummaryTitle = document.getElementById("matchSummaryTitle");
 const matchCountInput = document.getElementById("matchCountInput");
-const suggestedQuestionsContainer = document.getElementById("suggestedQuestionsContainer");
-const suggestedQuestionsList = document.getElementById("suggestedQuestionsList");
+const suggestedQuestionsContainer = document.getElementById(
+  "suggestedQuestionsContainer"
+);
+const suggestedQuestionsList = document.getElementById(
+  "suggestedQuestionsList"
+);
 
 const rankDisplayContainer = document.getElementById("rankDisplayContainer");
 const rankInfo = document.getElementById("rankInfo");
@@ -126,6 +130,7 @@ const updateSuggestedQuestions = () => {
       li.textContent = q;
       li.addEventListener("click", () => {
         questionInput.value = q;
+        // Removido o envio automático do formulário
       });
       suggestedQuestionsList.appendChild(li);
     });
@@ -168,7 +173,8 @@ function displaySummonerData(summonerInfo) {
   matchSummaryTitle.textContent = `Resumo das Últimas ${matchCount} Partidas:`;
 
   if (!summonerInfo || !summonerInfo.matchHistory || matchCount === 0) {
-    matchSummaryInfo.innerHTML = "<p>Nenhum histórico de partida encontrado.</p>";
+    matchSummaryInfo.innerHTML =
+      "<p>Nenhum histórico de partida encontrado.</p>";
   } else {
     const matchHistory = summonerInfo.matchHistory;
     let totalKills = 0;
@@ -179,15 +185,18 @@ function displaySummonerData(summonerInfo) {
     let totalCs = 0;
     let gamesWon = 0;
 
-    matchHistory.forEach(match => {
-      const participant = match.info.participants.find(p => p.puuid === summonerInfo.puuid);
+    matchHistory.forEach((match) => {
+      const participant = match.info.participants.find(
+        (p) => p.puuid === summonerInfo.puuid
+      );
       if (participant) {
         totalKills += participant.kills;
         totalDeaths += participant.deaths;
         totalAssists += participant.assists;
         totalDamage += participant.totalDamageDealtToChampions;
         totalGold += participant.goldEarned;
-        totalCs += (participant.totalMinionsKilled + participant.neutralMinionsKilled);
+        totalCs +=
+          participant.totalMinionsKilled + participant.neutralMinionsKilled;
         if (participant.win) {
           gamesWon++;
         }
@@ -196,8 +205,8 @@ function displaySummonerData(summonerInfo) {
 
     const numMatches = matchHistory.length;
     const avgKDA = (totalKills + totalAssists) / Math.max(1, totalDeaths);
-    const avgDamage = (totalDamage / numMatches).toLocaleString('pt-BR');
-    const avgGold = (totalGold / numMatches).toLocaleString('pt-BR');
+    const avgDamage = (totalDamage / numMatches).toLocaleString("pt-BR");
+    const avgGold = (totalGold / numMatches).toLocaleString("pt-BR");
     const avgCs = (totalCs / numMatches).toFixed(1);
     const winRate = ((gamesWon / numMatches) * 100).toFixed(0);
 
@@ -224,7 +233,7 @@ function displaySummonerData(summonerInfo) {
       </div>
     `;
   }
-  
+
   if (summonerInfo.tier && summonerInfo.rank) {
     rankInfo.innerHTML = `<p>${summonerInfo.tier} ${summonerInfo.rank}</p>`;
     showElement(rankDisplayContainer);
@@ -236,29 +245,31 @@ function displaySummonerData(summonerInfo) {
 
 async function sendFormWithRefresh(forceRefresh) {
   const question = questionInput.value.trim();
-  const summonerName = wantsSummonerInfo ? summonerNameInput.value.trim() : null;
+  const summonerName = wantsSummonerInfo
+    ? summonerNameInput.value.trim()
+    : null;
   const summonerTag = wantsSummonerInfo ? summonerTagInput.value.trim() : null;
   const platformRegion = wantsSummonerInfo ? platformRegionSelect.value : null;
   const matchCount = matchCountInput.value;
 
   const isInitialFetch = !question && wantsSummonerInfo;
-  
+
   if (isInitialFetch && (!summonerName || !summonerTag)) {
     alert("Por favor, preencha o nome e a tag do invocador.");
     return;
   }
-  
+
   if (question === "" && !isInitialFetch) {
-      alert("Por favor, digite sua pergunta.");
-      return;
+    alert("Por favor, digite sua pergunta.");
+    return;
   }
 
   if (forceRefresh) {
     refreshDataButton.disabled = true;
     refreshDataButton.innerHTML = `<div class="spinner"></div>`;
-    refreshDataButton.classList.add('loading');
+    refreshDataButton.classList.add("loading");
   }
-  
+
   if (!isInitialFetch) {
     askButton.disabled = true;
     askButton.textContent = "Perguntando...";
@@ -309,13 +320,12 @@ async function sendFormWithRefresh(forceRefresh) {
       showElement(questionFormContainer);
       showElement(rankDisplayContainer);
       hideElement(aiResponse);
-      updateSuggestedQuestions(); 
+      updateSuggestedQuestions();
     } else {
       aiResponse.querySelector(".response-content").innerHTML = markdownToHTML(
         data.response
       );
       showElement(aiResponse);
-      aiResponse.scrollIntoView({ behavior: 'smooth' });
     }
   } catch (error) {
     console.error("Erro ao obter resposta da IA:", error);
@@ -331,7 +341,7 @@ async function sendFormWithRefresh(forceRefresh) {
     if (forceRefresh) {
       refreshDataButton.disabled = false;
       refreshDataButton.innerHTML = `Atualizar Histórico`;
-      refreshDataButton.classList.remove('loading');
+      refreshDataButton.classList.remove("loading");
     }
 
     askButton.disabled = false;
@@ -415,10 +425,3 @@ if ("serviceWorker" in navigator) {
       });
   });
 }
-
-// Funcionalidade para voltar com a tecla ESC
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && mainFormArea.classList.contains("hidden") === false) {
-    resetToGameSelection();
-  }
-});
