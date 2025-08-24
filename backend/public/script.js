@@ -26,12 +26,8 @@ const matchSummaryContainer = document.getElementById("matchSummaryContainer");
 const matchSummaryInfo = document.getElementById("matchSummaryInfo");
 const matchSummaryTitle = document.getElementById("matchSummaryTitle");
 const matchCountInput = document.getElementById("matchCountInput");
-const suggestedQuestionsContainer = document.getElementById(
-  "suggestedQuestionsContainer"
-);
-const suggestedQuestionsList = document.getElementById(
-  "suggestedQuestionsList"
-);
+const suggestedQuestionsContainer = document.getElementById("suggestedQuestionsContainer");
+const suggestedQuestionsList = document.getElementById("suggestedQuestionsList");
 
 const rankDisplayContainer = document.getElementById("rankDisplayContainer");
 const rankInfo = document.getElementById("rankInfo");
@@ -93,7 +89,7 @@ const displayRegionMapping = {
   tr1: "Turquia",
 };
 
-// --- Funções Auxiliares (Definidas no topo para evitar erros de referência) ---
+// Funções Auxiliares
 const markdownToHTML = (text) => {
   const converter = new showdown.Converter();
   return converter.makeHtml(text);
@@ -116,11 +112,15 @@ const setBackgroundImage = (imageUrl) => {
 };
 
 const updateSuggestedQuestions = () => {
-  const suggestions = wantsSummonerInfo
-    ? gameSuggestions.lolSummoner
-    : gameSuggestions[selectedGame];
+  let suggestions = [];
+  if (selectedGame === "lol" && wantsSummonerInfo) {
+    suggestions = gameSuggestions.lolSummoner || [];
+  } else {
+    suggestions = gameSuggestions[selectedGame] || [];
+  }
+
   suggestedQuestionsList.innerHTML = "";
-  if (suggestions) {
+  if (suggestions.length > 0) {
     suggestions.forEach((q) => {
       const li = document.createElement("li");
       li.textContent = q;
@@ -136,13 +136,40 @@ const updateSuggestedQuestions = () => {
   }
 };
 
-const displaySummonerData = (summonerInfo) => {
+const showMainFormArea = (game, image) => {
+  selectedGame = game;
+  selectedGameDisplay.textContent = game.toUpperCase();
+  selectedGameDisplay.style.backgroundImage = `url(${image})`;
+  hideElement(gameSelectionSection);
+  showElement(mainFormArea);
+  showElement(questionFormContainer);
+  setBackgroundImage(image);
+  updateSuggestedQuestions();
+};
+
+const resetToGameSelection = () => {
+  selectedGame = "";
+  wantsSummonerInfo = false;
+  summonerDataLoaded = false;
+  hideElement(mainFormArea);
+  hideElement(aiResponse);
+  showElement(gameSelectionSection);
+  setBackgroundImage("./img/bg.jpg");
+  hideElement(lolSpecificFields);
+  hideElement(questionFormContainer);
+  hideElement(matchSummaryContainer);
+  hideElement(rankDisplayContainer);
+  mainContent.classList.remove("blur-content");
+  headerContent.classList.remove("blur-content");
+  updateSuggestedQuestions();
+};
+
+function displaySummonerData(summonerInfo) {
   const matchCount = summonerInfo.matchHistory.length;
   matchSummaryTitle.textContent = `Resumo das Últimas ${matchCount} Partidas:`;
 
   if (!summonerInfo || !summonerInfo.matchHistory || matchCount === 0) {
-    matchSummaryInfo.innerHTML =
-      "<p>Nenhum histórico de partida encontrado.</p>";
+    matchSummaryInfo.innerHTML = "<p>Nenhum histórico de partida encontrado.</p>";
   } else {
     const matchHistory = summonerInfo.matchHistory;
     let totalKills = 0;
@@ -153,18 +180,15 @@ const displaySummonerData = (summonerInfo) => {
     let totalCs = 0;
     let gamesWon = 0;
 
-    matchHistory.forEach((match) => {
-      const participant = match.info.participants.find(
-        (p) => p.puuid === summonerInfo.puuid
-      );
+    matchHistory.forEach(match => {
+      const participant = match.info.participants.find(p => p.puuid === summonerInfo.puuid);
       if (participant) {
         totalKills += participant.kills;
         totalDeaths += participant.deaths;
         totalAssists += participant.assists;
         totalDamage += participant.totalDamageDealtToChampions;
         totalGold += participant.goldEarned;
-        totalCs +=
-          participant.totalMinionsKilled + participant.neutralMinionsKilled;
+        totalCs += (participant.totalMinionsKilled + participant.neutralMinionsKilled);
         if (participant.win) {
           gamesWon++;
         }
@@ -173,8 +197,8 @@ const displaySummonerData = (summonerInfo) => {
 
     const numMatches = matchHistory.length;
     const avgKDA = (totalKills + totalAssists) / Math.max(1, totalDeaths);
-    const avgDamage = (totalDamage / numMatches).toLocaleString("pt-BR");
-    const avgGold = (totalGold / numMatches).toLocaleString("pt-BR");
+    const avgDamage = (totalDamage / numMatches).toLocaleString('pt-BR');
+    const avgGold = (totalGold / numMatches).toLocaleString('pt-BR');
     const avgCs = (totalCs / numMatches).toFixed(1);
     const winRate = ((gamesWon / numMatches) * 100).toFixed(0);
 
@@ -201,7 +225,7 @@ const displaySummonerData = (summonerInfo) => {
       </div>
     `;
   }
-
+  
   if (summonerInfo.tier && summonerInfo.rank) {
     rankInfo.innerHTML = `<p>${summonerInfo.tier} ${summonerInfo.rank}</p>`;
     showElement(rankDisplayContainer);
@@ -209,63 +233,33 @@ const displaySummonerData = (summonerInfo) => {
     rankInfo.innerHTML = `<p>Dados de Elo não encontrados.</p>`;
     showElement(rankDisplayContainer);
   }
-};
-
-const resetToGameSelection = () => {
-  selectedGame = "";
-  wantsSummonerInfo = false;
-  summonerDataLoaded = false;
-  hideElement(mainFormArea);
-  hideElement(aiResponse);
-  showElement(gameSelectionSection);
-  setBackgroundImage("./img/bg.jpg");
-  hideElement(lolSpecificFields);
-  hideElement(questionFormContainer);
-  hideElement(matchSummaryContainer);
-  hideElement(rankDisplayContainer);
-
-  mainContent.classList.remove("blur-content");
-  headerContent.classList.remove("blur-content");
-};
-
-const showMainFormArea = (game, image) => {
-  selectedGame = game;
-  selectedGameDisplay.textContent = game.toUpperCase();
-  selectedGameDisplay.style.backgroundImage = `url(${image})`;
-  hideElement(gameSelectionSection);
-  showElement(mainFormArea);
-  showElement(questionFormContainer);
-  setBackgroundImage(image);
-  updateSuggestedQuestions();
-};
+}
 
 async function sendFormWithRefresh(forceRefresh) {
   const question = questionInput.value.trim();
-  const summonerName = wantsSummonerInfo
-    ? summonerNameInput.value.trim()
-    : null;
+  const summonerName = wantsSummonerInfo ? summonerNameInput.value.trim() : null;
   const summonerTag = wantsSummonerInfo ? summonerTagInput.value.trim() : null;
   const platformRegion = wantsSummonerInfo ? platformRegionSelect.value : null;
   const matchCount = matchCountInput.value;
 
   const isInitialFetch = !question && wantsSummonerInfo;
-
+  
   if (isInitialFetch && (!summonerName || !summonerTag)) {
     alert("Por favor, preencha o nome e a tag do invocador.");
     return;
   }
-
+  
   if (question === "" && !isInitialFetch) {
-    alert("Por favor, digite sua pergunta.");
-    return;
+      alert("Por favor, digite sua pergunta.");
+      return;
   }
 
   if (forceRefresh) {
     refreshDataButton.disabled = true;
     refreshDataButton.innerHTML = `<div class="spinner"></div>`;
-    refreshDataButton.classList.add("loading");
+    refreshDataButton.classList.add('loading');
   }
-
+  
   if (!isInitialFetch) {
     askButton.disabled = true;
     askButton.textContent = "Perguntando...";
@@ -316,12 +310,13 @@ async function sendFormWithRefresh(forceRefresh) {
       showElement(questionFormContainer);
       showElement(rankDisplayContainer);
       hideElement(aiResponse);
-      updateSuggestedQuestions();
+      updateSuggestedQuestions(); 
     } else {
       aiResponse.querySelector(".response-content").innerHTML = markdownToHTML(
         data.response
       );
       showElement(aiResponse);
+      aiResponse.scrollIntoView({ behavior: 'smooth' }); // Nova funcionalidade: rola para a resposta
     }
   } catch (error) {
     console.error("Erro ao obter resposta da IA:", error);
@@ -337,7 +332,7 @@ async function sendFormWithRefresh(forceRefresh) {
     if (forceRefresh) {
       refreshDataButton.disabled = false;
       refreshDataButton.innerHTML = `Atualizar Histórico`;
-      refreshDataButton.classList.remove("loading");
+      refreshDataButton.classList.remove('loading');
     }
 
     askButton.disabled = false;
@@ -345,9 +340,8 @@ async function sendFormWithRefresh(forceRefresh) {
     askButton.classList.remove("loading");
   }
 }
-// --- Fim das Funções Auxiliares ---
 
-// --- Event Listeners (Ficam no final do script) ---
+// Event Listeners
 document.querySelectorAll(".game-card").forEach((card) => {
   card.addEventListener("click", () => {
     const game = card.dataset.game;
@@ -372,16 +366,14 @@ btnYesSummoner.addEventListener("click", () => {
   wantsSummonerInfo = true;
   hideElement(summonerQuestionModal);
   hideElement(blurBackgroundOverlay);
-
   mainContent.classList.remove("blur-content");
   headerContent.classList.remove("blur-content");
-
   showElement(lolSpecificFields);
   showMainFormArea("lol", "./img/lol_capa.jpg");
-
   hideElement(questionFormContainer);
   hideElement(matchSummaryContainer);
   hideElement(rankDisplayContainer);
+  updateSuggestedQuestions();
 });
 
 btnNoSummoner.addEventListener("click", () => {
@@ -389,15 +381,14 @@ btnNoSummoner.addEventListener("click", () => {
   summonerDataLoaded = true;
   hideElement(summonerQuestionModal);
   hideElement(blurBackgroundOverlay);
-
   mainContent.classList.remove("blur-content");
   headerContent.classList.remove("blur-content");
-
   hideElement(lolSpecificFields);
   showMainFormArea("lol", "./img/lol_capa.jpg");
   showElement(questionFormContainer);
   hideElement(matchSummaryContainer);
   hideElement(rankDisplayContainer);
+  updateSuggestedQuestions();
 });
 
 refreshDataButton.addEventListener("click", () => {
@@ -406,7 +397,7 @@ refreshDataButton.addEventListener("click", () => {
 
 aiForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  if (!summonerDataLoaded) {
+  if (!summonerDataLoaded && wantsSummonerInfo) {
     sendFormWithRefresh(true);
   } else {
     sendFormWithRefresh(false);
@@ -428,10 +419,7 @@ if ("serviceWorker" in navigator) {
 
 // Funcionalidade para voltar com a tecla ESC
 document.addEventListener("keydown", (event) => {
-  if (
-    event.key === "Escape" &&
-    mainFormArea.classList.contains("hidden") === false
-  ) {
+  if (event.key === "Escape" && mainFormArea.classList.contains("hidden") === false) {
     resetToGameSelection();
   }
 });
