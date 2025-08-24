@@ -121,31 +121,6 @@ const showMainFormArea = (game, image) => {
   updateSuggestedQuestions();
 };
 
-const updateSuggestedQuestions = () => {
-  let suggestions = [];
-  if (selectedGame === "lol" && wantsSummonerInfo && summonerDataLoaded) {
-    suggestions = gameSuggestions.lolSummoner || [];
-  } else {
-    suggestions = gameSuggestions[selectedGame] || [];
-  }
-
-  suggestedQuestionsList.innerHTML = "";
-  if (suggestions.length > 0) {
-    suggestions.forEach((suggestion) => {
-      const button = document.createElement("button");
-      button.textContent = suggestion;
-      button.classList.add("suggested-question-button");
-      button.addEventListener("click", () => {
-        questionInput.value = suggestion;
-      });
-      suggestedQuestionsList.appendChild(button);
-    });
-    showElement(suggestedQuestionsContainer);
-  } else {
-    hideElement(suggestedQuestionsContainer);
-  }
-};
-
 const resetToGameSelection = () => {
   selectedGame = "";
   wantsSummonerInfo = false;
@@ -417,3 +392,10 @@ if ("serviceWorker" in navigator) {
       });
   });
 }
+
+// Funcionalidade para voltar com a tecla ESC
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && mainFormArea.classList.contains("hidden") === false) {
+    resetToGameSelection();
+  }
+});
