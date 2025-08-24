@@ -41,7 +41,8 @@ main {
   max-width: 36rem;
   width: 90%;
   margin: 3rem auto;
-  transition: filter 0.3s ease-in-out, pointer-events 0.3s ease-in-out;
+  transition: filter 0.3s ease-in-out, pointer-events 0.3s ease-in-out,
+    user-select 0.3s ease-in-out;
 }
 
 .blur-content {
@@ -50,329 +51,163 @@ main {
   user-select: none;
 }
 
-.blur-overlay {
-  background-color: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 99;
-}
-
-section {
-  background-image: linear-gradient(
-    90deg,
-    #9572fc 0%,
-    #43e7ad 50%,
-    #e2d45c 100%
-  );
-  border-radius: 0.625rem;
-  padding-top: 4px;
-}
-
-section > div {
-  padding: 2rem;
-  background-color: #2a2634;
-  border-radius: 0.5rem;
-}
-
-section h2 {
-  font-size: 1.625rem;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.hidden {
-  display: none;
-}
-
-#gameSelectionSection > div > div {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-  margin-top: 1rem;
-}
-
-.game-card {
-  width: 150px;
-  height: 180px;
-  background-color: #1f1d24;
-  border: 2px solid transparent;
-  border-radius: 0.5rem;
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+#gameSelectionSection {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
-  padding: 0;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 100%;
 }
 
-.game-card img {
-  position: absolute;
-  top: 0;
-  left: 0;
+#gameSelectionSection h2 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: opacity 0.2s ease-in-out;
+}
+
+.game-card {
+  background-color: #1a1a1f;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .game-card:hover {
   transform: scale(1.05);
-  border-color: #e2d45c;
-  box-shadow: 0 0 15px rgba(226, 212, 92, 0.7);
+  background-color: #2a2a30;
 }
 
-.game-card span {
-  position: relative;
-  z-index: 1;
-  background-color: rgba(0, 0, 0, 0.6);
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  font-size: 0.8rem;
+.game-card img {
+  width: 80%;
+  height: auto;
   margin-bottom: 0.5rem;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
-.main-form-area {
-  margin-top: 1rem;
+#mainFormArea {
+  width: 100%;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 1rem;
 }
 
 #selectedGameDisplay {
   background-size: cover;
   background-position: center;
-  padding: 1.5rem;
   border-radius: 0.5rem;
-  text-align: center;
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
-  position: relative;
-  z-index: 0;
-  color: white;
-}
-
-#selectedGameDisplay::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  border-radius: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.4);
-  z-index: -1;
-}
-
-#backButton {
-  background: none;
-  border: none;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
   color: white;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  transition: color 0.2s ease;
-  align-self: flex-start;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  transition: background-image 0.3s ease-in-out;
 }
 
-#backButton:hover {
-  color: #e2d45c;
+.form-and-response-container {
+  width: 100%;
+}
+
+#aiForm {
+  background-color: #1f1d24;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
 }
 
 .input-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  margin-bottom: 1rem;
 }
 
 .input-group label {
-  font-size: 0.875rem;
-  color: #a1a1a1;
+  font-weight: 600;
+  color: #c9c9c9;
 }
 
 .input-group textarea,
 .input-group input,
 .input-group select {
-  width: 100%;
+  background-color: #2d2b33;
+  border: none;
+  border-radius: 0.25rem;
   padding: 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid #4a4552;
-  background-color: #3a3642;
   color: white;
-  font-size: 1rem;
-  outline: none;
+  resize: vertical;
 }
 
 .input-group textarea:focus,
 .input-group input:focus,
 .input-group select:focus {
-  border-color: #e2d45c;
+  outline: 2px solid #43e7ad;
+  border: none;
 }
 
-#askButton {
-  width: 100%;
-  padding: 1rem;
-  background-color: #e2d45c;
+#askButton,
+#refreshDataButton,
+#backButton {
+  background-color: #43e7ad;
   color: #121214;
   border: none;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  font-weight: bold;
+  border-radius: 0.25rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s, transform 0.2s;
 }
 
-#askButton:hover {
-  background-color: #cbbd4b;
+#askButton:hover,
+#refreshDataButton:hover,
+#backButton:hover {
+  background-color: #38c994;
+  transform: translateY(-2px);
 }
 
-#askButton:disabled {
-  background-color: #a1a1a1;
-  cursor: not-allowed;
-  animation: none;
-}
-
-#refreshDataButton {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #4a4552;
-  color: #fff;
-  border: none;
+#aiResponse {
+  background-color: #1f1d24;
   border-radius: 0.5rem;
-  font-size: 0.9rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
 }
 
-#refreshDataButton:hover {
-  background-color: #5d5868;
-}
-
-#refreshDataButton.loading {
-  cursor: not-allowed;
-  color: transparent;
-  background-color: #5d5868;
-}
-
-.ai-response {
-  margin-top: 2rem;
-}
-
-.ai-response h2 {
+#aiResponse h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
   color: #43e7ad;
   text-align: center;
-  margin-bottom: 1rem;
 }
 
-.ai-response .response-content {
-  background-color: #1f1d24;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
+.response-content {
   white-space: pre-wrap;
-  word-wrap: break-word;
-  color: #e1e1e6;
-  font-size: 0.9375rem;
-}
-
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #2a2634;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  z-index: 100;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-  text-align: center;
-}
-
-.modal-content h3 {
-  color: #e2d45c;
-  margin-bottom: 1rem;
-}
-
-.modal-content p {
-  color: #a1a1a1;
-  margin-bottom: 1.5rem;
-}
-
-.modal-content button {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  margin: 0 0.5rem;
-  transition: background-color 0.3s ease;
-}
-
-.modal-content button:first-of-type {
-  background-color: #9572fc;
-  color: white;
-}
-
-.modal-content button:first-of-type:hover {
-  background-color: #7a5cd0;
-}
-
-.modal-content button:last-of-type {
-  background-color: #e2d45c;
-  color: #121214;
-}
-
-.modal-content button:last-of-type:hover {
-  background-color: #cbbd4b;
-}
-
-.suggested-questions-container {
-  background-color: #1f1d24;
-  border-radius: 0.5rem;
-  padding: 1rem;
-}
-
-.suggested-questions-container h3 {
-  text-align: center;
-  color: #e2d45c;
-  margin-bottom: 0.75rem;
-}
-
-.suggested-questions-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  justify-content: center;
-}
-
-.suggested-question-button {
-  background-color: #3a3642;
-  color: #e1e1e6;
-  border: 1px solid #4a4552;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 0.875rem;
-  transition: background-color 0.2s ease;
-}
-
-.suggested-question-button:hover {
-  background-color: #4a4552;
+  line-height: 1.6;
+  font-family: monospace;
 }
 
 .loading-container {
@@ -420,38 +255,110 @@ section h2 {
   text-align: center;
 }
 
-.match-summary-container .summary-item {
-  background-color: #3a3642;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-}
-
 .match-summary-container .summary-item p {
-  font-size: 1rem;
   font-weight: bold;
+  font-size: 1.2rem;
 }
 
 .match-summary-container .summary-item span {
   font-size: 0.8rem;
-  color: #a1a1a1;
+  color: #c9c9c9;
 }
 
 .rank-display-container {
   background-color: #1f1d24;
   border-radius: 0.5rem;
-  padding: 1rem;
+  padding: 0.5rem 1rem;
   margin-top: 1rem;
   text-align: center;
+  color: #e2d45c;
+  font-weight: bold;
 }
 
-.rank-display-container h3 {
-  color: #9572fc;
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #1f1d24;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 90%;
+}
+
+.modal-content h3 {
+  margin-bottom: 1rem;
+  color: #43e7ad;
+}
+
+.modal-content p {
+  margin-bottom: 1.5rem;
+  color: #c9c9c9;
+}
+
+.modal-content button {
+  background-color: #43e7ad;
+  color: #121214;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin: 0 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.modal-content button:hover {
+  background-color: #38c994;
+}
+
+.blur-background-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 999;
+}
+
+/* Novo estilo para a caixa de perguntas sugeridas */
+.suggested-questions-container {
+  background-color: #1f1d24;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 1.5rem;
+}
+
+.suggested-questions-container h3 {
+  color: #c9c9c9;
+  font-size: 1rem;
   margin-bottom: 0.5rem;
 }
 
-.rank-display-container .rank-info p {
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: #e1e1e6;
-  text-transform: capitalize;
+.suggested-questions-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.suggested-questions-list li {
+  list-style: none;
+  background-color: #2d2b33;
+  color: #e2d45c;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+  font-size: 0.9rem;
+  font-style: normal;
+}
+
+.suggested-questions-list li:hover {
+  background-color: #3e3c45;
+  transform: translateY(-1px);
 }

@@ -32,142 +32,72 @@
       sizes="16x16"
       href="/icons/favicon-16x16.png"
     />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#5bbad5" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="theme-color" content="#ffffff" />
   </head>
   <body>
     <header>
-      <img src="./img/logo.png" alt="logo AI Game Helper" />
+      <img src="./img/logo.png" alt="Logo do Assistente de IA para Jogos" />
     </header>
 
-    <main id="mainContent">
-      <section id="gameSelectionSection">
-        <div class="main-content">
-          <h1 class="title">Escolha seu Jogo</h1>
-          <p>Selecione um jogo para que o assistente de IA possa te ajudar!</p>
-
-          <div class="game-cards-container" id="gameSelectionContainer">
-            <div
-              class="game-card"
-              data-game="lol"
-              data-image="./img/lol_capa.jpg"
-            >
-              <div class="game-card-image-container">
-                <img src="./img/lol_capa.jpg" alt="League of Legends" />
-              </div>
-              <span>League of Legends</span>
-            </div>
-
-            <div
-              class="game-card"
-              data-game="valorant"
-              data-image="./img/valorant_capa.jpg"
-            >
-              <div class="game-card-image-container">
-                <img src="./img/valorant_capa.jpg" alt="Valorant" />
-              </div>
-              <span>Valorant</span>
-            </div>
-
-            <div
-              class="game-card"
-              data-game="tft"
-              data-image="./img/tft_capa.jpg"
-            >
-              <div class="game-card-image-container">
-                <img src="./img/tft_capa.jpg" alt="Teamfight Tactics" />
-              </div>
-              <span>Teamfight Tactics</span>
-            </div>
-
-            <div
-              class="game-card"
-              data-game="bdo"
-              data-image="./img/bdo_capa.jpg"
-            >
-              <div class="game-card-image-container">
-                <img src="./img/bdo_capa.jpg" alt="Black Desert Online" />
-              </div>
-              <span>Black Desert Online</span>
-            </div>
-
-            <div
-              class="game-card"
-              data-game="delta"
-              data-image="./img/delta_capa.jpg"
-            >
-              <div class="game-card-image-container">
-                <img src="./img/delta_capa.jpg" alt="Delta Force Hawk Ops" />
-              </div>
-              <span>Delta Force</span>
-            </div>
+    <main>
+      <section id="gameSelectionSection" class="main-container">
+        <h2>Selecione um jogo</h2>
+        <div class="game-grid">
+          <div class="game-card" data-game="lol" data-image="./img/lol_capa.jpg">
+            <img src="./img/lol_capa.jpg" alt="League of Legends" />
+            <span>LoL</span>
+          </div>
+          <div
+            class="game-card"
+            data-game="valorant"
+            data-image="./img/valorant_capa.jpg"
+          >
+            <img src="./img/valorant_capa.jpg" alt="Valorant" />
+            <span>Valorant</span>
+          </div>
+          <div class="game-card" data-game="bdo" data-image="./img/bdo_capa.jpg">
+            <img src="./img/bdo_capa.jpg" alt="Black Desert Online" />
+            <span>BDO</span>
+          </div>
+          <div class="game-card" data-game="tft" data-image="./img/tft_capa.jpg">
+            <img src="./img/tft_capa.jpg" alt="Teamfight Tactics" />
+            <span>TFT</span>
+          </div>
+          <div
+            class="game-card"
+            data-game="delta"
+            data-image="./img/delta_capa.jpg"
+          >
+            <img src="./img/delta_capa.jpg" alt="Delta Force" />
+            <span>Delta Force</span>
           </div>
         </div>
       </section>
 
-      <section class="main-form-area hidden" id="mainFormArea">
-        <div class="main-content">
-          <button class="back-button" id="backButton">← Voltar</button>
+      <section id="mainFormArea" class="hidden">
+        <div class="main-container">
+          <button id="backButton">Voltar</button>
 
-          <div class="selected-game-display" id="selectedGameDisplay"></div>
+          <div id="selectedGameDisplay"></div>
 
-          <div class="lol-fields hidden" id="lolSpecificFields">
-            <div class="input-group">
-              <label for="summonerNameInput">Nome de Invocador:</label>
-              <input
-                type="text"
-                id="summonerNameInput"
-                placeholder="Nome do Invocador"
-              />
-            </div>
-            <div class="input-group">
-              <label for="summonerTagInput">Tag de Invocador:</label>
-              <input type="text" id="summonerTagInput" placeholder="#BR1" />
-            </div>
-            <div class="input-group">
-              <label for="platformRegionSelect">Região:</label>
-              <select id="platformRegionSelect">
-                <option value="br1">Brasil (BR1)</option>
-                <option value="eun1">Europa Nórdica e Oriental (EUN1)</option>
-                <option value="euw1">Europa Ocidental (EUW1)</option>
-                <option value="jp1">Japão (JP1)</option>
-                <option value="kr">Coreia (KR)</option>
-                <option value="la1">América Latina Norte (LA1)</option>
-                <option value="la2">América Latina Sul (LA2)</option>
-                <option value="na1">América do Norte (NA1)</option>
-                <option value="oc1">Oceania (OC1)</option>
-                <option value="tr1">Turquia (TR1)</option>
-                <option value="ru">Rússia (RU)</option>
-              </select>
-            </div>
-            
-            <div class="input-group">
-              <label for="matchCountInput">Número de Partidas (5-20):</label>
-              <select id="matchCountInput">
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
-              </select>
-            </div>
-
-            <div class="input-group refresh-button-container">
-              <button type="button" id="refreshDataButton">
-                Atualizar Histórico
-              </button>
-            </div>
-            
-            <div class="match-summary-container hidden" id="matchSummaryContainer">
-              <h3 id="matchSummaryTitle">Resumo das Últimas Partidas:</h3>
-              <div class="summary-info" id="matchSummaryInfo"></div>
-            </div>
-
-            <div class="rank-display-container hidden" id="rankDisplayContainer">
-              <h3>Elo e Liga:</h3>
-              <div class="rank-info" id="rankInfo"></div>
-            </div>
+          <div
+            class="match-summary-container hidden"
+            id="matchSummaryContainer"
+          >
+            <h3 id="matchSummaryTitle"></h3>
+            <div class="summary-info" id="matchSummaryInfo"></div>
           </div>
 
-          <div class="question-form-container hidden" id="questionFormContainer">
+          <div
+            class="rank-display-container hidden"
+            id="rankDisplayContainer"
+          >
+            <p id="rankInfo"></p>
+          </div>
+
+          <div class="form-and-response-container">
             <div
               class="suggested-questions-container hidden"
               id="suggestedQuestionsContainer"
@@ -180,12 +110,60 @@
             </div>
 
             <form id="aiForm">
+              <div id="lolSpecificFields" class="input-group hidden">
+                <div class="input-group">
+                  <label for="summonerNameInput">Nome de Invocador:</label>
+                  <input
+                    type="text"
+                    id="summonerNameInput"
+                    placeholder="Nome de invocador"
+                  />
+                </div>
+                <div class="input-group">
+                  <label for="summonerTagInput">Tag de Invocador:</label>
+                  <input
+                    type="text"
+                    id="summonerTagInput"
+                    placeholder="#BR1"
+                  />
+                </div>
+                <div class="input-group">
+                  <label for="platformRegionSelect">Região:</label>
+                  <select id="platformRegionSelect">
+                    <option value="br1">Brasil (BR)</option>
+                    <option value="na1">América do Norte (NA)</option>
+                    <option value="euw1">Europa Ocidental (EUW)</option>
+                    <option value="eun1">Europa Nórdica e Oriental (EUN)</option>
+                    <option value="la1">América Latina Norte (LAN)</option>
+                    <option value="la2">América Latina Sul (LAS)</option>
+                    <option value="kr">Coreia (KR)</option>
+                    <option value="jp1">Japão (JP)</option>
+                    <option value="oc1">Oceania (OC)</option>
+                    <option value="ru">Rússia (RU)</option>
+                    <option value="tr1">Turquia (TR)</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label for="matchCountInput">Número de Partidas:</label>
+                  <input
+                    type="number"
+                    id="matchCountInput"
+                    value="10"
+                    min="1"
+                    max="20"
+                  />
+                </div>
+                <button type="button" id="refreshDataButton">
+                  Atualizar Histórico
+                </button>
+              </div>
+
               <div class="input-group">
                 <label for="questionInput">Faça sua pergunta:</label>
                 <textarea
                   id="questionInput"
                   rows="4"
-                  placeholder="Ex: Qual a melhor build ?"
+                  placeholder="Ex: Qual a melhor build para a Ahri?"
                 ></textarea>
               </div>
 
