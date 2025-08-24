@@ -126,7 +126,6 @@ const updateSuggestedQuestions = () => {
       li.textContent = q;
       li.addEventListener("click", () => {
         questionInput.value = q;
-        sendFormWithRefresh(false);
       });
       suggestedQuestionsList.appendChild(li);
     });
@@ -316,7 +315,7 @@ async function sendFormWithRefresh(forceRefresh) {
         data.response
       );
       showElement(aiResponse);
-      aiResponse.scrollIntoView({ behavior: 'smooth' }); // Nova funcionalidade: rola para a resposta
+      aiResponse.scrollIntoView({ behavior: 'smooth' });
     }
   } catch (error) {
     console.error("Erro ao obter resposta da IA:", error);
