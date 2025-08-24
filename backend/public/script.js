@@ -24,187 +24,331 @@ const headerContent = document.querySelector("header");
 const questionFormContainer = document.getElementById("questionFormContainer");
 const matchSummaryContainer = document.getElementById("matchSummaryContainer");
 const matchSummaryInfo = document.getElementById("matchSummaryInfo");
-const summonerInfoDisplay = document.getElementById("summonerInfoDisplay");
-const rankDisplayContainer = document.getElementById("rankDisplayContainer");
-const rankDisplay = document.getElementById("rankDisplay");
-
-const suggestedQuestionsContainer = document.getElementById(
-  "suggestedQuestionsContainer"
-);
+const matchSummaryTitle = document.getElementById("matchSummaryTitle");
+const matchCountInput = document.getElementById("matchCountInput");
+const suggestedQuestionsContainer = document.getElementById("suggestedQuestionsContainer");
 const suggestedQuestionsList = document.getElementById("suggestedQuestionsList");
 
-let selectedGame = null;
+const rankDisplayContainer = document.getElementById("rankDisplayContainer");
+const rankInfo = document.getElementById("rankInfo");
 
-const games = {
-  lol: {
-    name: "League of Legends",
-    hasSummonerData: true,
-    suggestedQuestions: [
-      "Quais as melhores builds para o meu campeão?",
-      "Qual é o meta atual da minha rota?",
-      "Quais campeões são counters do meu?",
-    ],
-  },
-  valorant: {
-    name: "Valorant",
-    hasSummonerData: false,
-    suggestedQuestions: [
-      "Qual o melhor agente para iniciantes?",
-      "Como melhorar minha mira?",
-      "Quais são os melhores mapas para a minha equipe?",
-    ],
-  },
-  bdo: {
-    name: "Black Desert Online",
-    hasSummonerData: false,
-    suggestedQuestions: [
-      "Qual a melhor rota de grind para iniciantes?",
-      "Como posso farmar mais prata?",
-      "Quais são as melhores classes atualmente?",
-    ],
-  },
-  tft: {
-    name: "Teamfight Tactics",
-    hasSummonerData: true,
-    suggestedQuestions: [
-      "Quais as melhores composições do meta?",
-      "Como usar o item 'Força da Natureza'?",
-      "Qual o melhor posicionamento de unidades?",
-    ],
-  },
-  delta: {
-    name: "Delta Force",
-    hasSummonerData: false,
-    suggestedQuestions: [
-      "Quais as melhores armas para o modo conquista?",
-      "Qual a melhor build para o fuzil de assalto?",
-      "Qual o melhor operador para jogar em modo solo?",
-    ],
-  },
+let selectedGame = "";
+let wantsSummonerInfo = false;
+let summonerDataLoaded = false;
+
+const gameSuggestions = {
+  lol: [
+    "Melhor build para Ahri mid?",
+    "Como jogar de caçador no LoL?",
+    "Melhores itens para o campeão X?",
+    "Análise o meta atual!",
+  ],
+  lolSummoner: [
+    "Como foi minha última partida?",
+    "Quais erros cometi nas minhas últimas partidas?",
+    "Por que perdi minhas últimas partidas?",
+    "Qual meu desempenho com o campeão X recentemente?",
+  ],
+  valorant: [
+    "Melhores agentes para iniciantes no Valorant.",
+    "Dicas para melhorar a mira no Valorant.",
+    "Como subir de elo no Valorant?",
+    "Qual o melhor mapa para a Viper?",
+  ],
+  bdo: [
+    "Melhores classes para iniciantes no BDO.",
+    "Como ganhar prata rapidamente no BDO?",
+    "Melhor rotação para a classe X?",
+    "Dicas de pesca no BDO.",
+  ],
+  tft: [
+    "Melhores composições atuais no TFT.",
+    "Dicas para fazer ouro rapidamente no TFT.",
+    "Como se posicionar no TFT?",
+    "Qual a melhor lenda para o patch atual?",
+  ],
+  delta: [
+    "Melhores armas no Delta Force.",
+    "Dicas para jogar Delta Force multiplayer.",
+    "Onde encontro as melhores comunidades de Delta Force?",
+    "Quais as melhores estratégias para o mapa X?",
+  ],
 };
 
-const markdownToHTML = (markdown) => {
+const displayRegionMapping = {
+  br1: "Brasil",
+  na1: "América do Norte",
+  euw1: "Europa Ocidental",
+  eun1: "Europa Nórdica e Oriental",
+  la1: "América Latina Norte",
+  la2: "América Latina Sul",
+  kr: "Coreia",
+  jp1: "Japão",
+  oc1: "Oceania",
+  ru: "Rússia",
+  tr1: "Turquia",
+};
+
+const markdownToHTML = (text) => {
   const converter = new showdown.Converter();
-  return converter.makeHtml(markdown);
+  return converter.makeHtml(text);
 };
 
 const showElement = (element) => {
-  element.classList.remove("hidden");
+  if (element) {
+    element.classList.remove("hidden");
+  }
 };
 
 const hideElement = (element) => {
-  element.classList.add("hidden");
+  if (element) {
+    element.classList.add("hidden");
+  }
 };
 
-const disableUI = () => {
-  mainContent.classList.add("loading-cursor");
-  headerContent.classList.add("loading-cursor");
-  blurBackgroundOverlay.classList.remove("hidden");
-  mainFormArea.classList.add("dimmed");
-  aiForm.classList.add("dimmed");
+const setBackgroundImage = (imageUrl) => {
+  document.body.style.backgroundImage = `url('${imageUrl}')`;
 };
 
-const enableUI = () => {
-  mainContent.classList.remove("loading-cursor");
-  headerContent.classList.remove("loading-cursor");
-  blurBackgroundOverlay.classList.add("hidden");
-  mainFormArea.classList.remove("dimmed");
-  aiForm.classList.remove("dimmed");
+const showMainFormArea = (game, image) => {
+  selectedGame = game;
+  selectedGameDisplay.textContent = game.toUpperCase();
+  selectedGameDisplay.style.backgroundImage = `url(${image})`;
+  hideElement(gameSelectionSection);
+  showElement(mainFormArea);
+  showElement(questionFormContainer);
+  setBackgroundImage(image);
+  updateSuggestedQuestions();
 };
 
 const updateSuggestedQuestions = () => {
-  const suggestedQuestions = games[selectedGame].suggestedQuestions;
+  let suggestions = [];
+  if (selectedGame === "lol" && wantsSummonerInfo && summonerDataLoaded) {
+    suggestions = gameSuggestions.lolSummoner || [];
+  } else {
+    suggestions = gameSuggestions[selectedGame] || [];
+  }
+
   suggestedQuestionsList.innerHTML = "";
-  suggestedQuestions.forEach((q) => {
-    const li = document.createElement("li");
-    li.textContent = q;
-    li.addEventListener("click", () => {
-      questionInput.value = q;
-      aiForm.dispatchEvent(new Event("submit"));
+  if (suggestions.length > 0) {
+    suggestions.forEach((suggestion) => {
+      const button = document.createElement("button");
+      button.textContent = suggestion;
+      button.classList.add("suggested-question-button");
+      button.addEventListener("click", () => {
+        questionInput.value = suggestion;
+      });
+      suggestedQuestionsList.appendChild(button);
     });
-    suggestedQuestionsList.appendChild(li);
-  });
-  showElement(suggestedQuestionsContainer);
+    showElement(suggestedQuestionsContainer);
+  } else {
+    hideElement(suggestedQuestionsContainer);
+  }
+};
+
+const resetToGameSelection = () => {
+  selectedGame = "";
+  wantsSummonerInfo = false;
+  summonerDataLoaded = false;
+  hideElement(mainFormArea);
+  hideElement(aiResponse);
+  showElement(gameSelectionSection);
+  setBackgroundImage("./img/bg.jpg");
+  hideElement(lolSpecificFields);
+  hideElement(questionFormContainer);
+  hideElement(matchSummaryContainer);
+  hideElement(rankDisplayContainer);
+
+  mainContent.classList.remove("blur-content");
+  headerContent.classList.remove("blur-content");
 };
 
 document.querySelectorAll(".game-card").forEach((card) => {
   card.addEventListener("click", () => {
-    selectedGame = card.dataset.game;
-    const gameName = games[selectedGame].name;
-    selectedGameDisplay.textContent = gameName;
-    hideElement(gameSelectionSection);
-    showElement(mainFormArea);
+    const game = card.dataset.game;
+    const image = card.dataset.image;
 
-    if (games[selectedGame].hasSummonerData) {
+    if (game === "lol") {
       showElement(summonerQuestionModal);
       showElement(blurBackgroundOverlay);
+
+      mainContent.classList.add("blur-content");
+      headerContent.classList.add("blur-content");
     } else {
-      showElement(questionFormContainer);
-      updateSuggestedQuestions();
+      hideElement(lolSpecificFields);
+      showMainFormArea(game, image);
     }
   });
 });
 
+backButton.addEventListener("click", resetToGameSelection);
+
 btnYesSummoner.addEventListener("click", () => {
+  wantsSummonerInfo = true;
   hideElement(summonerQuestionModal);
-  showElement(lolSpecificFields);
-  showElement(questionFormContainer);
   hideElement(blurBackgroundOverlay);
-  updateSuggestedQuestions();
+
+  mainContent.classList.remove("blur-content");
+  headerContent.classList.remove("blur-content");
+
+  showElement(lolSpecificFields);
+  showMainFormArea("lol", "./img/lol_capa.jpg");
+
+  hideElement(questionFormContainer);
+  hideElement(matchSummaryContainer);
+  hideElement(rankDisplayContainer);
 });
 
 btnNoSummoner.addEventListener("click", () => {
+  wantsSummonerInfo = false;
+  summonerDataLoaded = true;
   hideElement(summonerQuestionModal);
-  hideElement(lolSpecificFields);
-  showElement(questionFormContainer);
   hideElement(blurBackgroundOverlay);
-  updateSuggestedQuestions();
-});
 
-backButton.addEventListener("click", () => {
-  hideElement(mainFormArea);
-  showElement(gameSelectionSection);
-  hideElement(aiResponse);
-  hideElement(summonerQuestionModal);
+  mainContent.classList.remove("blur-content");
+  headerContent.classList.remove("blur-content");
+
   hideElement(lolSpecificFields);
-  hideElement(questionFormContainer);
+  showMainFormArea("lol", "./img/lol_capa.jpg");
+  showElement(questionFormContainer);
   hideElement(matchSummaryContainer);
-  hideElement(suggestedQuestionsContainer);
   hideElement(rankDisplayContainer);
-  questionInput.value = "";
-  summonerNameInput.value = "";
-  summonerTagInput.value = "";
-  selectedGame = null;
 });
 
-aiForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const question = questionInput.value.trim();
-  const summonerName = summonerNameInput.value.trim();
-  const summonerTag = summonerTagInput.value.trim();
-  const platformRegion = platformRegionSelect.value;
-  const matchCount = 3;
+refreshDataButton.addEventListener("click", () => {
+  sendFormWithRefresh(true);
+});
 
-  if (question === "" && summonerName === "") {
-    alert("Por favor, digite uma pergunta ou um nome de invocador.");
+aiForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  if (!summonerDataLoaded) {
+    sendFormWithRefresh(true);
+  } else {
+    sendFormWithRefresh(false);
+  }
+});
+
+function displaySummonerData(summonerInfo) {
+  const matchCount = summonerInfo.matchHistory.length;
+  matchSummaryTitle.textContent = `Resumo das Últimas ${matchCount} Partidas:`;
+
+  if (!summonerInfo || !summonerInfo.matchHistory || matchCount === 0) {
+    matchSummaryInfo.innerHTML = "<p>Nenhum histórico de partida encontrado.</p>";
+  } else {
+    const matchHistory = summonerInfo.matchHistory;
+    let totalKills = 0;
+    let totalDeaths = 0;
+    let totalAssists = 0;
+    let totalDamage = 0;
+    let totalGold = 0;
+    let totalCs = 0;
+    let gamesWon = 0;
+
+    matchHistory.forEach(match => {
+      const participant = match.info.participants.find(p => p.puuid === summonerInfo.puuid);
+      if (participant) {
+        totalKills += participant.kills;
+        totalDeaths += participant.deaths;
+        totalAssists += participant.assists;
+        totalDamage += participant.totalDamageDealtToChampions;
+        totalGold += participant.goldEarned;
+        totalCs += (participant.totalMinionsKilled + participant.neutralMinionsKilled);
+        if (participant.win) {
+          gamesWon++;
+        }
+      }
+    });
+
+    const numMatches = matchHistory.length;
+    const avgKDA = (totalKills + totalAssists) / Math.max(1, totalDeaths);
+    const avgDamage = (totalDamage / numMatches).toLocaleString('pt-BR');
+    const avgGold = (totalGold / numMatches).toLocaleString('pt-BR');
+    const avgCs = (totalCs / numMatches).toFixed(1);
+    const winRate = ((gamesWon / numMatches) * 100).toFixed(0);
+
+    matchSummaryInfo.innerHTML = `
+      <div class="summary-item">
+        <p>${winRate}%</p>
+        <span>Taxa de Vitória</span>
+      </div>
+      <div class="summary-item">
+        <p>${avgKDA.toFixed(2)}</p>
+        <span>KDA Médio</span>
+      </div>
+      <div class="summary-item">
+        <p>${avgDamage}</p>
+        <span>Dano Médio</span>
+      </div>
+      <div class="summary-item">
+        <p>${avgGold}</p>
+        <span>Ouro Médio</span>
+      </div>
+      <div class="summary-item">
+        <p>${avgCs}</p>
+        <span>CS Médio</span>
+      </div>
+    `;
+  }
+  
+  if (summonerInfo.tier && summonerInfo.rank) {
+    rankInfo.innerHTML = `<p>${summonerInfo.tier} ${summonerInfo.rank}</p>`;
+    showElement(rankDisplayContainer);
+  } else {
+    rankInfo.innerHTML = `<p>Dados de Elo não encontrados.</p>`;
+    showElement(rankDisplayContainer);
+  }
+}
+
+async function sendFormWithRefresh(forceRefresh) {
+  const question = questionInput.value.trim();
+  const summonerName = wantsSummonerInfo ? summonerNameInput.value.trim() : null;
+  const summonerTag = wantsSummonerInfo ? summonerTagInput.value.trim() : null;
+  const platformRegion = wantsSummonerInfo ? platformRegionSelect.value : null;
+  const matchCount = matchCountInput.value;
+
+  const isInitialFetch = !question && wantsSummonerInfo;
+  
+  if (isInitialFetch && (!summonerName || !summonerTag)) {
+    alert("Por favor, preencha o nome e a tag do invocador.");
     return;
   }
+  
+  if (question === "" && !isInitialFetch) {
+      alert("Por favor, digite sua pergunta.");
+      return;
+  }
 
-  askButton.disabled = true;
-  askButton.textContent = "Carregando...";
-  askButton.classList.add("loading");
-  disableUI();
-
-  hideElement(aiResponse);
+  if (forceRefresh) {
+    refreshDataButton.disabled = true;
+    refreshDataButton.innerHTML = `<div class="spinner"></div>`;
+    refreshDataButton.classList.add('loading');
+  }
+  
+  if (!isInitialFetch) {
+    askButton.disabled = true;
+    askButton.textContent = "Perguntando...";
+    askButton.classList.add("loading");
+    aiResponse.querySelector(".response-content").innerHTML = `
+      <div class="loading-container">
+        <div class="spinner"></div>
+        <p>Gerando resposta... Por favor, aguarde.</p>
+      </div>
+    `;
+    showElement(aiResponse);
+  }
 
   const requestBody = {
     game: selectedGame,
     question: question,
-    summonerName: summonerName,
-    summonerTag: summonerTag,
-    platformRegion: platformRegion,
-    matchCount: matchCount,
+    forceRefresh: forceRefresh,
   };
+
+  if (selectedGame === "lol" && wantsSummonerInfo) {
+    requestBody.summonerName = summonerName;
+    requestBody.summonerTag = summonerTag;
+    requestBody.platformRegion = platformRegion;
+    requestBody.matchCount = matchCount;
+  }
 
   try {
     const response = await fetch("/api/gemini-ask", {
@@ -215,14 +359,23 @@ aiForm.addEventListener("submit", async (event) => {
       body: JSON.stringify(requestBody),
     });
 
-    const data = await response.json();
-
     if (!response.ok) {
-      throw new Error(data.error || "Erro de rede desconhecido");
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Erro na requisição ao backend.");
     }
 
-    if (data.summonerName) {
-      displaySummonerData(data);
+    const data = await response.json();
+
+    if (isInitialFetch) {
+      const summonerInfo = data;
+      displaySummonerData(summonerInfo);
+      summonerDataLoaded = true;
+      showElement(matchSummaryContainer);
+      showElement(questionFormContainer);
+      showElement(rankDisplayContainer);
+      hideElement(aiResponse);
+      // Chamada adicionada aqui para exibir as perguntas sugeridas após o carregamento dos dados do invocador
+      updateSuggestedQuestions(); 
     } else {
       aiResponse.querySelector(".response-content").innerHTML = markdownToHTML(
         data.response
@@ -231,143 +384,36 @@ aiForm.addEventListener("submit", async (event) => {
     }
   } catch (error) {
     console.error("Erro ao obter resposta da IA:", error);
-    aiResponse.querySelector(
-      ".response-content"
-    ).innerHTML = `<p style="color: red;">Ocorreu um erro: ${error.message}. Tente novamente mais tarde.</p>`;
+    if (isInitialFetch) {
+      matchSummaryInfo.innerHTML = `<p style="color: red;">Ocorreu um erro: ${error.message}.</p>`;
+    } else {
+      aiResponse.querySelector(
+        ".response-content"
+      ).innerHTML = `<p style="color: red;">Ocorreu um erro: ${error.message}. Tente novamente mais tarde.</p>`;
+    }
     showElement(aiResponse);
   } finally {
+    if (forceRefresh) {
+      refreshDataButton.disabled = false;
+      refreshDataButton.innerHTML = `Atualizar Histórico`;
+      refreshDataButton.classList.remove('loading');
+    }
+
     askButton.disabled = false;
     askButton.textContent = "Perguntar";
     askButton.classList.remove("loading");
-    enableUI();
   }
-});
+}
 
-refreshDataButton.addEventListener("click", async (event) => {
-  event.preventDefault();
-
-  const summonerName = summonerNameInput.value.trim();
-  const summonerTag = summonerTagInput.value.trim();
-  const platformRegion = platformRegionSelect.value;
-  const matchCount = 3;
-
-  if (summonerName === "") {
-    alert("Por favor, preencha o nome do invocador e a tag.");
-    return;
-  }
-
-  refreshDataButton.disabled = true;
-  refreshDataButton.innerHTML = `<span class="spinner"></span> Atualizando...`;
-  refreshDataButton.classList.add("loading");
-  disableUI();
-
-  try {
-    const requestBody = {
-      game: selectedGame,
-      forceRefresh: true,
-      summonerName: summonerName,
-      summonerTag: summonerTag,
-      platformRegion: platformRegion,
-      matchCount: matchCount,
-    };
-
-    const response = await fetch("/api/gemini-ask", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "Erro de rede desconhecido");
-    }
-
-    displaySummonerData(data);
-  } catch (error) {
-    console.error("Erro ao obter resposta da IA:", error);
-    matchSummaryInfo.innerHTML = `<p style="color: red;">Ocorreu um erro: ${error.message}.</p>`;
-  } finally {
-    refreshDataButton.disabled = false;
-    refreshDataButton.innerHTML = `Atualizar Histórico`;
-    refreshDataButton.classList.remove("loading");
-    enableUI();
-  }
-});
-
-const displaySummonerData = (data) => {
-  hideElement(aiResponse);
-  showElement(matchSummaryContainer);
-  showElement(questionFormContainer);
-
-  const {
-    summonerName,
-    summonerTag,
-    tier,
-    rank,
-    summonerLevel,
-    matchHistory,
-  } = data;
-
-  const summonerInfoHTML = `
-        <h3>Dados do Invocador</h3>
-        <p><strong>Nome:</strong> ${summonerName}#${summonerTag}</p>
-        <p><strong>Nível:</strong> ${summonerLevel}</p>
-        <p><strong>Elo:</strong> ${tier ? `${tier} ${rank}` : "Não ranqueado"}</p>
-    `;
-  summonerInfoDisplay.innerHTML = summonerInfoHTML;
-
-  if (matchHistory && matchHistory.length > 0) {
-    const matchSummaryHTML = matchHistory
-      .map((match) => {
-        const participant = match.info.participants.find(
-          (p) => p.puuid === data.puuid
-        );
-        if (!participant) return "";
-
-        return `
-                <div class="summary-info">
-                    <p><strong>Campeão:</strong> ${
-                      participant.championName
-                    }</p>
-                    <p><strong>KDA:</strong> ${participant.kills}/${
-          participant.deaths
-        }/${participant.assists}</p>
-                    <p><strong>Resultado:</strong> ${
-                      participant.win ? "Vitória" : "Derrota"
-                    }</p>
-                    <p><strong>Posição:</strong> ${
-                      participant.individualPosition
-                    }</p>
-                    <p><strong>Dano:</strong> ${
-                      participant.totalDamageDealtToChampions
-                    }</p>
-                </div>
-            `;
-      })
-      .join("");
-    matchSummaryInfo.innerHTML = `<h3>Últimas Partidas:</h3>${matchSummaryHTML}`;
-  } else {
-    matchSummaryInfo.innerHTML = `<p>Histórico de partidas não encontrado.</p>`;
-  }
-};
-
-// --- Início do código para registro do Service Worker ---
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
       .register("/sw.js")
       .then((registration) => {
-        console.log(
-          "Service Worker registrado com sucesso:",
-          registration.scope
-        );
+        console.log("Service Worker registrado com sucesso:", registration);
       })
       .catch((error) => {
         console.error("Falha no registro do Service Worker:", error);
       });
   });
 }
-// --- Fim do código para registro do Service Worker ---
