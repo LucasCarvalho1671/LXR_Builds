@@ -93,7 +93,6 @@ const displayRegionMapping = {
   tr1: "Turquia",
 };
 
-// Funções Auxiliares
 const markdownToHTML = (text) => {
   const converter = new showdown.Converter();
   return converter.makeHtml(text);
@@ -115,30 +114,6 @@ const setBackgroundImage = (imageUrl) => {
   document.body.style.backgroundImage = `url('${imageUrl}')`;
 };
 
-const updateSuggestedQuestions = () => {
-  let suggestions = [];
-  if (selectedGame === "lol" && wantsSummonerInfo) {
-    suggestions = gameSuggestions.lolSummoner || [];
-  } else {
-    suggestions = gameSuggestions[selectedGame] || [];
-  }
-
-  suggestedQuestionsList.innerHTML = "";
-  if (suggestions.length > 0) {
-    suggestions.forEach((q) => {
-      const li = document.createElement("li");
-      li.textContent = q;
-      li.addEventListener("click", () => {
-        questionInput.value = q;
-      });
-      suggestedQuestionsList.appendChild(li);
-    });
-    showElement(suggestedQuestionsContainer);
-  } else {
-    hideElement(suggestedQuestionsContainer);
-  }
-};
-
 const showMainFormArea = (game, image) => {
   selectedGame = game;
   selectedGameDisplay.textContent = game.toUpperCase();
@@ -148,6 +123,31 @@ const showMainFormArea = (game, image) => {
   showElement(questionFormContainer);
   setBackgroundImage(image);
   updateSuggestedQuestions();
+};
+
+const updateSuggestedQuestions = () => {
+  let suggestions = [];
+  if (selectedGame === "lol" && wantsSummonerInfo && summonerDataLoaded) {
+    suggestions = gameSuggestions.lolSummoner || [];
+  } else {
+    suggestions = gameSuggestions[selectedGame] || [];
+  }
+
+  suggestedQuestionsList.innerHTML = "";
+  if (suggestions.length > 0) {
+    suggestions.forEach((suggestion) => {
+      const button = document.createElement("button");
+      button.textContent = suggestion;
+      button.classList.add("suggested-question-button");
+      button.addEventListener("click", () => {
+        questionInput.value = suggestion;
+      });
+      suggestedQuestionsList.appendChild(button);
+    });
+    showElement(suggestedQuestionsContainer);
+  } else {
+    hideElement(suggestedQuestionsContainer);
+  }
 };
 
 const resetToGameSelection = () => {
@@ -162,10 +162,75 @@ const resetToGameSelection = () => {
   hideElement(questionFormContainer);
   hideElement(matchSummaryContainer);
   hideElement(rankDisplayContainer);
+
   mainContent.classList.remove("blur-content");
   headerContent.classList.remove("blur-content");
-  updateSuggestedQuestions();
 };
+
+document.querySelectorAll(".game-card").forEach((card) => {
+  card.addEventListener("click", () => {
+    const game = card.dataset.game;
+    const image = card.dataset.image;
+
+    if (game === "lol") {
+      showElement(summonerQuestionModal);
+      showElement(blurBackgroundOverlay);
+
+      mainContent.classList.add("blur-content");
+      headerContent.classList.add("blur-content");
+    } else {
+      hideElement(lolSpecificFields);
+      showMainFormArea(game, image);
+    }
+  });
+});
+
+backButton.addEventListener("click", resetToGameSelection);
+
+btnYesSummoner.addEventListener("click", () => {
+  wantsSummonerInfo = true;
+  hideElement(summonerQuestionModal);
+  hideElement(blurBackgroundOverlay);
+
+  mainContent.classList.remove("blur-content");
+  headerContent.classList.remove("blur-content");
+
+  showElement(lolSpecificFields);
+  showMainFormArea("lol", "./img/lol_capa.jpg");
+
+  hideElement(questionFormContainer);
+  hideElement(matchSummaryContainer);
+  hideElement(rankDisplayContainer);
+});
+
+btnNoSummoner.addEventListener("click", () => {
+  wantsSummonerInfo = false;
+  summonerDataLoaded = true;
+  hideElement(summonerQuestionModal);
+  hideElement(blurBackgroundOverlay);
+
+  mainContent.classList.remove("blur-content");
+  headerContent.classList.remove("blur-content");
+
+  hideElement(lolSpecificFields);
+  showMainFormArea("lol", "./img/lol_capa.jpg");
+  showElement(questionFormContainer);
+  hideElement(matchSummaryContainer);
+  hideElement(rankDisplayContainer);
+});
+
+refreshDataButton.addEventListener("click", () => {
+  sendFormWithRefresh(true);
+});
+
+aiForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  if (!summonerDataLoaded) {
+    sendFormWithRefresh(true);
+  } else {
+    sendFormWithRefresh(false);
+  }
+});
 
 function displaySummonerData(summonerInfo) {
   const matchCount = summonerInfo.matchHistory.length;
@@ -319,13 +384,13 @@ async function sendFormWithRefresh(forceRefresh) {
       showElement(questionFormContainer);
       showElement(rankDisplayContainer);
       hideElement(aiResponse);
+      // Chamada adicionada aqui para exibir as perguntas sugeridas após o carregamento dos dados do invocador
       updateSuggestedQuestions();
     } else {
       aiResponse.querySelector(".response-content").innerHTML = markdownToHTML(
         data.response
       );
       showElement(aiResponse);
-      aiResponse.scrollIntoView({ behavior: "smooth" });
     }
   } catch (error) {
     console.error("Erro ao obter resposta da IA:", error);
@@ -350,69 +415,6 @@ async function sendFormWithRefresh(forceRefresh) {
   }
 }
 
-// Event Listeners
-document.querySelectorAll(".game-card").forEach((card) => {
-  card.addEventListener("click", () => {
-    const game = card.dataset.game;
-    const image = card.dataset.image;
-
-    if (game === "lol") {
-      showElement(summonerQuestionModal);
-      showElement(blurBackgroundOverlay);
-
-      mainContent.classList.add("blur-content");
-      headerContent.classList.add("blur-content");
-    } else {
-      hideElement(lolSpecificFields);
-      showMainFormArea(game, image);
-    }
-  });
-});
-
-backButton.addEventListener("click", resetToGameSelection);
-
-btnYesSummoner.addEventListener("click", () => {
-  wantsSummonerInfo = true;
-  hideElement(summonerQuestionModal);
-  hideElement(blurBackgroundOverlay);
-  mainContent.classList.remove("blur-content");
-  headerContent.classList.remove("blur-content");
-  showElement(lolSpecificFields);
-  showMainFormArea("lol", "./img/lol_capa.jpg");
-  hideElement(questionFormContainer);
-  hideElement(matchSummaryContainer);
-  hideElement(rankDisplayContainer);
-  updateSuggestedQuestions();
-});
-
-btnNoSummoner.addEventListener("click", () => {
-  wantsSummonerInfo = false;
-  summonerDataLoaded = true;
-  hideElement(summonerQuestionModal);
-  hideElement(blurBackgroundOverlay);
-  mainContent.classList.remove("blur-content");
-  headerContent.classList.remove("blur-content");
-  hideElement(lolSpecificFields);
-  showMainFormArea("lol", "./img/lol_capa.jpg");
-  showElement(questionFormContainer);
-  hideElement(matchSummaryContainer);
-  hideElement(rankDisplayContainer);
-  updateSuggestedQuestions();
-});
-
-refreshDataButton.addEventListener("click", () => {
-  sendFormWithRefresh(true);
-});
-
-aiForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  if (!summonerDataLoaded && wantsSummonerInfo) {
-    sendFormWithRefresh(true);
-  } else {
-    sendFormWithRefresh(false);
-  }
-});
-
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
@@ -425,13 +427,3 @@ if ("serviceWorker" in navigator) {
       });
   });
 }
-
-// Funcionalidade para voltar com a tecla ESC
-document.addEventListener("keydown", (event) => {
-  if (
-    event.key === "Escape" &&
-    mainFormArea.classList.contains("hidden") === false
-  ) {
-    resetToGameSelection();
-  }
-});
