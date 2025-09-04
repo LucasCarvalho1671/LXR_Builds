@@ -130,7 +130,6 @@ const updateSuggestedQuestions = () => {
       li.textContent = q;
       li.addEventListener("click", () => {
         questionInput.value = q;
-        // Removido o envio automático do formulário
       });
       suggestedQuestionsList.appendChild(li);
     });
@@ -326,6 +325,7 @@ async function sendFormWithRefresh(forceRefresh) {
         data.response
       );
       showElement(aiResponse);
+      aiResponse.scrollIntoView({ behavior: "smooth" });
     }
   } catch (error) {
     console.error("Erro ao obter resposta da IA:", error);
@@ -413,29 +413,6 @@ aiForm.addEventListener("submit", (e) => {
   }
 });
 
-// Adicionando o event listener para a tecla "Esc"
-document.addEventListener("keydown", (e) => {
-  if (
-    e.key === "Escape" &&
-    !summonerQuestionModal.classList.contains("hidden")
-  ) {
-    // Se o modal de pergunta do invocador estiver visível, fecha apenas o modal.
-    hideElement(summonerQuestionModal);
-    hideElement(blurBackgroundOverlay);
-    mainContent.classList.remove("blur-content");
-    headerContent.classList.remove("blur-content");
-  } else if (
-    e.key === "Escape" &&
-    !gameSelectionSection.classList.contains("hidden")
-  ) {
-    // Se estiver na tela de seleção de jogos, não faz nada
-    return;
-  } else if (e.key === "Escape") {
-    // Se estiver em qualquer outra tela, volta para a tela de seleção de jogos.
-    resetToGameSelection();
-  }
-});
-
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
@@ -448,3 +425,13 @@ if ("serviceWorker" in navigator) {
       });
   });
 }
+
+// Funcionalidade para voltar com a tecla ESC
+document.addEventListener("keydown", (event) => {
+  if (
+    event.key === "Escape" &&
+    mainFormArea.classList.contains("hidden") === false
+  ) {
+    resetToGameSelection();
+  }
+});
