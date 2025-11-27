@@ -8,7 +8,7 @@
 <br>
 
 <p align="center">
-  <img alt="projeto DevLinks" src="./assets/logo.png" width="100%">
+  <img alt="projeto LXR_Builds" src=./img/logo.png" width="100%">
 </p>
 
 ## 🚀 Tecnologias
@@ -20,14 +20,10 @@ Esse projeto foi desenvolvido com as seguintes tecnologias:
 - Gemini AI
 - Git e Github
 
-
 ## 🎮 Projeto
 
 LXR - Builds é a sua central estratégica com builds otimizadas, runas e informações detalhadas — tudo baseado no meta mais recente de cada patch.
 
 - [Acesse o projeto finalizado, online](https://lxr-builds.onrender.com)
-
-
-
 
 ---
