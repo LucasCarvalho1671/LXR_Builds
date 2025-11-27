@@ -8,7 +8,7 @@
 <br>
 
 <p align="center">
-  <img alt="projeto LXR_Builds" src="LXR_Builds/backend/public/img/logo.png" width="100%">
+  <img alt="projeto LXR_Builds" src="/backend/public/img/logo.png" width="50%">
 </p>
 
 ## 🚀 Tecnologias
