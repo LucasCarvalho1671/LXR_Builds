@@ -42,12 +42,21 @@ O usuário está jogando League of Legends. A análise de desempenho deve focar 
 
         if (summonerInfo.matchHistory && summonerInfo.matchHistory.length > 0) {
           prompt += `\nDados das últimas ${summonerInfo.matchHistory.length} partidas do invocador (analise este histórico para uma resposta personalizada):\n`;
+
           summonerInfo.matchHistory.forEach((match, index) => {
             const participant = match.info.participants.find(
               (p) => p.puuid === summonerInfo.puuid
             );
             if (participant) {
+              // OBTENÇÃO DA DATA/HORA
+              const gameDate = new Date(match.info.gameCreation);
+              const formattedDate = gameDate.toLocaleString("pt-BR", {
+                dateStyle: "short",
+                timeStyle: "short",
+              });
               prompt += `\nPartida ${index + 1}:\n`;
+              //INCLUSÃO DA DATA NO PROMPT
+              prompt += `- Data/Hora: ${formattedDate}\n`;
               prompt += `- Resultado: ${
                 participant.win ? "Vitória" : "Derrota"
               }\n`;
